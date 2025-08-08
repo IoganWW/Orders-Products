@@ -41,29 +41,33 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect }) =>
           </h5>
         </div>
 
-        <div className={`${styles.orderCard__middleSection}`}>
-          <div className={`${styles.orderCard__productsCount}`}>
-            <svg className={styles.orderCard__productsIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M3 13H21V11H3V13ZM3 6V8H21V6H3ZM3 18H21V16H3V18Z"/>
-            </svg>
-            <span className={`${styles.orderCard__productsValue}`}>
-              {order.products.length} Продукта
-            </span>
+        <div className={styles.orderCard__middleSection}>
+          {/* Иконка в круглой рамке */}
+          <div className={styles.orderCard__iconWrapper}>
+            <i className="fa-solid fa-list"></i>
           </div>
-          <div className={`${styles.orderCard__date}`}>
-            {formattedDate.short}
+
+          {/* Количество продуктов: цифра + под ней "Продукта" */}
+          <div className={styles.orderCard__productsValue}>
+            <span className={styles.orderCard__productsCountNumber}>{order.products.length}</span>
+            <span className={styles.orderCard__productsLabel}>Продукта</span>
+          </div>
+
+          {/* Дата */}
+          <div className={styles.orderCard__date}>
+            {formattedDate.shortMonStr}
           </div>
         </div>
-
+        
         <div className={`${styles.orderCard__rightSection}`}>
           <div className={`${styles.orderCard__totals}`}>
             {totals[0] && (
-              <div className={`${styles.orderCard__total}`}>
+              <div className={`${styles.orderCard__totalSecondary}`}>
                 {totals[0].formatted}
               </div>
             )}
             {totals[1] && (
-              <div className={`${styles.orderCard__total}`}>
+              <div className={`${styles.orderCard__totalMain}`}>
                 {totals[1].formatted}
               </div>
             )}

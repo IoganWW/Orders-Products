@@ -119,7 +119,6 @@
   max-width: 100%;
 }
 
-/* НОВАЯ КОЛОНКА 2 (бывшая col4_status): Статус "На ремонте" / "Свободен" */
 .productCard__col2 {
   flex-basis: 10%;
   flex-shrink: 0;
@@ -153,7 +152,7 @@
 }
 
 .productCard__priceMain {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 .productCard__priceSecondary {
@@ -164,7 +163,6 @@
   gap: 0.5rem;
 }
 
-/* НОВАЯ КОЛОНКА 4 (бывшая col2): Статус (New/Used) и Тип (Бейджи) */
 .productCard__col4 {
   display: flex; /* Изменено на flex для горизонтального расположения */
   flex-direction: column; /* Бейджи вертикально, как на макете */

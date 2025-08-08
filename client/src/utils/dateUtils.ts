@@ -1,6 +1,14 @@
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString);
   
+  // Получаем день, месяц (в сокращённой форме) и год
+  const day = date.toLocaleString('en-GB', { day: '2-digit' }); 
+  const month = date.toLocaleString('en-GB', { month: 'short' });
+  const year = date.toLocaleString('en-GB', { year: 'numeric' });
+
+  // Форматируем строку вручную
+  const formattedDate = `${day} / ${month} / ${year}`;
+
   return {
     // Формат: 29.06.2017
     short: date.toLocaleDateString('en-GB', {
@@ -8,12 +16,16 @@ export const formatDate = (dateString: string) => {
       month: '2-digit',
       year: 'numeric'
     }),
+
+    shortMonStr: formattedDate,
+  
     // Формат: June 29, 2017
     long: date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     }),
+
     // Формат: 29.06.2017 12:09:33
     full: `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-GB')}`,
     // ISO формат для datetime-local input
