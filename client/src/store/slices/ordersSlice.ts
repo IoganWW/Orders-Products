@@ -1,5 +1,7 @@
+// client/src/store/slices/ordersSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { OrdersState, Order } from '@/types/orders';
+import { Product } from '@/types/products';
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
@@ -38,6 +40,40 @@ const ordersSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    // Новый экшн для добавления продукта к заказу
+    addProductToOrder: (state, action: PayloadAction<{ orderId: number; product: Product }>) => {
+      const { orderId, product } = action.payload;
+      
+      // Обновляем в общем списке заказов
+      const orderIndex = state.orders.findIndex(order => order.id === orderId);
+      if (orderIndex !== -1) {
+        state.orders[orderIndex].products.push(product);
+      }
+      
+      // Обновляем выбранный заказ, если это он
+      if (state.selectedOrder && state.selectedOrder.id === orderId) {
+        state.selectedOrder.products.push(product);
+      }
+    },
+    // Новый экшн для удаления продукта из заказа
+    removeProductFromOrder: (state, action: PayloadAction<{ orderId: number; productId: number }>) => {
+      const { orderId, productId } = action.payload;
+      
+      // Обновляем в общем списке заказов
+      const orderIndex = state.orders.findIndex(order => order.id === orderId);
+      if (orderIndex !== -1) {
+        state.orders[orderIndex].products = state.orders[orderIndex].products.filter(
+          product => product.id !== productId
+        );
+      }
+      
+      // Обновляем выбранный заказ, если это он
+      if (state.selectedOrder && state.selectedOrder.id === orderId) {
+        state.selectedOrder.products = state.selectedOrder.products.filter(
+          product => product.id !== productId
+        );
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -49,6 +85,16 @@ const ordersSlice = createSlice({
       .addCase(fetchOrders.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = action.payload;
+        
+        // Обновляем выбранный заказ, если он есть
+        if (state.selectedOrder) {
+          const updatedSelectedOrder = action.payload.find(
+            (order: Order) => order.id === state.selectedOrder!.id
+          );
+          if (updatedSelectedOrder) {
+            state.selectedOrder = updatedSelectedOrder;
+          }
+        }
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
@@ -73,5 +119,11 @@ const ordersSlice = createSlice({
   },
 });
 
-export const { setSelectedOrder, clearError } = ordersSlice.actions;
+export const { 
+  setSelectedOrder, 
+  clearError, 
+  addProductToOrder, 
+  removeProductFromOrder 
+} = ordersSlice.actions;
+
 export default ordersSlice.reducer;

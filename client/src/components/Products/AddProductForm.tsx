@@ -1,8 +1,10 @@
+// client/src/components/Products/AddProductForm.tsx
 'use client';
 
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { fetchProducts } from '@/store/slices/productsSlice';
+import { fetchOrders } from '@/store/slices/ordersSlice';
 import FormField from '@/components/UI/FormField';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
 import { ProductType } from '@/types/products';
@@ -140,7 +142,10 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
       });
 
       if (response.ok) {
+        // Обновляем и продукты и заказы, чтобы новый продукт появился в деталях заказа
         dispatch(fetchProducts());
+        dispatch(fetchOrders());
+        
         resetForm();
         onClose();
         

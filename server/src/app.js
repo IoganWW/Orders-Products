@@ -293,7 +293,6 @@ app.put('/api/products/:id', (req, res) => {
   
   res.json(products[productIndex]);
 });
-
 const PORT = process.env.PORT || 3001;
 
 server.listen(PORT, () => {

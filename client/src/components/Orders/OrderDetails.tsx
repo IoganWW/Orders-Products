@@ -107,30 +107,6 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeletePro
               ))
             )}
           </div>
-
-          {/* Статистика заказа */}
-          {order.products.length > 0 && (
-            <div className={`${styles.orderDetails__summary} mt-4 p-3 bg-light rounded`}>
-              <div className="row text-center">
-                <div className="col-4">
-                  <div className="h5 mb-1">{order.products.length}</div>
-                  <small className="text-muted">Продуктов</small>
-                </div>
-                <div className="col-4">
-                  <div className="h5 mb-1 text-success">
-                    {order.products.filter(p => p.isNew === 1).length}
-                  </div>
-                  <small className="text-muted">Новых</small>
-                </div>
-                <div className="col-4">
-                  <div className="h5 mb-1 text-warning">
-                    {order.products.filter(p => p.isNew === 0).length}
-                  </div>
-                  <small className="text-muted">Б/у</small>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 

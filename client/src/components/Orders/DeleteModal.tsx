@@ -1,9 +1,9 @@
+// client/src/components/Orders/DeleteModal.tsx
 import React from 'react';
 import { useAppDispatch } from '@/store';
 import { deleteOrder } from '@/store/slices/ordersSlice';
 import { Order } from '@/types/orders';
 
-// Интерфейс пропсов обновлен. Теперь он не включает 'onConfirm'
 interface DeleteModalProps {
   show: boolean;
   order: Order;
@@ -13,15 +13,12 @@ interface DeleteModalProps {
 const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
   const dispatch = useAppDispatch();
 
-  // Логика удаления теперь внутри компонента
   const handleDelete = async () => {
     try {
-      // Предполагаем, что order.id имеет тип number, как в вашем интерфейсе Order
       await dispatch(deleteOrder(order.id)).unwrap();
-      onClose(); // Закрываем модальное окно после успешного удаления
+      onClose();
     } catch (error) {
       console.error('Failed to delete order:', error);
-      // Здесь можно добавить обработку ошибок, например, показать всплывающее уведомление
     }
   };
 
@@ -29,60 +26,54 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
 
   return (
     <>
-      {/* Используем Bootstrap классы, как в вашем примере */}
-      <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content animate__animated animate__zoomIn">
-            <div className="modal-header bg-danger text-white">
-              <h5 className="modal-title">
-                <i className="fas fa-exclamation-triangle me-2"></i>
-                Confirm Deletion
-              </h5>
-              <button
-                type="button"
-                className="btn-close btn-close-white"
-                onClick={onClose}
-              ></button>
-            </div>
+      <div className="modal fade show" style={{ display: 'block', zIndex: 1060 }} tabIndex={-1}>
+        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '500px' }}>
+          <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
             
-            <div className="modal-body">
-              <p className="mb-3">
-                Are you sure you want to delete this order?
-              </p>
-              
-              <div className="alert alert-warning">
-                <h6><strong>{order.title}</strong></h6>
-                <p className="mb-1">Order ID: #{order.id}</p>
-                <p className="mb-0">Products: {order.products.length}</p>
+            <div className="modal-body text-center p-4">
+              <div style={{ background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)', borderRadius: '12px', padding: '2rem', color: 'white', marginBottom: '1.5rem' }}>
+                <i className="fas fa-question-circle fa-3x mb-3"></i>
+                <h4 className="mb-2">Вы уверены, что хотите удалить этот приход?</h4>
               </div>
               
-              <p className="text-muted small mb-0">
-                <i className="fas fa-info-circle me-1"></i>
-                This action cannot be undone.
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f8f9fa', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
+                <div style={{ width: '40px', height: '40px', background: '#e8ecf0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <i className="fas fa-desktop" style={{ color: '#6c757d' }}></i>
+                </div>
+                <div style={{ flex: 1, textAlign: 'left' }}>
+                  <div style={{ fontWeight: '500', color: '#333', marginBottom: '0.25rem' }}>
+                    Gigabyte Technology X58-USB3 (Socket 1366) 6 X58-USB3
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: '#6c757d' }}>
+                    SN-12 3456789
+                  </div>
+                </div>
+              </div>
             </div>
             
-            <div className="modal-footer">
+            <div className="modal-footer justify-content-center border-0 pb-4">
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="btn btn-outline-secondary px-4 py-2"
                 onClick={onClose}
+                style={{ borderRadius: '25px', fontWeight: '500' }}
               >
-                Cancel
+                ОТМЕНИТЬ
               </button>
               <button
                 type="button"
-                className="btn btn-danger"
+                className="btn btn-danger px-4 py-2 ms-3"
                 onClick={handleDelete}
+                style={{ borderRadius: '25px', fontWeight: '500', background: '#dc3545', border: 'none' }}
               >
                 <i className="fas fa-trash me-1"></i>
-                Delete Order
+                УДАЛИТЬ
               </button>
             </div>
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show"></div>
+      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}></div>
     </>
   );
 };

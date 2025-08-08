@@ -60,7 +60,7 @@
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: var(--transition);
-  padding: 10px 20px;
+  padding: 8px 20px;
   position: relative;
 }
 
@@ -85,9 +85,9 @@
 
 /* Левая часть: Название прихода */
 .orderCard__titleContainer {
-  flex-grow: 1; /* Занимает доступное пространство */
+  flex-grow: 1; 
   max-width: 50%;
-  min-width: 150px;
+  min-width: 200px;
   padding-right: 15px;
   transition: all 0.2s ease-in-out;
 }
@@ -103,9 +103,9 @@
   /* Обновлено: подчеркивание строго по ширине текста */
   text-decoration: underline;
   text-decoration-color: currentColor;
-  text-decoration-thickness: 1px; /* Более тонкое подчеркивание */
-  text-underline-offset: 2px; /* Отступ от текста */
-  display: inline; /* Возвращаем к inline, так как text-decoration работает с текстом */
+  text-decoration-thickness: 1px; 
+  text-underline-offset: 2px; 
+  display: inline; 
 }
 
 /* Центральная часть: Количество продуктов и дата */
@@ -196,17 +196,17 @@
 
 /* Новый элемент: контейнер для стрелки */
 .orderCard__arrowContainer {
-  position: absolute; /* Абсолютное позиционирование внутри .orderCard */
+  position: absolute; 
   right: 0;
   top: 0;
-  height: 100%; /* На всю высоту карточки */
-  width: 50px; /* Ширина квадратика */
-  display: none; /* По умолчанию скрыт */
+  height: 100%;
+  width: 50px; 
+  display: none; 
   justify-content: center;
   align-items: center;
   background-color: #f0f0f0;
-  border-top-right-radius: var(--border-radius); /* Скругление только справа сверху */
-  border-bottom-right-radius: var(--border-radius); /* Скругление только справа снизу */
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
   transition: all 0.2s ease-in-out;
 }
 
