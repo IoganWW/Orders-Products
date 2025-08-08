@@ -27,8 +27,8 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
   return (
     <>
       <div className="modal fade show" style={{ display: 'block', zIndex: 1060 }} tabIndex={-1}>
-        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '500px' }}>
-          <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
+        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '700px' }}>
+          <div className="modal-content animate__animated animate__zoomIn" style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
             
             <div className="modal-body text-center p-4">
               <div style={{ background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)', borderRadius: '12px', padding: '2rem', color: 'white', marginBottom: '1.5rem' }}>

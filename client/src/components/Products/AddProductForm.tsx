@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/store';
 import { fetchProducts } from '@/store/slices/productsSlice';
 import { fetchOrders } from '@/store/slices/ordersSlice';
 import FormField from '@/components/UI/FormField';
+import Portal from '@/components/UI/Portal';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
 import { ProductType } from '@/types/products';
 
@@ -176,8 +177,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
   if (!show) return null;
 
   return (
-    <>
-      <div className="modal fade show" style={{ display: 'block', zIndex: 1055 }} tabIndex={-1}>
+    <Portal>
+      <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered modal-xl">
           <div className="modal-content" style={{ borderRadius: '12px', border: 'none' }}>
             <div className="modal-header bg-info text-white" style={{ borderRadius: '12px 12px 0 0' }}>
@@ -399,8 +400,8 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show"></div>
-    </>
+      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10000 }}></div>
+    </Portal>
   );
 };
 

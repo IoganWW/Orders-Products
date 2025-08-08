@@ -1,6 +1,7 @@
 // client/src/components/Products/DeleteProductModal.tsx
 import React from 'react';
 import { Product } from '@/types/products';
+import Portal from '@/components/UI/Portal';
 
 interface DeleteProductModalProps {
   show: boolean;
@@ -20,8 +21,8 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
   if (!show) return null;
 
   return (
-    <>
-      <div className="modal fade show" style={{ display: 'block', zIndex: 1060 }} tabIndex={-1}>
+    <Portal>
+      <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '500px' }}>
           <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
             
@@ -87,8 +88,8 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}></div>
-    </>
+      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 10000 }}></div>
+    </Portal>
   );
 };
 

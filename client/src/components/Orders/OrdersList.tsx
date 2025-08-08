@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchOrders, setSelectedOrder } from '@/store/slices/ordersSlice';
 import { deleteProduct } from '@/store/slices/productsSlice';
+import { useOrderRefresh } from '@/hooks/useOrderRefresh';
 import OrderCard from './OrderCard';
 import OrderDetails from './OrderDetails';
 import styles from './Orders.module.css';
@@ -13,6 +14,9 @@ import { Order } from '@/types/orders';
 const OrdersList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { orders, selectedOrder, loading, error } = useAppSelector(state => state.orders);
+  
+  // Используем хук для автоматического обновления выбранного заказа
+  useOrderRefresh();
 
   useEffect(() => {
     dispatch(fetchOrders());
@@ -31,8 +35,17 @@ const OrdersList: React.FC = () => {
       // Удаляем продукт на сервере
       await dispatch(deleteProduct(productId)).unwrap();
       
-      // Обновляем заказы, чтобы продукт исчез из деталей
-      dispatch(fetchOrders());
+      // Обновляем заказы
+      await dispatch(fetchOrders()).unwrap();
+      
+      // Обновляем выбранный заказ, чтобы изменения сразу отобразились в OrderDetails
+      if (selectedOrder) {
+        const updatedOrders = await dispatch(fetchOrders()).unwrap();
+        const updatedSelectedOrder = updatedOrders.find((order: Order) => order.id === selectedOrder.id);
+        if (updatedSelectedOrder) {
+          dispatch(setSelectedOrder(updatedSelectedOrder));
+        }
+      }
       
       // Показываем уведомление
       const successEvent = new CustomEvent('showNotification', {

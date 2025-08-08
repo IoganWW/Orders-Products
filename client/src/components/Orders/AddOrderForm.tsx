@@ -1,10 +1,13 @@
+// client/src/components/Orders/AddOrderForm.tsx
 'use client';
 
 import React, { useState } from 'react';
 import { useAppDispatch } from '@/store';
 import { fetchOrders } from '@/store/slices/ordersSlice';
 import FormField from '@/components/UI/FormField';
+import Portal from '@/components/UI/Portal';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
+import styles from './Forms.module.css';
 
 interface AddOrderFormProps {
   show: boolean;
@@ -107,8 +110,8 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
   if (!show) return null;
 
   return (
-    <>
-      <div className="modal fade show" style={{ display: 'block', zIndex: 1055 }} tabIndex={-1}>
+    <Portal>
+      <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered modal-lg">
           <div className="modal-content" style={{ borderRadius: '12px', border: 'none' }}>
             <div className="modal-header bg-success text-white" style={{ borderRadius: '12px 12px 0 0' }}>
@@ -206,8 +209,8 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show"></div>
-    </>
+      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10000 }}></div>
+    </Portal>
   );
 };
 

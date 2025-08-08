@@ -260,6 +260,7 @@
   position: sticky;
   top: 20px;
   padding-bottom: 20px;
+  z-index: 1;
 }
 
 /* Заголовок панели деталей */
