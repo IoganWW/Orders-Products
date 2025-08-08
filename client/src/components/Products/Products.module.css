@@ -1,0 +1,332 @@
+.productsContainer {
+  padding: 1rem;
+}
+
+.productsHeader {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--primary-color);
+}
+
+.productsList {
+  min-height: 200px;
+  overflow-x: auto; /* Горизонтальная прокрутка */
+  padding-bottom: 10px; /* Отступ снизу, чтобы скроллбар не перекрывал контент */
+}
+
+.loading {
+  min-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Product Filter */
+.productFilter .form-select {
+  border-color: var(--border-color);
+  transition: var(--transition);
+}
+
+.productFilter .form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
+}
+
+/* Product Card - Общая стилизация карточки (строки) */
+.productCard {
+  display: flex;
+  align-items: center; /* Выравнивание по центру по вертикали */
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  height: auto;
+  padding: 5px 20px; /* Внутренние отступы карточки */
+  gap: 15px; /* Отступ между колонками */
+}
+
+.productCard:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Стили для каждой колонки */
+.productCard__col1 {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 20px; /* Отступ между кружком/иконкой и текстом */
+}
+
+.productCard__statusCircle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusCircle__new {
+  background-color: #FFA500; /* Оранжевый */
+}
+
+.statusCircle__used {
+  background-color: #333; /* Черный */
+}
+
+.productCard__typeIcon {
+  display: flex; /* Чтобы иконка центрировалась, если это SVG */
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-muted); /* Цвет иконки */
+}
+
+.productCard__titleAndSerial {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1; 
+}
+
+.productCard__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  display: inline-block; /* Для корректного подчеркивания */
+  width: fit-content; /* Ширина по контенту */
+  max-width: 100%; /* Ограничиваем ширину для ellipsis */
+}
+
+.productCard__serialNumber {
+  font-size: 0.8rem;
+  color: var(--text-muted); /* Чуть светлей серый */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* НОВАЯ КОЛОНКА 2 (бывшая col4_status): Статус "На ремонте" / "Свободен" */
+.productCard__col2 {
+  flex-basis: 10%;
+  flex-shrink: 0;
+  min-width: 100px;
+  text-align: center; /* Выравнивание по левому краю */
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.statusAvailable {
+  color: #FFA500;
+}
+
+.statusOnRepair {
+  color: #333;
+}
+
+.productCard__col3 { /* Цена */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Выравнивание по правому краю */
+  flex-basis: 10%;
+  flex-shrink: 0;
+  min-width: 120px;
+  gap: 5px;
+}
+
+.productCard__prices {
+  text-align: right;
+}
+
+.productCard__priceMain {
+  font-size: 1.15rem;
+}
+
+.productCard__priceSecondary {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* НОВАЯ КОЛОНКА 4 (бывшая col2): Статус (New/Used) и Тип (Бейджи) */
+.productCard__col4 {
+  display: flex; /* Изменено на flex для горизонтального расположения */
+  flex-direction: column; /* Бейджи вертикально, как на макете */
+  align-items: flex-start;
+  flex-basis: 10%; /* Уменьшена ширина */
+  flex-shrink: 0;
+  min-width: 100px;
+  gap: 5px;
+}
+
+.productCard__badges {
+  display: flex;
+  gap: 5px;
+}
+
+
+.productCard__col5_description { /* Длинное описание / Название группы */
+  flex-basis: 20%;
+  flex-shrink: 0;
+  min-width: 180px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.productCard__col6_order { /* Название прихода / Имя человека */
+  flex-basis: 15%;
+  flex-shrink: 0;
+  min-width: 160px;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.productCard__orderTitle {
+  font-weight: 600;
+  color: var(--text-primary);
+  display: block; /* Чтобы занимал отдельную строку */
+  margin-bottom: 2px;
+}
+
+.productCard__personName {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.productCard__guaranteeDates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-grow: 1; 
+}
+
+.productCard__guaranteeDates > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Выравнивание по правому краю */
+}
+
+.productCard__guaranteeDates > div span {
+  white-space: nowrap;
+}
+
+.productCard__footerDate {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 1400px) { /* Адаптация для больших экранов */
+  .productCard__col1 { min-width: 220px; }
+  .productCard__col2 { min-width: 90px; } /* Обновлено */
+  .productCard__col3 { min-width: 100px; }
+  .productCard__col4 { min-width: 90px; } /* Обновлено */
+  .productCard__col5_description { min-width: 160px; }
+  .productCard__col6_order { min-width: 140px; }
+  .productCard__col7_guarantee { min-width: 130px; }
+}
+
+@media (max-width: 1200px) { /* Перестраиваем в вертикальный стек */
+  .productCard {
+    flex-wrap: wrap; /* Разрешаем перенос элементов */
+    justify-content: center;
+    text-align: center;
+    padding: 15px;
+    gap: 10px; /* Отступ между элементами при вертикальном стеке */
+  }
+
+  .productCard__col1,
+  .productCard__col2,
+  .productCard__col3,
+  .productCard__col4, /* Обновлено */
+  .productCard__col5_description,
+  .productCard__col6_order,
+  .productCard__col7_guarantee {
+    flex-basis: 100%; /* Каждая колонка занимает всю ширину */
+    align-items: center; /* Центрируем содержимое */
+    padding: 0;
+    min-width: auto; /* Убираем минимальную ширину */
+  }
+
+  .productCard__col1 {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .productCard__statusCircle {
+    margin-right: 0;
+  }
+
+  .productCard__typeIcon {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .productCard__titleAndSerial {
+    align-items: center;
+  }
+
+  .productCard__title {
+    white-space: normal;
+    text-overflow: clip;
+  }
+
+  .productCard__badges {
+    justify-content: center;
+  }
+
+  .productCard__prices,
+  .productCard__guaranteeDates,
+  .productCard__orderTitle,
+  .productCard__footerDate {
+    text-align: center;
+  }
+
+  .productCard__priceSecondary {
+    justify-content: center;
+  }
+
+  .productCard__guaranteeDates {
+    flex-direction: row; /* Даты гарантии снова горизонтально на мобильных */
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .productCard__guaranteeDates > div {
+    align-items: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .productCard__title {
+    font-size: 0.9rem;
+  }
+  .productCard__priceMain {
+    font-size: 1.05rem;
+  }
+}

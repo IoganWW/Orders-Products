@@ -1,0 +1,263 @@
+/* Main Layout */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8f9fa;
+}
+
+.layoutBody {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.layoutMain {
+  flex: 1;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  height: 60px;
+  position: relative;
+  z-index: 1000;
+}
+
+.headerLeft {
+  margin-left: 180px;
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #28a745;
+}
+
+.headerCenter {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 2rem;
+}
+
+.searchBox {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchBox i {
+  position: absolute;
+  left: 0.75rem;
+  color: #6c757d;
+  z-index: 2;
+}
+
+.searchBox input {
+  padding-left: 2.5rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  background: #f8f9fa;
+}
+
+.searchBox input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.1);
+  background: #ffffff;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sessionCounter {
+  display: flex;
+  align-items: center;
+}
+
+.dateTime {
+  text-align: right;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: #333;
+}
+
+.dateLabel {
+  text-align: start;
+}
+
+.dateValue {
+  margin: 0.1rem 0;
+}
+
+.userAvatar {
+  margin-left: 0.5rem;
+}
+
+.userAvatar img {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.userAvatar img:hover {
+  transform: scale(1.05);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 150px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.sidebarNav {
+  padding: 1rem 0;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  position: relative;
+  margin-bottom: 1rem;
+  margin-left: 0.25rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.navLink:hover {
+  font-weight: 700;
+  background-color: #f9fafb;
+}
+
+.navLink.active {
+  font-weight: 700;
+  background-color: #f3f4f6;
+  color: #000;
+}
+
+.navIcon {
+  width: 20px;
+  margin-right: 0.75rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.navLabel {
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* Анимация подчеркивания */
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #45d345 0%, #1bb01b 100%);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.navLink.active::after {
+  width: 50%;
+}
+
+/* Responsive Design */
+@media (min-width: 769px) {
+  .navIcon {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerCenter {
+    display: none;
+  }
+  
+  .headerRight {
+    gap: 0.5rem;
+  }
+  
+  .dateTime {
+    display: none;
+  }
+  
+  .sidebar {
+    width: 60px;
+  }
+  
+  .navLabel {
+    display: none;
+  }
+  
+  .navLink {
+    justify-content: center;
+    padding: 1rem 0.5rem;
+  }
+  
+  .navIcon {
+    display: block;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .header {
+    padding: 0.5rem 1rem;
+  }
+  
+  .sidebar {
+    position: fixed;
+    width: 30px;
+    top: 60px;
+    left: 0px;
+    transition: left 0.3s ease;
+    z-index: 1001;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+}
