@@ -17,6 +17,27 @@
   padding: 1rem;
 }
 
+/* Заголовок панели заказов */
+.ordersPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1rem;
+}
+
+.ordersTitle {
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .ordersList {
   min-height: 200px;
 }
@@ -40,6 +61,7 @@
   cursor: pointer;
   transition: var(--transition);
   padding: 10px 20px;
+  position: relative;
 }
 
 .orderCard:hover {
@@ -135,7 +157,6 @@
   font-size: 0.75rem;
   color: #858383;
 }
-
 
 .orderCard__date {
   font-size: 0.85rem;
@@ -418,6 +439,15 @@
   color: #e74c3c;
 }
 
+/* Статистика заказа */
+.orderDetails__summary {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
   .ordersContainer .row {
@@ -447,6 +477,12 @@
 
   .orderDetails__productCondition {
     margin-top: 10px;
+  }
+
+  .ordersPanelHeader {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
   }
 }
 

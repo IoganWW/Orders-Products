@@ -60,9 +60,10 @@ const OrdersList: React.FC = () => {
         <div className={selectedOrder ? 'col-md-6' : 'col-12'}>
           <div className={`${styles.ordersList} orders-list`}>
             {orders.length === 0 ? (
-              <div className="alert alert-info">
-                <h5>No orders found</h5>
-                <p>There are no orders to display at the moment.</p>
+              <div className="text-center p-4 text-muted">
+                <i className="fas fa-inbox fa-3x mb-3"></i>
+                <p>Нет приходов</p>
+                <p className="small">Нажмите на иконку <i className="fa-sharp fa-solid fa-circle-plus fa-sm text-success"></i> в заголовке, чтобы создать первый приход</p>
               </div>
             ) : (
               <div className="row">

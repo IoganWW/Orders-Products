@@ -3,6 +3,7 @@
 import React from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import Notifications from '@/components/UI/Notifications';
 import { useSocket } from '@/hooks/useSocket';
 import styles from './Layout.module.css';
 
@@ -22,6 +23,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           {children}
         </main>
       </div>
+      <Notifications />
     </div>
   );
 };

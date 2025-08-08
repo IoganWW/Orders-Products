@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Order } from '@/types/orders';
 import { Product } from '@/types/products';
+import AddProductForm from '@/components/Products/AddProductForm';
 import styles from './Orders.module.css';
 
 // Обновленный интерфейс для OrderDetailsProps
@@ -50,54 +51,96 @@ const OrderProductItem: React.FC<{ product: Product, orderId: number, onDeletePr
 };
 
 const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeleteProduct, onAddProduct }) => {
+  const [showAddProductForm, setShowAddProductForm] = useState(false);
+
+  const handleAddProductClick = () => {
+    setShowAddProductForm(true);
+  };
+
+  const handleAddProductFormClose = () => {
+    setShowAddProductForm(false);
+  };
+
   return (
-    <div className={`${styles.orderDetails} animate__animated animate__slideInRight`}>
-      <div className={`${styles.orderDetails__header}`}>
-        <h5 className={`${styles.orderDetails__title}`}>
-          {order.title}
-        </h5>
-        <button
-          type="button"
-          className={`${styles.orderDetails__closeButton}`}
-          onClick={onClose}
-          aria-label="Закрыть"
-        >
-          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/>
-          </svg>
-        </button>
-      </div>
+    <>
+      <div className={`${styles.orderDetails} animate__animated animate__slideInRight`}>
+        <div className={`${styles.orderDetails__header}`}>
+          <h5 className={`${styles.orderDetails__title}`}>
+            {order.title}
+          </h5>
+          <button
+            type="button"
+            className={`${styles.orderDetails__closeButton}`}
+            onClick={onClose}
+            aria-label="Закрыть"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/>
+            </svg>
+          </button>
+        </div>
 
-      <div className={`${styles.orderDetails__content}`}>
-        <button 
-          className={`${styles.orderDetails__addProductButton}`}
-          // Теперь order.id передается как number, что соответствует типу в onAddProduct
-          onClick={() => onAddProduct(order.id)}
-        >
-          <svg className={styles.orderDetails__addProductIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
-          </svg>
-          Добавить продукт
-        </button>
+        <div className={`${styles.orderDetails__content}`}>
+          <button 
+            className={`${styles.orderDetails__addProductButton}`}
+            onClick={handleAddProductClick}
+          >
+            <svg className={styles.orderDetails__addProductIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
+            </svg>
+            Добавить продукт
+          </button>
 
-        <div className={`${styles.orderDetails__productsList}`}>
-          {order.products.length === 0 ? (
-            <div className={`${styles.orderDetails__noProducts}`}>
-              Нет продуктов в этом приходе.
+          <div className={`${styles.orderDetails__productsList}`}>
+            {order.products.length === 0 ? (
+              <div className={`${styles.orderDetails__noProducts}`}>
+                Нет продуктов в этом приходе.
+              </div>
+            ) : (
+              order.products.map((product) => (
+                <OrderProductItem 
+                  key={product.id} 
+                  product={product} 
+                  orderId={order.id} 
+                  onDeleteProduct={onDeleteProduct} 
+                />
+              ))
+            )}
+          </div>
+
+          {/* Статистика заказа */}
+          {order.products.length > 0 && (
+            <div className={`${styles.orderDetails__summary} mt-4 p-3 bg-light rounded`}>
+              <div className="row text-center">
+                <div className="col-4">
+                  <div className="h5 mb-1">{order.products.length}</div>
+                  <small className="text-muted">Продуктов</small>
+                </div>
+                <div className="col-4">
+                  <div className="h5 mb-1 text-success">
+                    {order.products.filter(p => p.isNew === 1).length}
+                  </div>
+                  <small className="text-muted">Новых</small>
+                </div>
+                <div className="col-4">
+                  <div className="h5 mb-1 text-warning">
+                    {order.products.filter(p => p.isNew === 0).length}
+                  </div>
+                  <small className="text-muted">Б/у</small>
+                </div>
+              </div>
             </div>
-          ) : (
-            order.products.map((product) => (
-              <OrderProductItem 
-                key={product.id} 
-                product={product} 
-                orderId={order.id} 
-                onDeleteProduct={onDeleteProduct} 
-              />
-            ))
           )}
         </div>
       </div>
-    </div>
+
+      {/* Форма добавления продукта */}
+      <AddProductForm
+        show={showAddProductForm}
+        orderId={order.id}
+        onClose={handleAddProductFormClose}
+      />
+    </>
   );
 };
 

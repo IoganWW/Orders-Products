@@ -181,8 +181,44 @@ app.get('/api/orders', (req, res) => {
   res.json(ordersWithProducts);
 });
 
+app.post('/api/orders', (req, res) => {
+  const { title, description, date } = req.body;
+  
+  // Простая валидация
+  if (!title || !description || !date) {
+    return res.status(400).json({ error: 'Все поля обязательны' });
+  }
+  
+  const newOrder = {
+    id: Math.max(...orders.map(o => o.id)) + 1,
+    title,
+    description,
+    date
+  };
+  
+  orders.push(newOrder);
+  res.status(201).json(newOrder);
+});
+
 app.get('/api/products', (req, res) => {
   res.json(products);
+});
+
+app.post('/api/products', (req, res) => {
+  const productData = req.body;
+  
+  // Простая валидация
+  if (!productData.title || !productData.type || !productData.specification) {
+    return res.status(400).json({ error: 'Обязательные поля не заполнены' });
+  }
+  
+  const newProduct = {
+    id: Math.max(...products.map(p => p.id)) + 1,
+    ...productData
+  };
+  
+  products.push(newProduct);
+  res.status(201).json(newProduct);
 });
 
 app.get('/api/orders/:id', (req, res) => {
@@ -209,8 +245,53 @@ app.delete('/api/orders/:id', (req, res) => {
     return res.status(404).json({ error: 'Order not found' });
   }
   
+  // Удаляем также все продукты этого заказа
+  const productIndexes = [];
+  for (let i = products.length - 1; i >= 0; i--) {
+    if (products[i].order === orderId) {
+      productIndexes.push(i);
+    }
+  }
+  
+  // Удаляем продукты
+  productIndexes.forEach(index => {
+    products.splice(index, 1);
+  });
+  
+  // Удаляем заказ
   orders.splice(orderIndex, 1);
-  res.json({ message: 'Order deleted successfully' });
+  
+  res.json({ message: 'Order and related products deleted successfully' });
+});
+
+app.delete('/api/products/:id', (req, res) => {
+  const productId = parseInt(req.params.id);
+  const productIndex = products.findIndex(p => p.id === productId);
+  
+  if (productIndex === -1) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+  
+  products.splice(productIndex, 1);
+  res.json({ message: 'Product deleted successfully' });
+});
+
+app.put('/api/products/:id', (req, res) => {
+  const productId = parseInt(req.params.id);
+  const productIndex = products.findIndex(p => p.id === productId);
+  
+  if (productIndex === -1) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+  
+  // Обновляем продукт
+  products[productIndex] = {
+    ...products[productIndex],
+    ...req.body,
+    id: productId // Защищаем ID от изменения
+  };
+  
+  res.json(products[productIndex]);
 });
 
 const PORT = process.env.PORT || 3001;
