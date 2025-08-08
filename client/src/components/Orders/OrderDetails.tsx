@@ -122,16 +122,19 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeletePro
         </div>
 
         <div className={`${styles.orderDetails__content}`}>
+          <i 
+            className="fa-sharp fa-solid fa-circle-plus fa-lg" 
+            style={{color:" #25b01c", cursor: "pointer"}}
+            onClick={handleAddProductClick}
+            title="Добавить новый продукт"
+          ></i>
           <button 
-            className={`${styles.orderDetails__addProductButton}`}
+            className={`btn ${styles.orderDetails__addProductButton}`} 
             onClick={handleAddProductClick}
           >
-            <svg className={styles.orderDetails__addProductIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z"/>
-            </svg>
             Добавить продукт
           </button>
-
+            
           <div className={`${styles.orderDetails__productsList}`}>
             {order.products.length === 0 ? (
               <div className={`${styles.orderDetails__noProducts}`}>

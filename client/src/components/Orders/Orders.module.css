@@ -314,32 +314,10 @@
 
 /* Кнопка "Добавить продукт" */
 .orderDetails__addProductButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #e6ffe6;
   color: #4CAF50;
-  border: 1px solid #4CAF50;
   padding: 10px 15px;
-  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-  width: 100%;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.orderDetails__addProductButton:hover {
-  background-color: #d9f7d9;
-  box-shadow: 0 2px 5px rgba(76, 175, 80, 0.2);
-}
-
-.orderDetails__addProductIcon {
-  width: 20px;
-  height: 20px;
-  color: #4CAF50;
 }
 
 /* Список продуктов */

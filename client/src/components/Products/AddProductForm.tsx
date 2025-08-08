@@ -183,7 +183,6 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
           <div className="modal-content" style={{ borderRadius: '12px', border: 'none' }}>
             <div className="modal-header bg-info text-white" style={{ borderRadius: '12px 12px 0 0' }}>
               <h5 className="modal-title">
-                <i className="fas fa-plus-circle me-2"></i>
                 Добавить новый продукт
               </h5>
               <button
@@ -195,7 +194,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
             </div>
 
             <form onSubmit={handleSubmit}>
-              <div className="modal-body p-4">
+              <div className="modal-body p-3">
                 <div className="row">
                   <div className="col-md-8">
                     <FormField
@@ -390,7 +389,6 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                     </>
                   ) : (
                     <>
-                      <i className="fas fa-save me-2"></i>
                       Добавить продукт
                     </>
                   )}

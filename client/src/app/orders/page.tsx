@@ -12,8 +12,8 @@ export default function OrdersPage() {
 
   return (
     <div className="page fade-in">
-      <div className="page__header">
-        <h1 className="page__title">
+      <div className="page__header px-5">
+        <h1 className="page__title px-3">
           <i 
             className="fa-sharp fa-solid fa-circle-plus fa-sm" 
             style={{color:" #25b01c", cursor: "pointer"}}

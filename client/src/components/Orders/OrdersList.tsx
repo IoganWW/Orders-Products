@@ -88,8 +88,8 @@ const OrdersList: React.FC = () => {
 
   return (
     <div className={`${styles.ordersContainer} orders-container`}>
-      <div className="row">
-        <div className={selectedOrder ? 'col-md-6' : 'col-12'}>
+      <div className="row px-5">
+        <div className={selectedOrder ? 'col-md-4' : 'col-12'}>
           <div className={`${styles.ordersList} orders-list`}>
             {orders.length === 0 ? (
               <div className="text-center p-4 text-muted">
@@ -116,7 +116,7 @@ const OrdersList: React.FC = () => {
         </div>
         
         {selectedOrder && (
-          <div className="col-md-6">
+          <div className="col-md-8">
             <OrderDetails
               order={selectedOrder}
               onClose={() => dispatch(setSelectedOrder(null))}
