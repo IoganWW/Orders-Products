@@ -62,12 +62,12 @@ const ProductsList: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="row"> {/* Этот row теперь просто контейнер, не управляет колонками ProductCard */}
+          <div className="row">
             {filteredProducts.map((product) => {
               const orderTitle = orders.find(order => order.id === product.order)?.title || `Order #${product.order}`;
               
               return (
-                <div key={product.id} className="col-12 mb-1"> {/* Каждая карточка занимает 12 колонок */}
+                <div key={product.id}>
                   <ProductCard 
                     product={product} 
                     orderTitle={orderTitle}

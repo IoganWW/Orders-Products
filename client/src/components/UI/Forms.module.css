@@ -1,0 +1,61 @@
+.formField {
+  margin-bottom: 1rem;
+}
+
+.formLabel {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.formControl {
+  position: relative;
+}
+
+.formControl.error .form-control,
+.formControl.error .form-select {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+}
+
+.formError {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.formError i {
+  font-size: 0.8rem;
+}
+
+/* Form input overrides */
+.formField .form-control,
+.formField .form-select {
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.formField .form-control:focus,
+.formField .form-select:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+}
+
+.formField textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Success state */
+.formControl.success .form-control,
+.formControl.success .form-select {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+}
+
