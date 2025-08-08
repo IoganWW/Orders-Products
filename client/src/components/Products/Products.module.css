@@ -79,15 +79,16 @@
 }
 
 .productCard__typeIcon {
-  display: flex; /* Чтобы иконка центрировалась, если это SVG */
+  display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: var(--text-muted); /* Цвет иконки */
+  color: #3b4044ff;
 }
 
 .productCard__titleAndSerial {
   display: flex;
+  min-width: 500px;
   flex-direction: column;
   align-items: flex-start;
   flex-grow: 1; 

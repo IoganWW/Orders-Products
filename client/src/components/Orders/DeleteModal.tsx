@@ -3,6 +3,8 @@ import React from 'react';
 import { useAppDispatch } from '@/store';
 import { deleteOrder } from '@/store/slices/ordersSlice';
 import { Order } from '@/types/orders';
+import styles from '../Products/Products.module.css';
+import Portal from '@/components/UI/Portal';
 
 interface DeleteModalProps {
   show: boolean;
@@ -25,46 +27,59 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
   if (!show) return null;
 
   return (
-    <>
-      <div className="modal fade show" style={{ display: 'block', zIndex: 1060 }} tabIndex={-1}>
+    <Portal>
+      <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '700px' }}>
-          <div className="modal-content animate__animated animate__zoomIn" style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
+          <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
             
-            <div className="modal-body text-center p-4">
-              <div style={{ background: 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)', borderRadius: '12px', padding: '2rem', color: 'white', marginBottom: '1.5rem' }}>
-                <i className="fas fa-question-circle fa-3x mb-3"></i>
-                <h4 className="mb-2">Вы уверены, что хотите удалить этот приход?</h4>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f8f9fa', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
-                <div style={{ width: '40px', height: '40px', background: '#e8ecf0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <i className="fas fa-desktop" style={{ color: '#6c757d' }}></i>
-                </div>
-                <div style={{ flex: 1, textAlign: 'left' }}>
-                  <div style={{ fontWeight: '500', color: '#333', marginBottom: '0.25rem' }}>
-                    Gigabyte Technology X58-USB3 (Socket 1366) 6 X58-USB3
+            <div className="modal-body py-0 mt-4">
+              <h4 className="mb-3">Вы уверены, что хотите удалить этот приход?</h4>
+                {/* Список продуктов */}
+                {order.products.length > 0 && (
+                    <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                      {order.products.map((product) => {
+                        return (
+                          <div key={product.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem', background: 'white', borderRadius: '6px', marginBottom: '0.25rem', border: '1px solid #e9ecef' }}>
+                            <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
+                            <div className="px-4" style={{ width: '24px', height: '24px', background: '#f1f3f4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                              <i className="fas fa-desktop" style={{ fontSize: '1.2rem', color: '#3b4044ff' }}></i>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontWeight: '500', fontSize: '0.85rem', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {product.title}
+                              </div>
+                              <div style={{ fontSize: '0.75rem', color: '#6c757d' }}>
+                                SN: {product.serialNumber}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                )}
+
+                {order.products.length === 0 && (
+                  <div style={{ textAlign: 'center', color: '#6c757d', fontSize: '0.9rem', padding: '1rem' }}>
+                    <i className="fas fa-inbox me-2"></i>
+                    В этом приходе нет продуктов
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#6c757d' }}>
-                    SN-12 3456789
-                  </div>
-                </div>
-              </div>
+                )}
             </div>
             
-            <div className="modal-footer justify-content-center border-0 pb-4">
+            <div className="modal-footer justify-content-end border-0 pb-4" style={{backgroundColor:"#69b838ff"}}>
               <button
                 type="button"
-                className="btn btn-outline-secondary px-4 py-2"
+                className="btn"
                 onClick={onClose}
-                style={{ borderRadius: '25px', fontWeight: '500' }}
+                style={{ fontWeight: '500', color: 'white' }}
               >
                 ОТМЕНИТЬ
               </button>
               <button
                 type="button"
-                className="btn btn-danger px-4 py-2 ms-3"
+                className="btn btn-light px-4 py-2 me-3"
                 onClick={handleDelete}
-                style={{ borderRadius: '25px', fontWeight: '500', background: '#dc3545', border: 'none' }}
+                style={{ borderRadius: '25px', fontWeight: '500', color: '#dc3545', border: 'none' }}
               >
                 <i className="fas fa-trash me-1"></i>
                 УДАЛИТЬ
@@ -73,8 +88,8 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}></div>
-    </>
+      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 10000 }}></div>
+    </Portal>
   );
 };
 
