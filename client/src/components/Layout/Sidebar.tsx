@@ -55,7 +55,7 @@ const Sidebar: React.FC = () => {
                   ${item.isActive ? styles.active : ''}
                 `}
               >
-                <i className={`${item.icon} ${styles.navIcon}`}></i>
+                <i className={`${item.icon} ${styles.navIcon} d-block d-md-none`}></i>
                 <span className={`${styles.navLabel} nav-label`}>
                   {item.label}
                 </span>

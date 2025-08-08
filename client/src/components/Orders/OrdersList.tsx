@@ -1,8 +1,10 @@
+// client/src/components/Orders/OrdersList.tsx
 'use client';
 
 import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchOrders, setSelectedOrder } from '@/store/slices/ordersSlice';
+import { deleteProduct } from '@/store/slices/productsSlice';
 import OrderCard from './OrderCard';
 import OrderDetails from './OrderDetails';
 import styles from './Orders.module.css';
@@ -21,13 +23,30 @@ const OrdersList: React.FC = () => {
     dispatch(setSelectedOrder(selectedOrder?.id === order.id ? null : order));
   };
 
-  // Функции-обработчики для OrderDetails
-  const handleDeleteProduct = (orderId: number, productId: number) => {
-    console.log(`Удален продукт ID: ${productId} из заказа ID: ${orderId}`);
-    
-    if (selectedOrder) {
-      const updatedProducts = selectedOrder.products.filter(p => p.id !== productId);
-      dispatch(setSelectedOrder({ ...selectedOrder, products: updatedProducts }));
+  // Функции-обработчики для OrderDetails - ОБНОВЛЕНО для реального удаления
+  const handleDeleteProduct = async (orderId: number, productId: number) => {
+    try {
+      console.log(`Удаляем продукт ID: ${productId} из заказа ID: ${orderId}`);
+      
+      // Удаляем продукт на сервере
+      await dispatch(deleteProduct(productId)).unwrap();
+      
+      // Обновляем заказы, чтобы продукт исчез из деталей
+      dispatch(fetchOrders());
+      
+      // Показываем уведомление
+      const successEvent = new CustomEvent('showNotification', {
+        detail: { type: 'success', message: 'Продукт успешно удален!' }
+      });
+      window.dispatchEvent(successEvent);
+      
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      
+      const errorEvent = new CustomEvent('showNotification', {
+        detail: { type: 'error', message: 'Ошибка при удалении продукта' }
+      });
+      window.dispatchEvent(errorEvent);
     }
   };
 

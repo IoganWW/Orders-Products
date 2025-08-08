@@ -13,6 +13,14 @@ export const fetchProducts = createAsyncThunk(
   }
 );
 
+export const deleteProduct = createAsyncThunk(
+  'products/deleteProduct',
+  async (productId: number) => {
+    await axios.delete(`${API_URL}/api/products/${productId}`);
+    return productId;
+  }
+);
+
 const initialState: ProductsState = {
   products: [],
   filteredProducts: [],
@@ -61,6 +69,21 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch products';
+      })
+      // Delete product
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        // Удаляем продукт из всех массивов
+        state.products = state.products.filter(product => product.id !== action.payload);
+        state.filteredProducts = state.filteredProducts.filter(product => product.id !== action.payload);
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to delete product';
       });
   },
 });

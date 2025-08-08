@@ -1,3 +1,4 @@
+// client/src/store/slices/authSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AuthState, LoginCredentials, User } from '@/types/auth';
 import axios from 'axios';

@@ -1,3 +1,4 @@
+// client/src/store/slices/appSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState } from '@/types/app';
 
