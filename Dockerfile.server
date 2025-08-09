@@ -1,0 +1,45 @@
+# Dockerfile.server
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY server/package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code
+COPY server/ .
+
+# Create uploads directory
+RUN mkdir -p uploads
+
+# Expose port
+EXPOSE 3001
+
+# Start the application
+CMD ["npm", "start"]
+
+# Dockerfile.client  
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY client/package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY client/ .
+
+# Build the application
+RUN npm run build
+
+# Expose port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "start"]

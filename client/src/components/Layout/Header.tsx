@@ -57,7 +57,7 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      <div className={`${styles.headerRight} header-right`}>
+      <div className={`${styles.headerRight} header-right me-5`}>
         <div className={`${styles.sessionCounter} session-counter`}>
           <span className="badge bg-secondary me-2">
             <i className="fas fa-users me-1"></i>
@@ -72,15 +72,6 @@ const Header: React.FC = () => {
             <i className="fas fa-clock ms-2 me-1" style={{color:" #34cb3e"}}></i>
             {time}
           </div>
-        </div>
-
-        <div className={`${styles.userAvatar} user-avatar`}>
-          <i className="fa fa-user fa-lg"></i>
-          {/*<img 
-            src="https://via.placeholder.com/40x40/28a745/ffffff?text=U" 
-            alt="User" 
-            className="rounded-circle"
-          />*/}
         </div>
       </div>
     </header>

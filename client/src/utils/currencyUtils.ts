@@ -20,13 +20,14 @@ export const calculateOrderTotal = (products: any[]) => {
       if (!totals[price.symbol]) {
         totals[price.symbol] = 0;
       }
-      totals[price.symbol] += price.value;
+
+      totals[price.symbol] += Number(price.value);
     });
   });
   
   return Object.entries(totals).map(([symbol, value]) => ({
     value,
     symbol,
-    formatted: `${value} ${symbol}`
+    formatted: `${value.toFixed(2)} ${symbol}`
   }));
 };

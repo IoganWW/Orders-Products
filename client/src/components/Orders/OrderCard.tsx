@@ -61,14 +61,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect }) =>
         
         <div className={`${styles.orderCard__rightSection}`}>
           <div className={`${styles.orderCard__totals}`}>
-            {totals[0] && (
-              <div className={`${styles.orderCard__totalSecondary}`}>
-                {totals[0].formatted}
-              </div>
-            )}
             {totals[1] && (
               <div className={`${styles.orderCard__totalMain}`}>
                 {totals[1].formatted}
+              </div>
+            )}
+            {totals[0] && (
+              <div className={`${styles.orderCard__totalSecondary}`}>
+                {totals[0].formatted}
               </div>
             )}
           </div>
