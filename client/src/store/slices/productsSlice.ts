@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { ProductsState, Product, ProductType } from '@/types/products';
+import { ProductsState, ProductType } from '@/types/products';
 import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
@@ -25,8 +25,19 @@ const initialState: ProductsState = {
   products: [],
   filteredProducts: [],
   selectedType: 'All',
+  specificationFilter: 'All', // Добавляем фильтр по спецификации
   loading: false,
   error: null,
+};
+
+// Функция для применения фильтров
+const applyFilters = (state: ProductsState) => {
+  state.filteredProducts = state.products.filter(product => {
+    const typeMatch = state.selectedType === 'All' || product.type === state.selectedType;
+    const specMatch = state.specificationFilter === 'All' || 
+                     product.specification?.includes(state.specificationFilter);
+    return typeMatch && specMatch;
+  });
 };
 
 const productsSlice = createSlice({
@@ -35,14 +46,11 @@ const productsSlice = createSlice({
   reducers: {
     setProductFilter: (state, action: PayloadAction<ProductType | 'All'>) => {
       state.selectedType = action.payload;
-      
-      if (action.payload === 'All') {
-        state.filteredProducts = state.products;
-      } else {
-        state.filteredProducts = state.products.filter(
-          product => product.type === action.payload
-        );
-      }
+      applyFilters(state); // Применяем все фильтры
+    },
+    setSpecificationFilter: (state, action: PayloadAction<string>) => {
+      state.specificationFilter = action.payload;
+      applyFilters(state); // Применяем все фильтры
     },
     clearError: (state) => {
       state.error = null;
@@ -57,14 +65,8 @@ const productsSlice = createSlice({
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload;
-        // Применяем текущий фильтр
-        if (state.selectedType === 'All') {
-          state.filteredProducts = action.payload;
-        } else {
-          state.filteredProducts = action.payload.filter(
-            product => product.type === state.selectedType
-          );
-        }
+        // Применяем текущие фильтры
+        applyFilters(state);
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
@@ -88,5 +90,5 @@ const productsSlice = createSlice({
   },
 });
 
-export const { setProductFilter, clearError } = productsSlice.actions;
+export const { setProductFilter, setSpecificationFilter, clearError } = productsSlice.actions;
 export default productsSlice.reducer;

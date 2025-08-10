@@ -2,9 +2,8 @@
 
 import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
-import { fetchProducts } from '@/store/slices/productsSlice';
+import { fetchProducts, deleteProduct } from '@/store/slices/productsSlice';
 import ProductCard from './ProductCard';
-import ProductFilter from './ProductFilter';
 import styles from './Products.module.css';
 
 const ProductsList: React.FC = () => {
@@ -15,6 +14,15 @@ const ProductsList: React.FC = () => {
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
+
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      await dispatch(deleteProduct(productId)).unwrap();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      throw error;
+    }
+  };
 
   if (loading) {
     return (
@@ -37,19 +45,6 @@ const ProductsList: React.FC = () => {
 
   return (
     <div className={`${styles.productsContainer} products-container`}>
-      <div className={`${styles.productsHeader} products-header`}>
-        <div className="row align-items-center">
-          <div className="col-md-8">
-            <h5 className="mb-0">
-              {selectedType === 'All' ? 'All Products' : `${selectedType}`}
-            </h5>
-          </div>
-          <div className="col-md-4">
-            <ProductFilter />
-          </div>
-        </div>
-      </div>
-
       <div className={`${styles.productsList} products-list`}>
         {filteredProducts.length === 0 ? (
           <div className="alert alert-info text-center">
@@ -62,20 +57,20 @@ const ProductsList: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="row">
+          <>
             {filteredProducts.map((product) => {
               const orderTitle = orders.find(order => order.id === product.order)?.title || `Order #${product.order}`;
               
               return (
-                <div key={product.id}>
-                  <ProductCard 
-                    product={product} 
-                    orderTitle={orderTitle}
-                  />
-                </div>
+                <ProductCard 
+                  key={product.id}
+                  product={product} 
+                  orderTitle={orderTitle}
+                  onDeleteProduct={handleDeleteProduct}
+                />
               );
             })}
-          </div>
+          </>
         )}
       </div>
     </div>

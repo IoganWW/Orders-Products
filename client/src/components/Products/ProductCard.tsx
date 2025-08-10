@@ -1,113 +1,169 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Product } from '@/types/products';
 import { formatDate, isDateExpired } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/currencyUtils';
+import DeleteProductModal from './DeleteProductModal';
 import styles from './Products.module.css';
-import { Monitor, Keyboard, Laptop } from 'lucide-react'; // Импортируем иконки из lucide-react
+import { Monitor, Keyboard, Laptop, Phone, Tablet } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
   orderTitle: string;
+  onDeleteProduct?: (productId: number) => Promise<void>;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle }) => {
-  // Заглушки для функций, если они не импортированы или не определены
-  const formatPrice = (priceArray: any[]) => {
-    const defaultPrice = priceArray.find(p => p.isDefault === 1) || priceArray[0]; // Ищем isDefault: 1, иначе берем первый
-    const secondaryPrices = priceArray.filter(p => p.isDefault !== 1);
-    return {
-      default: defaultPrice ? `${defaultPrice.value} ${defaultPrice.symbol}` : '',
-      secondary: secondaryPrices
-    };
-  };
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-      short: date.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-      long: date.toLocaleDateString('ru-RU', { day: '2-digit', month: 'long', year: 'numeric' })
-    };
-  };
-  const isDateExpired = (dateString: string) => {
-    return new Date(dateString) < new Date();
-  };
-
+const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDeleteProduct }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const price = formatPrice(product.price);
   const guaranteeStart = formatDate(product.guarantee.start);
   const guaranteeEnd = formatDate(product.guarantee.end);
   const isGuaranteeExpired = isDateExpired(product.guarantee.end);
 
+  // Иконка типа продукта
+  const getTypeIcon = () => {
+    switch (product.type) {
+      case 'Monitors': return <Monitor size={20} />;
+      case 'Keyboards': return <Keyboard size={20} />;
+      case 'Laptops': return <Laptop size={20} />;
+      case 'Phones': return <Phone size={20} />;
+      case 'Tablets': return <Tablet size={20} />;
+      default: return <div style={{ width: 20, height: 20 }}>📦</div>;
+    }
+  };
+
+  // Обработчики удаления
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!onDeleteProduct) return;
+    
+    setIsDeleting(true);
+    try {
+      await onDeleteProduct(product.id);
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
+  };
+
   return (
-    <div className={`${styles.productCard} product-card animate__animated animate__fadeIn`}>
-      {/* Колонка 1: Кружок статуса, Иконка типа, Название продукта, Серийный номер */}
-      <div className={`${styles.productCard__col1}`}>
-        <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
-        <div className={`${styles.productCard__typeIcon}`}>
-          {product.type === 'Monitors' && <Monitor size={20} />}
-          {product.type === 'Keyboards' && <Keyboard size={20} />}
-          {product.type === 'Laptops' && <Laptop size={20} />}
-          {/* Если тип не соответствует, можно использовать дефолтную иконку FontAwesome */}
-          {product.type !== 'Monitors' && product.type !== 'Keyboards' && product.type !== 'Laptops' && <i className="fas fa-box fa-lg text-muted"></i>}
+    <>
+      <div className={`${styles.productCard} product-card animate__animated animate__fadeIn`}>
+        
+        {/* Столбец 1: Статус + Иконка + Название + Серийник */}
+        <div className={styles.productCard__col1}>
+          <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
+          
+          <div className={styles.productCard__typeIcon}>
+            {getTypeIcon()}
+          </div>
+          
+          <div className={styles.productCard__titleAndSerial}>
+            <h5 className={styles.productCard__title}>
+              {product.title}
+            </h5>
+            <span className={styles.productCard__serialNumber}>SN-{product.serialNumber}</span>
+          </div>
         </div>
-        <div className={`${styles.productCard__titleAndSerial}`}>
-          <h5 className={`${styles.productCard__title}`}>
-            {product.title}
-          </h5>
-          <span className={`${styles.productCard__serialNumber}`}>SN-{product.serialNumber}</span>
-        </div>
-        <div className={`${styles.productCard__col2}`}>
+
+        {/* Столбец 2: Статус */}
+        <div className={styles.productCard__col2}>
           <span className={`${product.isNew === 1 ? styles.statusAvailable : styles.statusOnRepair}`}>
             {product.isNew === 1 ? 'Свободен' : 'На ремонте'}
           </span>
         </div>
-      </div>
+        
+        {/* Столбец 3: Гарантия */}
+        <div className={styles.productCard__guaranteeDates}>
+          <span>
+            <small className="text-muted">From:</small> {guaranteeStart.short}
+          </span>
+          <span className={isGuaranteeExpired ? 'text-danger' : 'text-success'}>
+            <small className="text-muted">Until:</small> {guaranteeEnd.short}
+          </span>
+        </div>
 
-      <div className={`${styles.productCard__guaranteeDates}`}>
-        <span>
-          <small className="text-muted">From:</small>{guaranteeStart.short}
-        </span>
-        <span className={isGuaranteeExpired ? 'text-danger' : 'text-success'}>
-          <small className="text-muted">Until:</small>{guaranteeEnd.short}
-        </span>
-      </div>
-      <div className={`${styles.productCard__col2}`}>
-        <span>{product.isNew ? 'Новый' : 'Б/У'}</span>
-      </div>
-      
-      {/* Колонка 3: Цена */}
-      <div className={`${styles.productCard__col3}`}>
-        {price.secondary.length > 0 && (
-          <div className={`${styles.productCard__priceSecondary}`}>
-            {price.secondary.map((p, index) => (
-              <span key={index}>{p.value} {p.symbol}</span>
-            ))}
+        {/* Столбец 4: Новый/Б/У */}
+        <div className={styles.productCard__col_newUsed}>
+          <span>{product.isNew ? 'Новый' : 'Б/У'}</span>
+        </div>
+
+        {/* Столбец 5: Цены */}
+        <div className={styles.productCard__col3}>
+          {price.secondary.length > 0 && (
+            <div className={styles.productCard__priceSecondary}>
+              {price.secondary.map((p, index) => (
+                <span key={index}>{p.value} {p.symbol}</span>
+              ))}
+            </div>
+          )}
+          <div className={styles.productCard__priceMain}>
+            {price.default}
+          </div>
+        </div>
+
+        {/* Столбец 6: Описание */}
+        <div className={styles.productCard__col5_description}>
+          <span className={styles.productCard__descriptionText}>
+            {product.specification || 'Длинное предлинное длиннющее название группы'}
+          </span>
+        </div>
+
+        {/* Столбец 7: User */}
+        <div className={styles.productCard__col_user}>
+          <span>Христорождественский Александр</span>
+        </div>
+
+        {/* Столбец 8: Заказ */}
+        <div className={styles.productCard__col6_order}>
+          <span className={styles.productCard__orderTitle}>{orderTitle}</span>
+        </div>
+
+        {/* Столбец 9: Дата */}
+        <div className={styles.productCard__col7}>
+          <small className={styles.productCard__footerDate}>
+            {formatDate(product.date).shortMonStr}
+          </small>
+        </div>
+
+        {/* Столбец 10: Удаление */}
+        {onDeleteProduct && (
+          <div className={styles.productCard__deleteCol}>
+            <button
+              type="button"
+              className={styles.productCard__deleteButton}
+              onClick={handleDeleteClick}
+              title="Удалить продукт"
+              disabled={isDeleting}
+            >
+              <svg className={styles.productCard__deleteIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H5C4.45 4 4 4.45 4 5C4 5.55 4.45 6 5 6H19C19.55 6 20 5.55 20 5C20 4.45 19.55 4 19 4Z"/>
+              </svg>
+            </button>
           </div>
         )}
-        <div className={`${styles.productCard__priceMain}`}>
-          {price.default}
-        </div>
+
       </div>
-
-      {/* Колонка 5: Длинное описание / Название группы */}
-      <div className={`${styles.productCard__col5_description}`}>
-        <span className={`${styles.productCard__descriptionText}`}>
-          Длинное предлинное длиннющее название группы
-        </span>
-      </div>
-
-      {/* Колонка 6: Название прихода / Имя человека */}
-      <div className={`${styles.productCard__col6_order}`}>
-        <span className={`${styles.productCard__orderTitle}`}>{orderTitle}</span>
-        {/* <span className={`${styles.productCard__personName}`}>Христорождественский Александр</span> */}
-      </div>
-
-      <span className="badge bg-info">{product.type}</span>
-
-      {/* Колонка 7: Гарантия и Дата добавления */}
-        <small className="text-muted">
-          Added: {formatDate(product.date).short}
-        </small>
-    </div>
+      
+      {/* Модалка удаления продукта */}
+      <DeleteProductModal
+        show={showDeleteModal}
+        product={product}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
+      />
+    </>
   );
 };
 

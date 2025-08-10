@@ -18,6 +18,7 @@ export interface ProductsState {
   products: Product[];
   filteredProducts: Product[];
   selectedType: ProductType | 'All';
+  specificationFilter: string;
   loading: boolean;
   error: string | null;
 }
