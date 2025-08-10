@@ -1,17 +1,11 @@
-# scripts/docker-stop.sh
 #!/bin/bash
+# scripts/docker-stop.sh
+# Stop all containers
 
-echo "🛑 Stopping Orders & Products application..."
+echo "🛑 Stopping Orders & Products containers..."
 
-# Stop all services
+# Stop all containers
 docker-compose down
+docker-compose -f docker-compose.yml -f docker-compose.dev.yml down
 
-# Optional: Remove volumes
-read -p "🗑️  Do you want to remove database data? (y/n): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "🗑️  Removing volumes..."
-    docker-compose down -v
-fi
-
-echo "✅ Application stopped successfully!"
+echo "✅ All containers stopped"

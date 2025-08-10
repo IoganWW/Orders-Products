@@ -1,10 +1,18 @@
-// server/src/services/database.js
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 class Database {
   constructor() {
-    // Создание пула соединений для лучшей производительности
+    this.pool = null;
+    this.isConnected = false;
+  }
+
+  // Создание пула с retry логикой
+  async createPool() {
+    if (this.pool) {
+      return this.pool;
+    }
+
     this.pool = mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
@@ -13,13 +21,22 @@ class Database {
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      charset: 'utf8mb4'
+      charset: 'utf8mb4',
+      // Важные настройки для Docker
+      acquireTimeout: 60000,
+      timeout: 60000,
+      reconnect: true
     });
+
+    return this.pool;
   }
 
   // Базовые методы для запросов
   async query(sql, params = []) {
     try {
+      if (!this.pool) {
+        await this.createPool();
+      }
       const [rows] = await this.pool.execute(sql, params);
       return rows;
     } catch (error) {
@@ -29,6 +46,10 @@ class Database {
   }
 
   async transaction(callback) {
+    if (!this.pool) {
+      await this.createPool();
+    }
+    
     const connection = await this.pool.getConnection();
     try {
       await connection.beginTransaction();
@@ -44,25 +65,48 @@ class Database {
   }
 
   async close() {
-    await this.pool.end();
+    if (this.pool) {
+      await this.pool.end();
+      this.pool = null;
+      this.isConnected = false;
+    }
   }
 
-  // Проверка подключения к БД
-  async testConnection() {
-    try {
-      const connection = await this.pool.getConnection();
-      console.log('✅ MySQL connected successfully');
-      connection.release();
-      return true;
-    } catch (error) {
-      console.error('❌ MySQL connection failed:', error.message);
-      return false;
+  // Проверка подключения к БД с retry
+  async testConnection(maxRetries = 10, delay = 5000) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        if (!this.pool) {
+          await this.createPool();
+        }
+        
+        const connection = await this.pool.getConnection();
+        await connection.ping();
+        connection.release();
+        
+        console.log(`✅ MySQL connected successfully (attempt ${attempt})`);
+        this.isConnected = true;
+        return true;
+        
+      } catch (error) {
+        console.log(`⏳ MySQL connection attempt ${attempt}/${maxRetries} failed: ${error.message}`);
+        
+        if (attempt === maxRetries) {
+          console.error('❌ MySQL connection failed after all retries');
+          this.isConnected = false;
+          return false;
+        }
+        
+        console.log(`⏸️  Waiting ${delay/1000}s before retry...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
     }
+    
+    return false;
   }
 
   // ================== SESSIONS ==================
 
-  // Добавить активную сессию
   async addActiveSession(sessionId, userId = null, ipAddress = null, userAgent = null) {
     try {
       const [result] = await this.pool.execute(
@@ -79,7 +123,6 @@ class Database {
     }
   }
 
-  // Удалить активную сессию
   async removeActiveSession(sessionId) {
     try {
       const [result] = await this.pool.execute(
@@ -93,7 +136,6 @@ class Database {
     }
   }
 
-  // Получить количество активных сессий
   async getActiveSessionsCount() {
     try {
       const [rows] = await this.pool.execute(
@@ -106,7 +148,6 @@ class Database {
     }
   }
 
-  // Очистить старые сессии
   async cleanupOldSessions(minutesOld = 30) {
     try {
       const [result] = await this.pool.execute(
@@ -125,17 +166,14 @@ class Database {
 
   // ================== ORDERS ==================
 
-  // Получить все заказы с продуктами
   async getAllOrders() {
     try {
-      // Получаем заказы
       const [orders] = await this.pool.execute(`
         SELECT id, title, description, date, created_at, updated_at 
         FROM orders 
         ORDER BY date DESC
       `);
 
-      // Для каждого заказа получаем его продукты
       for (let order of orders) {
         const products = await this.getProductsByOrderId(order.id);
         order.products = products;
@@ -148,7 +186,6 @@ class Database {
     }
   }
 
-  // Получить заказ по ID с продуктами
   async getOrderById(orderId) {
     try {
       const [orders] = await this.pool.execute(
@@ -170,7 +207,6 @@ class Database {
     }
   }
 
-  // Создать новый заказ
   async createOrder({ title, description, date }) {
     try {
       const [result] = await this.pool.execute(
@@ -178,7 +214,6 @@ class Database {
         [title, description, date]
       );
 
-      // Возвращаем созданный заказ
       return await this.getOrderById(result.insertId);
     } catch (error) {
       console.error('Error creating order:', error);
@@ -186,7 +221,6 @@ class Database {
     }
   }
 
-  // Удалить заказ (продукты удалятся автоматически через CASCADE)
   async deleteOrder(orderId) {
     try {
       const [result] = await this.pool.execute(
@@ -202,7 +236,6 @@ class Database {
 
   // ================== PRODUCTS ==================
 
-  // Получить продукты заказа с ценами
   async getProductsByOrderId(orderId) {
     try {
       const [products] = await this.pool.execute(`
@@ -225,7 +258,6 @@ class Database {
         ORDER BY p.created_at DESC
       `, [orderId]);
 
-      // Для каждого продукта получаем цены
       for (let product of products) {
         product.guarantee = {
           start: product.guarantee_start,
@@ -245,7 +277,6 @@ class Database {
     }
   }
 
-  // Получить все продукты
   async getAllProducts() {
     try {
       const [products] = await this.pool.execute(`
@@ -267,7 +298,6 @@ class Database {
         ORDER BY p.created_at DESC
       `);
 
-      // Для каждого продукта получаем цены
       for (let product of products) {
         product.guarantee = {
           start: product.guarantee_start,
@@ -287,7 +317,6 @@ class Database {
     }
   }
 
-  // Получить продукт по ID
   async getProductById(productId) {
     try {
       const [products] = await this.pool.execute(`
@@ -328,10 +357,8 @@ class Database {
     }
   }
 
-  // Создать новый продукт
   async createProduct(productData) {
     return await this.transaction(async (connection) => {
-      // Создаем продукт
       const [result] = await connection.execute(`
         INSERT INTO products 
         (serial_number, is_new, photo, title, type, specification, guarantee_start, guarantee_end, order_id, date) 
@@ -351,7 +378,6 @@ class Database {
 
       const productId = result.insertId;
 
-      // Добавляем цены
       if (productData.price && Array.isArray(productData.price)) {
         for (let priceData of productData.price) {
           await connection.execute(
@@ -361,12 +387,10 @@ class Database {
         }
       }
 
-      // Возвращаем созданный продукт
       return await this.getProductById(productId);
     });
   }
 
-  // Удалить продукт (цены удалятся автоматически через CASCADE)
   async deleteProduct(productId) {
     try {
       const [result] = await this.pool.execute(
@@ -380,53 +404,8 @@ class Database {
     }
   }
 
-  // ================== USERS ==================
-
-  // Получить пользователя по email
-  async getUserByEmail(email) {
-    try {
-      const [users] = await this.pool.execute(
-        'SELECT id, name, email, password, role, created_at FROM users WHERE email = ?',
-        [email]
-      );
-      return users.length > 0 ? users[0] : null;
-    } catch (error) {
-      console.error('Error fetching user by email:', error);
-      throw error;
-    }
-  }
-
-  // Получить пользователя по ID
-  async getUserById(userId) {
-    try {
-      const [users] = await this.pool.execute(
-        'SELECT id, name, email, role, created_at FROM users WHERE id = ?',
-        [userId]
-      );
-      return users.length > 0 ? users[0] : null;
-    } catch (error) {
-      console.error('Error fetching user by ID:', error);
-      throw error;
-    }
-  }
-
-  // Создать нового пользователя
-  async createUser({ name, email, password, role = 'user' }) {
-    try {
-      const [result] = await this.pool.execute(
-        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-        [name, email, password, role]
-      );
-      return await this.getUserById(result.insertId);
-    } catch (error) {
-      console.error('Error creating user:', error);
-      throw error;
-    }
-  }
-
   // ================== HELPERS ==================
 
-  // Получить цены продукта
   async getProductPrices(productId) {
     try {
       const [prices] = await this.pool.execute(`
@@ -446,49 +425,19 @@ class Database {
     }
   }
 
-  // Получить все типы продуктов (из ENUM)
-  async getProductTypes() {
-    try {
-      const [result] = await this.pool.execute(`
-        SHOW COLUMNS FROM products LIKE 'type'
-      `);
-      
-      if (result.length > 0) {
-        const enumString = result[0].Type;
-        // Извлекаем значения из enum('value1','value2',...)
-        const matches = enumString.match(/enum\((.+)\)/i);
-        if (matches) {
-          const values = matches[1].split(',').map(val => 
-            val.replace(/'/g, '').trim()
-          );
-          return values.map((name, index) => ({ id: index + 1, name }));
-        }
-      }
-      
-      return [];
-    } catch (error) {
-      console.error('Error fetching product types:', error);
-      throw error;
-    }
-  }
-
-  // Получить все валюты (статический список)
-  async getCurrencies() {
-    return [
-      { id: 1, code: 'USD', symbol: 'USD', name: 'US Dollar', is_default: 0 },
-      { id: 2, code: 'UAH', symbol: 'UAH', name: 'Ukrainian Hryvnia', is_default: 1 },
-      { id: 3, code: 'EUR', symbol: 'EUR', name: 'Euro', is_default: 0 }
-    ];
-  }
-
-  // Инициализация БД при запуске
+  // Инициализация БД при запуске с retry
   async initDatabase() {
-    const isConnected = await this.testConnection();
+    console.log('🔄 Initializing database connection...');
+    
+    const isConnected = await this.testConnection(15, 3000); // 15 попыток, 3 сек между попытками
+    
     if (isConnected) {
       console.log('🗄️  Database initialized successfully');
-      // Очищаем старые сессии при запуске
       await this.cleanupOldSessions(30);
+    } else {
+      console.error('💥 Database initialization failed');
     }
+    
     return isConnected;
   }
 }

@@ -1,0 +1,50 @@
+# Development override
+# Use: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+---
+# docker-compose.dev.yml
+services:
+  mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: devpassword
+      MYSQL_DATABASE: orders_products_dev
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_password
+    ports:
+      - "3307:3306"
+
+  server:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+      DB_HOST: mysql
+      DB_USER: dev_user
+      DB_PASSWORD: dev_password
+      DB_NAME: orders_products_dev
+      CLIENT_URL: http://localhost:3000
+    volumes:
+      - ./server/src:/app/src
+      - ./server/package.json:/app/package.json
+      - /app/node_modules
+    command: npm run dev
+
+  client:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_SERVER_URL: http://localhost:3001
+    volumes:
+      - ./client/src:/app/src
+      - ./client/package.json:/app/package.json
+      - ./client/next.config.js:/app/next.config.js
+      - ./client/tailwind.config.js:/app/tailwind.config.js
+      - ./client/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+
+# Убираем nginx в dev режиме
+  nginx:
+    profiles:
+      - disabled
