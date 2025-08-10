@@ -342,6 +342,7 @@
 
 .productCard__deleteButton:hover .productCard__deleteIcon {
   transform: scale(1.1);
+  color: #e74c3c;
 }
 
 .productCard__deleteButton:disabled .productCard__deleteIcon {

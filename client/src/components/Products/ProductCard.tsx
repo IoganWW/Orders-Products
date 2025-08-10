@@ -126,7 +126,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
 
         {/* Столбец 8: Заказ */}
         <div className={styles.productCard__col6_order}>
-          <span className={styles.productCard__orderTitle}>{orderTitle}</span>
+          <span>{orderTitle}</span>
         </div>
 
         {/* Столбец 9: Дата */}

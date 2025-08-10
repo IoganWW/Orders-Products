@@ -1,6 +1,7 @@
 // client/src/components/Products/DeleteProductModal.tsx
 import React from 'react';
 import { Product } from '@/types/products';
+import styles from '../Products/Products.module.css';
 import Portal from '@/components/UI/Portal';
 
 interface DeleteProductModalProps {
@@ -23,18 +24,15 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
   return (
     <Portal>
       <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
-        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '500px' }}>
-          <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
+        <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '700px' }}>
+          <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
             
-            <div className="modal-body text-center p-4">
-              <div style={{ background: 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)', borderRadius: '12px', padding: '2rem', color: 'white', marginBottom: '1.5rem' }}>
-                <i className="fas fa-exclamation-triangle fa-3x mb-3"></i>
-                <h4 className="mb-2">Вы уверены, что хотите удалить этот продукт?</h4>
-              </div>
-              
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f8f9fa', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
-                <div style={{ width: '40px', height: '40px', background: '#e8ecf0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <i className="fas fa-desktop" style={{ color: '#6c757d' }}></i>
+            <div className="modal-body py-0 mt-4">
+              <h5 className="mb-3">Вы уверены, что хотите удалить этот продукт?</h5>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f8f9fa', padding: '1rem', borderRadius: '8px', marginBottom: '0.5rem' }}>
+                <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
+                <div className="px-4" style={{ width: '24px', height: '24px', background: '#f1f3f4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <i className="fas fa-desktop" style={{ fontSize: '1.2rem', color: '#3b4044ff' }}></i>
                 </div>
                 <div style={{ flex: 1, textAlign: 'left' }}>
                   <div style={{ fontWeight: '500', color: '#333', marginBottom: '0.25rem' }}>
@@ -43,34 +41,29 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
                   <div style={{ fontSize: '0.8rem', color: '#6c757d' }}>
                     SN-{product.serialNumber}
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: '#28a745', fontWeight: '500', marginTop: '0.25rem' }}>
-                    {product.price.find(p => p.isDefault === 1)?.value} {product.price.find(p => p.isDefault === 1)?.symbol}
-                  </div>
                 </div>
-              </div>
-
-              <div className="alert alert-warning text-start">
-                <i className="fas fa-info-circle me-2"></i>
-                Это действие нельзя отменить. Продукт будет полностью удален из системы.
+                <div style={{ fontSize: '0.8rem', color: '#28a745', fontWeight: '500', marginTop: '0.25rem' }}>
+                  {product.price.find(p => p.isDefault === 1)?.value} {product.price.find(p => p.isDefault === 1)?.symbol}
+                </div>
               </div>
             </div>
             
-            <div className="modal-footer justify-content-center border-0 pb-4">
+            <div className="modal-footer justify-content-end border-0 pb-4" style={{backgroundColor:"#69b838ff"}}>
               <button
                 type="button"
-                className="btn btn-outline-secondary px-4 py-2"
+                className="btn"
                 onClick={onClose}
                 disabled={isDeleting}
-                style={{ borderRadius: '25px', fontWeight: '500' }}
+                style={{ fontWeight: '500', color: 'white' }}
               >
                 ОТМЕНИТЬ
               </button>
               <button
                 type="button"
-                className="btn btn-danger px-4 py-2 ms-3"
+                className="btn btn-light px-4 py-2 me-3"
                 onClick={onConfirm}
                 disabled={isDeleting}
-                style={{ borderRadius: '25px', fontWeight: '500', background: '#dc3545', border: 'none' }}
+                style={{ borderRadius: '25px', fontWeight: '500', color: '#dc3545', border: 'none' }}
               >
                 {isDeleting ? (
                   <>

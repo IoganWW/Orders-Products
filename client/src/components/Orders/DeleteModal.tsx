@@ -31,15 +31,15 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
       <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '700px' }}>
           <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
-            
+
             <div className="modal-body py-0 mt-4">
-              <h4 className="mb-3">Вы уверены, что хотите удалить этот приход?</h4>
+              <h5 className="mb-3">Вы уверены, что хотите удалить этот приход?</h5>
                 {/* Список продуктов */}
                 {order.products.length > 0 && (
                     <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                       {order.products.map((product) => {
                         return (
-                          <div key={product.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem', background: 'white', borderRadius: '6px', marginBottom: '0.25rem', border: '1px solid #e9ecef' }}>
+                          <div key={product.id} style={{ display: 'flex', alignItems: 'center', gap: '2rem', padding: '0.75rem 1rem', background: 'white', borderRadius: '6px', marginBottom: '0.25rem', border: '1px solid #e9ecef' }}>
                             <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
                             <div className="px-4" style={{ width: '24px', height: '24px', background: '#f1f3f4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                               <i className="fas fa-desktop" style={{ fontSize: '1.2rem', color: '#3b4044ff' }}></i>
