@@ -45,93 +45,46 @@ export default function HomePage() {
         </div>
 
         {/* Statistics Cards */}
-        <div className="row g-3 mb-4">
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 h-100">
-              <div className="card-body p-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <p className="text-muted small mb-1">Заказы</p>
-                    <h4 className="mb-0 fw-bold">{orders.length}</h4>
-                  </div>
-                  <div className="text-primary">
-                    <i className="fas fa-shopping-cart fa-lg"></i>
-                  </div>
-                </div>
-                <div className="mt-2">
-                  <Link href="/orders" className="btn btn-sm btn-outline-primary">
-                    Управление
-                  </Link>
-                </div>
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="d-flex flex-wrap gap-3 justify-content-start statistics-blocks">
+              <div className="bg-white rounded px-3 py-2 border">
+                <span className="text-muted small me-2">Приходы:</span>
+                <span className="fw-bold">{orders.length}</span>
+                <Link href="/orders" className="btn btn-sm btn-outline-primary ms-2">
+                  Управление
+                </Link>
               </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 h-100">
-              <div className="card-body p-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <p className="text-muted small mb-1">Продукты</p>
-                    <h4 className="mb-0 fw-bold">{products.length}</h4>
-                    <small className="text-muted">Новых: {newProductsCount}</small>
-                    <small className="text-muted ms-3">Б/у: {usedProductsCount}</small> 
-                  </div>
-                  <div className="text-success">
-                    <i className="fas fa-boxes fa-lg"></i>
-                  </div>
-                </div>
-                <div className="mt-2">
-                  <Link href="/products" className="btn btn-sm btn-outline-success">
-                    Каталог
-                  </Link>
-                </div>
+              
+              <div className="bg-white rounded px-3 py-2 border">
+                <span className="text-muted small me-2">Продукты:</span>
+                <span className="fw-bold">{products.length}</span>
+                <span className="text-muted small ms-2">(Новых: {newProductsCount}, Б/у: {usedProductsCount})</span>
+                <Link href="/products" className="btn btn-sm btn-outline-success ms-2">
+                  Каталог
+                </Link>
               </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 h-100">
-              <div className="card-body p-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <p className="text-muted small mb-1">Выручка</p>
-                    <h4 className="mb-0 fw-bold">{totalRevenue.toLocaleString()} ₴</h4>
-                    <small className="text-muted">Средний: {Math.round(averageOrder).toLocaleString()} ₴</small>
-                  </div>
-                  <div className="text-info">
-                    <i className="fas fa-chart-line fa-lg"></i>
-                  </div>
-                </div>
+              
+              <div className="bg-white rounded px-3 py-2 border">
+                <span className="text-muted small me-2">Стоимость:</span>
+                <span className="fw-bold">{totalRevenue.toLocaleString()} ₴</span>
+                <span className="text-muted small ms-2">(Средний: {Math.round(averageOrder).toLocaleString()} ₴)</span>
               </div>
-            </div>
-          </div>
-
-          <div className="col-lg-3 col-md-6">
-            <div className="card border-0 h-100">
-              <div className="card-body p-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <p className="text-muted small mb-1">Сессии</p>
-                    <h4 className="mb-0 fw-bold">{activeSessions}</h4>
-                    <div className="d-flex align-items-center mt-1">
-                      <div 
-                        className="rounded-circle me-1" 
-                        style={{ 
-                          width: '6px', 
-                          height: '6px', 
-                          backgroundColor: isConnected ? '#28a745' : '#dc3545' 
-                        }}
-                      ></div>
-                      <small className="text-muted">
-                        {isConnected ? 'Онлайн' : 'Офлайн'}
-                      </small>
-                    </div>
-                  </div>
-                  <div className="text-warning">
-                    <i className="fas fa-users fa-lg"></i>
-                  </div>
-                </div>
+              
+              <div className="bg-white rounded px-3 py-2 border">
+                <span className="text-muted small me-2">Сессии:</span>
+                <span className="fw-bold">{activeSessions}</span>
+                <div 
+                  className="d-inline-block rounded-circle ms-2 me-1" 
+                  style={{ 
+                    width: '6px', 
+                    height: '6px', 
+                    backgroundColor: isConnected ? '#28a745' : '#dc3545' 
+                  }}
+                ></div>
+                <span className="text-muted small">
+                  {isConnected ? 'Онлайн' : 'Офлайн'}
+                </span>
               </div>
             </div>
           </div>

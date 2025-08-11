@@ -180,3 +180,57 @@ body {
     padding: 0.25rem 0.5rem;
   }
 }
+
+/* Стили для простых блоков статистики */
+.statistics-blocks {
+  gap: 0.75rem !important;
+}
+
+.statistics-blocks > div {
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.statistics-blocks > div:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Адаптивность для мобильных экранов */
+@media (max-width: 767.98px) {
+  .statistics-blocks {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  .statistics-blocks > div {
+    white-space: normal;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .statistics-blocks .btn {
+    margin-left: auto !important;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .statistics-blocks > div {
+    padding: 0.5rem !important;
+    font-size: 0.85rem;
+  }
+  
+  .statistics-blocks .btn {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .statistics-blocks .text-muted {
+    font-size: 0.75rem;
+  }
+}
