@@ -425,14 +425,44 @@ class Database {
     }
   }
 
+  // Создать таблицу user_sessions если не существует
+  async createUserSessionsTable() {
+    try {
+      await this.query(`
+        CREATE TABLE IF NOT EXISTS user_sessions (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          user_id INT NULL,
+          session_id VARCHAR(255) NOT NULL UNIQUE,
+          ip_address VARCHAR(45),
+          user_agent TEXT,
+          is_active TINYINT(1) NOT NULL DEFAULT 1,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_session_id (session_id),
+          INDEX idx_user_id (user_id)
+        )
+      `);
+      console.log('✅ user_sessions table created/verified');
+      return true;
+    } catch (error) {
+      console.error('❌ Error creating user_sessions table:', error);
+      return false;
+    }
+  }
+
   // Инициализация БД при запуске с retry
   async initDatabase() {
     console.log('🔄 Initializing database connection...');
     
-    const isConnected = await this.testConnection(15, 3000); // 15 попыток, 3 сек между попытками
+    const isConnected = await this.testConnection(15, 3000);
     
     if (isConnected) {
       console.log('🗄️  Database initialized successfully');
+      
+      // Создаем таблицу сессий если не существует
+      await this.createUserSessionsTable();
+      
+      // Теперь можно безопасно очистить старые сессии
       await this.cleanupOldSessions(30);
     } else {
       console.error('💥 Database initialization failed');
