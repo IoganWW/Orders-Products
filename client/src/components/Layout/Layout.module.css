@@ -17,7 +17,7 @@
   flex: 1;
   overflow-y: auto;
   background: #ffffff;;
-  min-height: 100vh;
+  min-height: 80vh;
 }
 
 /* Header */
@@ -28,7 +28,7 @@
   padding: 0.75rem 1.5rem;
   background: #ffffff;
   border-bottom: 1px solid #e9ecef;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   height: 60px;
   position: relative;
   z-index: 1000;
@@ -123,13 +123,15 @@
 
 /* Sidebar */
 .sidebar {
-  width: 200px;
+  width: 180px;
   display: flex;
   flex-direction: column;
   padding-top: 150px;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 100;
 }
 
 .sidebarNav {

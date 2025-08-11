@@ -2,6 +2,8 @@
   padding: 1rem;
   width: 100%; /* Полная ширина доступной области */
   overflow-x: auto; /* Горизонтальная прокрутка на уровне контейнера */
+  overflow-y: scroll;
+  height: 500px;
 }
 
 .productsHeader {
@@ -18,7 +20,7 @@
   min-height: 200px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   width: max-content; /* Ширина по содержимому карточек */
   min-width: 100%; /* Минимум - полная ширина контейнера */
 }
@@ -71,7 +73,7 @@
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
-  height: 70px; /* Фиксированная высота */
+  height: 60px;
   padding: 0 20px;
   gap: 0; /* Убираем gap, используем фиксированные ширины */
   width: 2200px; 

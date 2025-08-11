@@ -259,9 +259,10 @@
   padding: 5px;
   border-radius: 50%;
   transition: background-color 0.2s ease;
+  border: none;
   display: flex;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -316,7 +317,7 @@
 .orderDetails__productsList {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 
 .orderDetails__noProducts {
@@ -333,10 +334,14 @@
   align-items: center;
   background: #fdfdfd;
   border: 1px solid #eee;
-  border-radius: var(--border-radius);
   padding: 10px 15px;
   gap: 15px;
   box-shadow: var(--shadow-sm);
+}
+
+.orderDetails__productItem:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
 }
 
 .orderDetails__productIcon {
