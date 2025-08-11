@@ -38,7 +38,7 @@ export default function ProductsPage() {
       <div className="page__header">
         <div className="d-flex align-items-center">
           <h1 className="page__title mb-0">
-            <span>Products / {productsCount}</span>
+            <span>Продукты / {productsCount}</span>
           </h1>
           
           {/* Фильтры */}

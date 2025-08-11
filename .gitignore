@@ -2,7 +2,7 @@
 node_modules/
 */node_modules/
 
-# Production builds
+# Production builds  
 client/.next/
 client/out/
 server/dist/
@@ -13,16 +13,16 @@ server/dist/
 .env.development.local
 .env.test.local
 .env.production.local
-server/.env
+server/.env*
+client/.env*
 
 # Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-*.log
-
-# Runtime data
 pids
 *.pid
 *.seed
@@ -32,14 +32,86 @@ pids
 coverage/
 *.lcov
 
-# IDE files
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript v1 declaration files
+typings/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# Editor directories and files
 .vscode/
 .idea/
-*.swp
-*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 *~
 
-# OS files
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -47,20 +119,67 @@ coverage/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Database
-*.sqlite
-*.db
+desktop.ini
 
 # Docker
 .dockerignore
 
-# Next.js
-client/.next/
-client/out/
+# Database files
+*.sqlite
+*.db
+*.db-journal
 
 # Testing
-client/__tests__/__snapshots__/
+__tests__/__snapshots__/
+test-results/
+playwright-report/
 
-# TypeScript
-*.tsbuildinfo
+# Local SSL certificates
+*.pem
+*.crt
+*.key
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# MySQL Workbench
+*.mwb.bak
+
+# Documentation build
+docs/_build/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json

@@ -20,7 +20,7 @@ export default function OrdersPage() {
             onClick={() => setShowAddForm(true)}
             title="Добавить новый приход"
           ></i>
-          <span className="p-2">Orders / {ordersCount}</span>
+          <span className="p-2">Приходы / {ordersCount}</span>
         </h1>
       </div>
 

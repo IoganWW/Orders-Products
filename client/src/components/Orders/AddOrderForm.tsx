@@ -113,10 +113,9 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
     <Portal>
       <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered modal-lg">
-          <div className="modal-content" style={{ borderRadius: '12px', border: 'none' }}>
+          <div className="modal-content" style={{ borderRadius: '12px', border: '1px solid' }}>
             <div className="modal-header bg-success text-white" style={{ borderRadius: '12px 12px 0 0' }}>
               <h5 className="modal-title">
-                <i className="fas fa-plus-circle me-2"></i>
                 Добавить новый приход
               </h5>
               <button

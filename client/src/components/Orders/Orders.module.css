@@ -40,12 +40,13 @@
   display: flex;
   align-items: center;
   background: white;
+  min-height: 60px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: var(--transition);
-  padding: 8px 20px;
+  padding: 5px 20px;
   position: relative;
 }
 
@@ -55,7 +56,8 @@
 }
 
 .orderCard.selected {
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1), var(--shadow-md);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 /* Правило: Скрыть заголовок у всех карточек, когда открыта панель деталей */
@@ -239,10 +241,9 @@
   background: white;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-sm);
   height: fit-content;
   max-height: calc(100vh - 80px);
-  top: 20px;
   padding-bottom: 20px;
   z-index: 1; /* Понижаем z-index, чтобы модалки были поверх */
 }
@@ -254,7 +255,6 @@
   right: 0;
   transform: translate(50%, -50%); /* Центр кнопки попадает в угол */
   background: white;
-  border: 1px solid var(--text-primary);
   cursor: pointer;
   padding: 5px;
   border-radius: 50%;
@@ -275,14 +275,13 @@
 .orderDetails__closeButton svg {
   width: 24px;
   height: 24px;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 /* Заголовок панели деталей */
 .orderDetails__header {
   position: relative;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -291,7 +290,6 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .orderDetails__title {
@@ -303,13 +301,13 @@
 
 /* Основное содержимое панели */
 .orderDetails__content {
-  padding: 1.5rem;
+  padding: 0rem;
 }
 
 /* Кнопка "Добавить продукт" */
 .orderDetails__addProductButton {
   color: #4CAF50;
-  padding: 10px 15px;
+  padding: 15px 15px;
   cursor: pointer;
   font-weight: 500;
 }
@@ -318,7 +316,7 @@
 .orderDetails__productsList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
 
 .orderDetails__noProducts {

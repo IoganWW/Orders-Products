@@ -123,7 +123,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeletePro
 
         <div className={`${styles.orderDetails__content}`}>
           <i
-            className="fa-sharp fa-solid fa-circle-plus fa-lg"
+            className="fa-sharp fa-solid fa-circle-plus fa-lg ms-4"
             style={{ color: " #25b01c", cursor: "pointer" }}
             onClick={handleAddProductClick}
             title="Добавить новый продукт"
