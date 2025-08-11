@@ -1,8 +1,9 @@
-CREATE DATABASE IF NOT EXISTS orders_products CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE orders_products;
+-- server/database/schema.sql
+CREATE DATABASE IF NOT EXISTS orders_products_dev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE orders_products_dev;
 
 -- Таблица заказов (приходов)
-CREATE TABLE orders (
+CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -12,7 +13,7 @@ CREATE TABLE orders (
 );
 
 -- Таблица продуктов
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     serial_number VARCHAR(100) NOT NULL UNIQUE,
     is_new TINYINT(1) DEFAULT 1,
@@ -32,7 +33,7 @@ CREATE TABLE products (
 );
 
 -- Таблица цен продуктов
-CREATE TABLE product_prices (
+CREATE TABLE IF NOT EXISTS product_prices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     value DECIMAL(10, 2) NOT NULL,
@@ -44,7 +45,7 @@ CREATE TABLE product_prices (
 );
 
 -- Таблица пользователей (для JWT)
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -56,7 +57,7 @@ CREATE TABLE users (
 );
 
 -- Таблица сессий (для отслеживания активных пользователей)
-CREATE TABLE user_sessions (
+CREATE TABLE IF NOT EXISTS user_sessions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     session_id VARCHAR(255) NOT NULL UNIQUE,
