@@ -207,13 +207,6 @@
   width: 50%;
 }
 
-/* Responsive Design */
-@media (min-width: 769px) {
-  .navIcon {
-    display: none;
-  }
-}
-
 @media (max-width: 768px) {
   .headerCenter {
     display: none;
@@ -244,6 +237,10 @@
     display: block;
     margin-right: 0;
   }
+  
+  .headerLeft {
+    margin-left: 60px; /* Изменено с 180px */
+  }
 }
 
 @media (max-width: 576px) {
@@ -256,11 +253,41 @@
     width: 30px;
     top: 60px;
     left: 0px;
-    transition: left 0.3s ease;
+    transition: width 0.3s ease;
     z-index: 1001;
   }
   
   .sidebar.open {
-    left: 0;
+    width: 30px;
+  }
+  
+  .headerLeft {
+    margin-left: 30px; /* Изменено для соответствия ширине sidebar */
+  }
+  
+  .navLink {
+    padding: 0.75rem 0.25rem;
+  }
+  
+  .navIcon {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .sidebar {
+    width: 25px;
+  }
+  
+  .headerLeft {
+    margin-left: 25px;
+  }
+  
+  .navLink {
+    padding: 0.5rem 0.125rem;
+  }
+  
+  .navIcon {
+    font-size: 0.7rem;
   }
 }

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setCurrentTime } from '@/store/slices/appSlice';
 import styles from './Layout.module.css';
+import Link from 'next/link';
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +27,7 @@ const Header: React.FC = () => {
       month: 'short',
       year: 'numeric'
     });
-    
+
     const time = date.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit'
@@ -35,12 +36,14 @@ const Header: React.FC = () => {
     return { today, time, weekly };
   };
 
-  const { today, time, weekly} = formatDate(currentTime);
+  const { today, time, weekly } = formatDate(currentTime);
 
   return (
     <header className={`${styles.header} header`}>
       <div className={`${styles.headerLeft} header-left`}>
-        <i className="fa-solid fa-shield fa-2xl me-2" style={{color:"#28a745"}}></i>
+        <Link href="/">
+          <i className="fa-solid fa-shield fa-2xl me-2" style={{ color: "#28a745" }}></i>
+        </Link>
         <div className={`${styles.logo} logo`}>
           <span className="fw-bold">INVENTORY</span>
         </div>
@@ -49,9 +52,9 @@ const Header: React.FC = () => {
       <div className={`${styles.headerCenter} header-center`}>
         <div className={`${styles.searchBox} search-box`}>
           <i className="fas fa-search"></i>
-          <input 
-            type="text" 
-            placeholder="Поиск" 
+          <input
+            type="text"
+            placeholder="Поиск"
             className="form-control"
           />
         </div>
@@ -64,12 +67,12 @@ const Header: React.FC = () => {
             {isConnected ? activeSessions : 0}
           </span>
         </div>
-        
+
         <div className={`${styles.dateTime} date-time`}>
           <div className={`${styles.dateLabel} date-label`}>{weekly}</div>
           <div className={`${styles.dateValue} date-value`}>
             {today}
-            <i className="fas fa-clock ms-2 me-1" style={{color:" #34cb3e"}}></i>
+            <i className="fas fa-clock ms-2 me-1" style={{ color: " #34cb3e" }}></i>
             {time}
           </div>
         </div>

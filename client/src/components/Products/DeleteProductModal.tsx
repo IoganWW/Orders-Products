@@ -26,7 +26,16 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
       <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '700px' }}>
           <div className="modal-content animate__animated animate__zoomIn" style={{ borderRadius: '8px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
-            
+            <button
+              type="button"
+              className={`${styles.orderDetails__closeButton}`}
+              onClick={onClose}
+              aria-label="Закрыть"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" />
+              </svg>
+            </button>
             <div className="modal-body py-0 mt-4">
               <h5 className="mb-3">Вы уверены, что хотите удалить этот продукт?</h5>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f8f9fa', padding: '1rem', borderRadius: '8px', marginBottom: '0.5rem' }}>
