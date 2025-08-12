@@ -1,7 +1,9 @@
+/* Products.module.css - Адаптивная версия */
+
 .productsContainer {
   padding: 1rem;
-  width: 100%; /* Полная ширина доступной области */
-  overflow-x: auto; /* Горизонтальная прокрутка на уровне контейнера */
+  width: 100%;
+  overflow-x: auto;
   overflow-y: scroll;
   max-height: 500px;
 }
@@ -13,7 +15,7 @@
   box-shadow: var(--shadow-sm);
   margin-bottom: 1.5rem;
   border-left: 4px solid var(--primary-color);
-  flex-shrink: 0; /* Не сжимаем заголовок */
+  flex-shrink: 0;
 }
 
 .productsList {
@@ -21,8 +23,8 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  width: max-content; /* Ширина по содержимому карточек */
-  min-width: 100%; /* Минимум - полная ширина контейнера */
+  width: max-content;
+  min-width: 100%;
 }
 
 .loading {
@@ -34,29 +36,17 @@
 }
 
 /* Page Header Filters */
-.pageFilters {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin-left: 20px; /* Отступ от заголовка */
-}
-
-.filterRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .filterLabel {
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
+  min-width: fit-content;
 }
 
 .filterSelect {
-  min-width: 160px;
   border-color: var(--border-color);
   transition: var(--transition);
+  flex: 1;
 }
 
 .filterSelect:focus {
@@ -64,7 +54,7 @@
   box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
 }
 
-/* Product Card - КАК ТАБЛИЦА С ФИКСИРОВАННЫМИ ШИРИНАМИ */
+/* Product Card - ДЕСКТОП (больше 1200px) */
 .productCard {
   display: flex;
   align-items: center;
@@ -75,7 +65,7 @@
   transition: var(--transition);
   height: 60px;
   padding: 0 20px;
-  gap: 0; /* Убираем gap, используем фиксированные ширины */
+  gap: 0;
   width: 2200px; 
   flex-shrink: 0;
 }
@@ -85,9 +75,7 @@
   transform: translateY(-2px);
 }
 
-/* ФИКСИРОВАННЫЕ ШИРИНЫ СТОЛБЦОВ */
-
-/* Столбец 1: Статус + Иконка + Название + Серийник = 600px */
+/* ФИКСИРОВАННЫЕ ШИРИНЫ СТОЛБЦОВ ДЛЯ ДЕСКТОПА */
 .productCard__col1 {
   display: flex;
   align-items: center;
@@ -126,7 +114,7 @@
   flex-direction: column;
   align-items: flex-start;
   flex: 1;
-  min-width: 0; /* Для правильного text-overflow */
+  min-width: 0;
 }
 
 .productCard__title {
@@ -153,7 +141,6 @@
   width: 100%;
 }
 
-/* Столбец 2: Статус = 120px */
 .productCard__col2 {
   width: 120px;
   min-width: 120px;
@@ -172,7 +159,6 @@
   color: var(--text-primary);
 }
 
-/* Столбец 3: Цены = 150px */
 .productCard__col3 {
   display: flex;
   flex-direction: column;
@@ -200,7 +186,6 @@
   white-space: nowrap;
 }
 
-/* Столбец 4: Гарантия = 140px */
 .productCard__guaranteeDates {
   display: flex;
   flex-direction: column;
@@ -218,7 +203,6 @@
   font-size: 0.85rem;
 }
 
-/* Столбец 5: Новый/Б/У = 100px */
 .productCard__col_newUsed {
   display: flex;
   align-items: center;
@@ -232,7 +216,6 @@
   color: var(--text-primary);
 }
 
-/* Столбец 6: Описание = 300px */
 .productCard__col5_description {
   width: 300px;
   min-width: 300px;
@@ -244,7 +227,6 @@
   text-overflow: ellipsis;
 }
 
-/* Столбец 7: User = 250px */
 .productCard__col_user {
   width: 250px;
   min-width: 250px;
@@ -256,7 +238,6 @@
   text-overflow: ellipsis;
 }
 
-/* Столбец 8: Заказ = 300px */
 .productCard__col6_order {
   width: 300px;
   min-width: 300px;
@@ -268,16 +249,6 @@
   text-overflow: ellipsis;
 }
 
-.productCard__orderTitle {
-  font-weight: 600;
-  color: var(--text-primary);
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Столбец 9: Дата = 150px */
 .productCard__col7 {
   display: flex;
   flex-direction: column;
@@ -290,18 +261,12 @@
   gap: 5px;
 }
 
-.productCard .badge {
-  white-space: nowrap;
-  font-size: 0.75rem;
-}
-
 .productCard__footerDate {
   font-size: 0.8rem;
   color: var(--text-primary);
   white-space: nowrap;
 }
 
-/* Столбец 10: Удаление = 60px */
 .productCard__deleteCol {
   display: flex;
   align-items: center;
@@ -347,16 +312,238 @@
   color: #e74c3c;
 }
 
-.productCard__deleteButton:disabled .productCard__deleteIcon {
-  transform: none;
+/* АДАПТИВНОСТЬ */
+
+/* Только планшеты (768px - 991px) */
+@media (max-width: 991px) and (min-width: 768px) {
+  .productsList {
+    width: 100%;
+  }
+  
+  .productCard {
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  /* Все столбцы становятся полной ширины */
+  .productCard__col1,
+  .productCard__col2,
+  .productCard__col3,
+  .productCard__col_newUsed,
+  .productCard__col_user,
+  .productCard__col6_order,
+  .productCard__col7,
+  .productCard__deleteCol {
+    width: 100%;
+    min-width: auto;
+    max-width: none;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left;
+  }
+
+  /* Скрываем спецификацию и гарантию на планшетах */
+  .productCard__col5_description,
+  .productCard__guaranteeDates {
+    display: none !important;
+  }
+
+  .productCard__col1 {
+    justify-content: flex-start;
+    gap: 15px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.75rem;
+  }
+
+  .productCard__titleAndSerial {
+    align-items: flex-start;
+  }
+
+  .productCard__title {
+    font-size: 1.1rem;
+    white-space: normal;
+    text-overflow: initial;
+    overflow: visible;
+  }
+
+  .productCard__col3 {
+    align-items: flex-start;
+  }
+
+  .productCard__deleteCol {
+    border-bottom: none;
+    justify-content: flex-end;
+    padding-top: 0.75rem;
+  }
 }
 
-/* Переносим эту кнопку ВНЕ orderDetails */
+/* Мобильные (меньше 768px) */
+@media (max-width: 767px) {
+  .productsContainer {
+    padding: 0.5rem;
+    max-height: 400px;
+  }
+
+  .productsList {
+    width: 100%;
+  }
+
+  .productCard {
+    width: 100% !important;
+    height: auto !important;
+    padding: 0.75rem !important;
+    gap: 0.5rem !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  /* Все столбцы становятся полной ширины на мобильных */
+  .productCard__col1,
+  .productCard__col2,
+  .productCard__col3,
+  .productCard__guaranteeDates,
+  .productCard__col_newUsed,
+  .productCard__col5_description,
+  .productCard__col_user,
+  .productCard__col6_order,
+  .productCard__col7,
+  .productCard__deleteCol {
+    width: 100% !important;
+    min-width: auto !important;
+    max-width: none !important;
+    padding: 0.25rem 0 !important;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: left !important;
+  }
+
+  .productCard__col1 {
+    gap: 10px !important;
+    padding-bottom: 0.5rem !important;
+    justify-content: flex-start !important;
+    flex-direction: row !important;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  .productCard__statusCircle {
+    width: 8px;
+    height: 8px;
+  }
+
+  .productCard__typeIcon {
+    width: 20px;
+  }
+
+  .productCard__title {
+    font-size: 1rem;
+    white-space: normal !important;
+    text-overflow: initial !important;
+    overflow: visible !important;
+  }
+
+  .productCard__serialNumber {
+    font-size: 0.75rem;
+  }
+
+  .productCard__titleAndSerial {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .productCard__col2,
+  .productCard__col3,
+  .productCard__guaranteeDates,
+  .productCard__col_newUsed,
+  .productCard__col5_description,
+  .productCard__col_user,
+  .productCard__col6_order,
+  .productCard__col7 {
+    font-size: 0.85rem;
+    padding: 0.25rem 0;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+
+  .productCard__col3 {
+    align-items: flex-start !important;
+  }
+
+  .productCard__guaranteeDates {
+    flex-direction: row !important;
+    gap: 1rem;
+  }
+
+  .productCard__priceMain {
+    font-size: 0.95rem;
+  }
+
+  .productCard__footerDate {
+    font-size: 0.75rem;
+  }
+
+  .productCard__deleteButton {
+    padding: 6px;
+  }
+
+  .productCard__deleteIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .productCard__deleteCol {
+    border-bottom: none !important;
+    justify-content: flex-end !important;
+    padding-top: 0.5rem !important;
+  }
+}
+
+/* Очень маленькие экраны (меньше 480px) */
+@media (max-width: 479px) {
+  .productCard {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .productCard__title {
+    font-size: 0.9rem;
+  }
+
+  .productCard__col1 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .productCard__titleAndSerial {
+    width: 100%;
+  }
+
+  .productCard__mainInfo {
+    gap: 0.5rem;
+  }
+
+  .productCard__col2,
+  .productCard__col3,
+  .productCard__guaranteeDates,
+  .productCard__col_newUsed,
+  .productCard__col5_description,
+  .productCard__col_user,
+  .productCard__col6_order {
+    font-size: 0.8rem;
+  }
+}
+
+/* Общие стили для кнопок и элементов */
 .orderDetails__closeButton {
   position: absolute;
   top: 0;
   right: 0;
-  transform: translate(50%, -50%); /* Центр кнопки попадает в угол */
+  transform: translate(50%, -50%);
   background: white;
   cursor: pointer;
   padding: 5px;
@@ -380,66 +567,4 @@
   width: 24px;
   height: 24px;
   color: var(--text-secondary);
-}
-
-/* Responsive */
-@media (max-width: 1200px) {
-  .productCard {
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
-    padding: 15px;
-    gap: 10px;
-    width: 100%; /* На мобильных возвращаем полную ширину */
-  }
-
-  .productCard__col1,
-  .productCard__col2,
-  .productCard__col3,
-  .productCard__col_newUsed,
-  .productCard__col5_description,
-  .productCard__col_user,
-  .productCard__col6_order,
-  .productCard__col7 {
-    flex-basis: 100%;
-    align-items: center;
-    padding: 0;
-    min-width: auto;
-    max-width: none;
-  }
-
-  .productCard__col1 {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .productCard__titleAndSerial {
-    align-items: center;
-    min-width: auto;
-    max-width: none;
-  }
-
-  .productCard__title {
-    white-space: normal;
-    text-overflow: clip;
-  }
-
-  .productCard__priceSecondary {
-    justify-content: center;
-  }
-
-  .productCard__guaranteeDates {
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-  }
-}
-
-@media (max-width: 576px) {
-  .productCard__title {
-    font-size: 0.9rem;
-  }
-  .productCard__priceMain {
-    font-size: 1.05rem;
-  }
 }
