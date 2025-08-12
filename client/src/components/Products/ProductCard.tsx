@@ -58,10 +58,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
 
   return (
     <>
-      <div className={`${styles.productCard} product-card animate__animated animate__fadeIn`}>
+      <div className={`${styles.productCard} product-card animate__animated animate__fadeIn d-flex flex-lg-row flex-md-column flex-sm-column flex-column g-0 g-lg-1`}>
         
         {/* Столбец 1: Статус + Иконка + Название + Серийник */}
-        <div className={styles.productCard__col1}>
+        <div className={`${styles.productCard__col1} d-flex align-items-center`}>
           <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
           
           <div className={styles.productCard__typeIcon}>
@@ -77,14 +77,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         </div>
 
         {/* Столбец 2: Статус */}
-        <div className={styles.productCard__col2}>
+        <div className={`${styles.productCard__col2} d-lg-flex d-md-none d-sm-none d-none`}>
           <span className={`${product.isNew === 1 ? styles.statusAvailable : styles.statusOnRepair}`}>
             {product.isNew === 1 ? 'Свободен' : 'На ремонте'}
           </span>
         </div>
         
         {/* Столбец 3: Гарантия */}
-        <div className={styles.productCard__guaranteeDates}>
+        <div className={`${styles.productCard__guaranteeDates} d-lg-flex d-md-flex d-sm-none d-none`}>
           <span>
             <small className="text-muted">From:</small> {guaranteeStart.short}
           </span>
@@ -94,12 +94,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         </div>
 
         {/* Столбец 4: Новый/Б/У */}
-        <div className={styles.productCard__col_newUsed}>
+        <div className={`${styles.productCard__col_newUsed} d-lg-flex d-md-none d-sm-none d-none`}>
           <span>{product.isNew ? 'Новый' : 'Б/У'}</span>
         </div>
 
         {/* Столбец 5: Цены */}
-        <div className={styles.productCard__col3}>
+        <div className={`${styles.productCard__col3} d-flex flex-column`}>
           {price.secondary.length > 0 && (
             <div className={styles.productCard__priceSecondary}>
               {price.secondary.map((p, index) => (
@@ -113,24 +113,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         </div>
 
         {/* Столбец 6: Описание */}
-        <div className={styles.productCard__col5_description}>
+        <div className={`${styles.productCard__col5_description} d-lg-block d-md-none d-sm-none d-none`}>
           <span className={styles.productCard__descriptionText}>
             {product.specification || 'Длинное предлинное длиннющее название группы'}
           </span>
         </div>
 
         {/* Столбец 7: User */}
-        <div className={styles.productCard__col_user}>
+        <div className={`${styles.productCard__col_user} d-xl-block d-lg-block d-md-block d-sm-block d-block`}>
           <span>Христорождественский Александр</span>
         </div>
 
         {/* Столбец 8: Заказ */}
-        <div className={styles.productCard__col6_order}>
+        <div className={`${styles.productCard__col6_order} d-xl-block d-lg-block d-md-block d-sm-block d-block`}>
           <span>{orderTitle}</span>
         </div>
 
         {/* Столбец 9: Дата */}
-        <div className={styles.productCard__col7}>
+        <div className={`${styles.productCard__col7} d-lg-flex d-md-none d-sm-none d-none`}>
           <small className={styles.productCard__footerDate}>
             {formatDate(product.date).shortMonStr}
           </small>
@@ -138,7 +138,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
 
         {/* Столбец 10: Удаление */}
         {onDeleteProduct && (
-          <div className={styles.productCard__deleteCol}>
+          <div className={`${styles.productCard__deleteCol} d-lg-flex d-md-none d-sm-none d-none`}>
             <button
               type="button"
               className={styles.productCard__deleteButton}

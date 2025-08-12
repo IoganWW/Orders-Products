@@ -44,7 +44,7 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className={`${styles.productsContainer} products-container px-5`}>
+    <div className={`${styles.productsContainer} products-container ps-4 pe-1 px-lg-5`}>
       <div className={`${styles.productsList} products-list`}>
         {filteredProducts.length === 0 ? (
           <div className="alert alert-info text-center">
@@ -57,20 +57,21 @@ const ProductsList: React.FC = () => {
             </p>
           </div>
         ) : (
-          <>
+          <div className="row g-1">
             {filteredProducts.map((product) => {
               const orderTitle = orders.find(order => order.id === product.order)?.title || `Order #${product.order}`;
               
               return (
-                <ProductCard 
-                  key={product.id}
-                  product={product} 
-                  orderTitle={orderTitle}
-                  onDeleteProduct={handleDeleteProduct}
-                />
+                <div key={product.id} className="col-lg-12 col-md-6 col-sm-12 col-12">
+                  <ProductCard 
+                    product={product} 
+                    orderTitle={orderTitle}
+                    onDeleteProduct={handleDeleteProduct}
+                  />
+                </div>
               );
             })}
-          </>
+          </div>
         )}
       </div>
     </div>
