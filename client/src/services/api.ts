@@ -54,28 +54,36 @@ api.interceptors.response.use(
       
       console.log('Authentication failed, logging out...');
       
+      // Проверяем, был ли пользователь авторизован (есть ли токен в localStorage)
+      const hadToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      
       // Очищаем localStorage
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
       
-      // Уведомляем пользователя ОДИН раз
-      const errorEvent = new CustomEvent('showNotification', {
-        detail: { 
-          type: 'warning', 
-          message: 'Сессия истекла. Войдите в систему заново.' 
-        }
-      });
-      window.dispatchEvent(errorEvent);
+      // Уведомляем пользователя ТОЛЬКО если у него был токен (т.е. он был авторизован)
+      if (hadToken) {
+        const errorEvent = new CustomEvent('showNotification', {
+          detail: { 
+            type: 'error', 
+            message: 'Сессия истекла. Войдите в систему заново.' 
+          }
+        });
+        window.dispatchEvent(errorEvent);
+      }
       
       // Сбрасываем флаг через небольшой тайм-аут, чтобы избежать спама
       setTimeout(() => {
         isLogoutInProgress = false;
       }, 2000);
-      
-      // Можно также отправить action для обновления состояния Redux
-      // store.dispatch(logoutUser());
+
+      // Обновляем состояние Redux только если пользователь был авторизован
+      if (hadToken) {
+        // Можно также отправить action для обновления состояния Redux
+        // store.dispatch(logoutUser());
+      }
     }
     
     return Promise.reject(error);

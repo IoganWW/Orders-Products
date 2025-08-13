@@ -1,3 +1,4 @@
+// client/src/app/page.tsx (обновляем главную страницу)
 'use client';
 
 import Link from 'next/link';
@@ -14,11 +15,15 @@ export default function HomePage() {
   const { orders } = useAppSelector(state => state.orders);
   const { products } = useAppSelector(state => state.products);
   const { activeSessions, isConnected } = useAppSelector(state => state.app);
+  const { isAuthenticated, loading: authLoading } = useAppSelector(state => state.auth);
 
   useEffect(() => {
-    dispatch(fetchOrders());
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    // Загружаем данные только если пользователь авторизован
+    if (isAuthenticated && !authLoading) {
+      dispatch(fetchOrders());
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, isAuthenticated, authLoading]);
 
   // Исправленное вычисление статистики
   const totalRevenue = orders.reduce((sum, order) => {
@@ -40,7 +45,14 @@ export default function HomePage() {
         <div className="row mb-4">
           <div className="col-12">
             <h1 className="h3 fw-bold text-dark mb-1">Панель управления</h1>
-            <p className="text-muted mb-0 small">Система управления заказами и продуктами</p>
+            <p className="text-muted mb-0 small">Система управления приходами и продуктами</p>
+          
+            {!isAuthenticated && !authLoading && (
+              <div className="alert alert-info">
+                <i className="fas fa-info-circle me-2"></i>
+                Для доступа к данным необходимо войти в систему
+              </div>
+            )}
           </div>
         </div>
 
