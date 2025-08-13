@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logoutUser } from '@/store/slices/authSlice';
 import AuthModal from '@/components/Auth/AuthModal';
@@ -12,6 +12,7 @@ import authStyles from '@/components/Auth/Auth.module.css';
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { isAuthenticated, user, loading } = useAppSelector(state => state.auth);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -49,13 +50,21 @@ const Sidebar: React.FC = () => {
     }
   ];
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    
-    const successEvent = new CustomEvent('showNotification', {
-      detail: { type: 'success', message: 'Вы успешно вышли из системы' }
-    });
-    window.dispatchEvent(successEvent);
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser()).unwrap();
+      
+      // Редирект на главную страницу
+      router.push('/');
+      
+      const successEvent = new CustomEvent('showNotification', {
+        detail: { type: 'success', message: 'Вы успешно вышли из системы' }
+      });
+      window.dispatchEvent(successEvent);
+      
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const getInitials = (name: string) => {

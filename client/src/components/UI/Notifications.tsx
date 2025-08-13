@@ -1,3 +1,4 @@
+// client/src/components/UI/Notifications.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -12,10 +13,18 @@ interface Notification {
 
 const Notifications: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [messageHistory, setMessageHistory] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const handleNotification = (event: CustomEvent) => {
       const { type, message, duration = 5000 } = event.detail;
+      
+      // Проверяем, не показывали ли мы это сообщение недавно
+      const messageKey = `${type}-${message}`;
+      if (messageHistory.has(messageKey)) {
+        return; // Пропускаем дублирующиеся сообщения
+      }
+      
       const id = Date.now().toString();
       
       const notification: Notification = {
@@ -26,10 +35,21 @@ const Notifications: React.FC = () => {
       };
 
       setNotifications(prev => [...prev, notification]);
+      
+      // Добавляем сообщение в историю
+      setMessageHistory(prev => new Set([...prev, messageKey]));
 
       // Auto remove after duration
       setTimeout(() => {
         removeNotification(id);
+        // Убираем из истории через некоторое время
+        setTimeout(() => {
+          setMessageHistory(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(messageKey);
+            return newSet;
+          });
+        }, 2000); // Удаляем из истории через 2 секунды после удаления уведомления
       }, duration);
     };
 
@@ -38,7 +58,7 @@ const Notifications: React.FC = () => {
     return () => {
       window.removeEventListener('showNotification', handleNotification as EventListener);
     };
-  }, []);
+  }, [messageHistory]);
 
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));

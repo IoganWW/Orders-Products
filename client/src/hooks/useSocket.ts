@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+// client/src/hooks/useSocket.ts
+import { useEffect } from 'react';
 import { useAppDispatch } from '@/store';
 import { setActiveSessions, setConnectionStatus } from '@/store/slices/appSlice';
 import { socketService } from '@/services/socket';

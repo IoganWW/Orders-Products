@@ -1,3 +1,4 @@
+// client/src/services/socket.ts
 import { io, Socket } from 'socket.io-client';
 
 class SocketService {
@@ -10,6 +11,9 @@ class SocketService {
       return this.socket;
     }
 
+    // Получаем токен из localStorage для авторизации
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
     // Создаем новое соединение только если его нет
     if (!this.socket) {
       this.socket = io(this.serverUrl, {
@@ -19,9 +23,12 @@ class SocketService {
         reconnection: true,
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
+        auth: {
+          token: token // Передаем токен для авторизации сессий
+        }
       });
 
-      console.log('New socket connection created');
+      console.log('New socket connection created with auth token:', !!token);
     }
 
     return this.socket;
@@ -46,6 +53,3 @@ class SocketService {
 
 // Экспортируем единственный экземпляр
 export const socketService = new SocketService();
-
-
-

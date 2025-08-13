@@ -9,6 +9,9 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
+// Флаг для предотвращения множественных уведомлений
+let isLogoutInProgress = false;
+
 // Добавляем interceptor для автоматического добавления токена
 api.interceptors.request.use(
   (config) => {
@@ -41,22 +44,35 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Если получили 401 или 403 ошибку - токен недействителен
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    // Если получили 401 или 403 ошибку и logout еще не в процессе
+    if (error.response && 
+        (error.response.status === 401 || error.response.status === 403) &&
+        !isLogoutInProgress) {
+      
+      // Устанавливаем флаг, что logout в процессе
+      isLogoutInProgress = true;
+      
+      console.log('Authentication failed, logging out...');
+      
       // Очищаем localStorage
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
       
-      // Уведомляем пользователя
+      // Уведомляем пользователя ОДИН раз
       const errorEvent = new CustomEvent('showNotification', {
         detail: { 
-          type: 'error', 
+          type: 'warning', 
           message: 'Сессия истекла. Войдите в систему заново.' 
         }
       });
       window.dispatchEvent(errorEvent);
+      
+      // Сбрасываем флаг через небольшой тайм-аут, чтобы избежать спама
+      setTimeout(() => {
+        isLogoutInProgress = false;
+      }, 2000);
       
       // Можно также отправить action для обновления состояния Redux
       // store.dispatch(logoutUser());

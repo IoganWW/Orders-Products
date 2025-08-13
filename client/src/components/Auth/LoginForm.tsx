@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store';
 import { loginUser } from '@/store/slices/authSlice';
 import FormField from '@/components/UI/FormField';
@@ -14,6 +15,7 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initialValues = {
@@ -68,12 +70,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       await dispatch(loginUser(values)).unwrap();
       
       const successEvent = new CustomEvent('showNotification', {
-        detail: { type: 'success', message: 'Успешный вход в систему!' }
+        detail: { type: 'success', message: 'Добро пожаловать в систему!' }
       });
       window.dispatchEvent(successEvent);
       
       resetForm();
       onSuccess();
+      
+      // Редирект на страницу Orders после успешного входа
+      router.push('/orders');
       
     } catch (error: any) {
       console.error('Login error:', error);
