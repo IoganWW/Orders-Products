@@ -111,6 +111,17 @@ class Database {
   }
 
   // ================== USERS ==================
+  async getAllUsers() {
+    try {
+      const [rows] = await this.pool.execute(
+        'SELECT id, name, email, role, created_at, updated_at FROM users ORDER BY created_at DESC'
+      );
+      return rows;
+    } catch (error) {
+      console.error('Error fetching all users:', error);
+      throw error;
+    }
+  }
 
   async getUserByEmail(email) {
     try {

@@ -1,0 +1,43 @@
+# ==== Чувствительные файлы ====
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ==== Папки с приватными данными ====
+/secrets
+/credentials
+
+# ==== Node.js служебные папки ====
+/node_modules
+/.pnpm-store
+/.yarn
+/.yarn-cache
+
+# ==== Сборка и кэш ====
+/dist
+/build
+/.next
+/out
+/.cache
+/tmp
+
+# ==== Логи ====
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# ==== IDE файлы ====
+.vscode
+.idea
+
+# ==== Тестовые снапшоты ====
+/__snapshots__
+
+# ==== Разное ====
+.DS_Store
+Thumbs.db

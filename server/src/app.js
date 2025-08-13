@@ -250,6 +250,17 @@ setInterval(async () => {
   }
 }, (parseInt(process.env.SESSION_CLEANUP_INTERVAL) || 5) * 60 * 1000);
 
+// Users API
+app.get('/api/users', authenticateToken, async (req, res) => {
+  try {
+    const users = await db.getAllUsers();
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
 // API роуты с защитой авторизации
 app.get('/api/health', async (req, res) => {
   try {

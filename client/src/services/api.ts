@@ -90,4 +90,35 @@ api.interceptors.response.use(
   }
 );
 
+// API методы
+export const fetchUsers = async () => {
+  try {
+    const response = await api.get('/api/users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw error;
+  }
+};
+
+export const fetchOrders = async () => {
+  try {
+    const response = await api.get('/api/orders');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    throw error;
+  }
+};
+
+export const fetchProducts = async () => {
+  try {
+    const response = await api.get('/api/products');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw error;
+  }
+};
+
 export default api;
