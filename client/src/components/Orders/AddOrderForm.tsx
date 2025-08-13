@@ -7,7 +7,6 @@ import { fetchOrders } from '@/store/slices/ordersSlice';
 import FormField from '@/components/UI/FormField';
 import Portal from '@/components/UI/Portal';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
-import styles from './Forms.module.css';
 
 interface AddOrderFormProps {
   show: boolean;
@@ -68,11 +67,11 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
     setIsSubmitting(true);
     
     try {
-      // Имитируем API запрос
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(values),
       });

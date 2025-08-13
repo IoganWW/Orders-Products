@@ -19,13 +19,18 @@ class Database {
       password: process.env.DB_PASSWORD || '',
       database: process.env.DB_NAME || 'orders_products',
       waitForConnections: true,
-      connectionLimit: 10,
+      connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
       queueLimit: 0,
       charset: 'utf8mb4',
       // Важные настройки для Docker
       acquireTimeout: 60000,
       timeout: 60000,
-      reconnect: true
+      reconnect: true,
+      // Дополнительные настройки безопасности
+      multipleStatements: false,
+      dateStrings: false,
+      supportBigNumbers: true,
+      bigNumberStrings: false
     });
 
     return this.pool;
@@ -97,12 +102,102 @@ class Database {
           return false;
         }
         
-        console.log(`⏸️  Waiting ${delay/1000}s before retry...`);
+        console.log(`⏸️ Waiting ${delay/1000}s before retry...`);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
     
     return false;
+  }
+
+  // ================== USERS ==================
+
+  async getUserByEmail(email) {
+    try {
+      const [users] = await this.pool.execute(
+        'SELECT id, name, email, password, role, created_at, updated_at FROM users WHERE email = ?',
+        [email]
+      );
+      return users.length > 0 ? users[0] : null;
+    } catch (error) {
+      console.error('Error fetching user by email:', error);
+      throw error;
+    }
+  }
+
+  async getUserById(userId) {
+    try {
+      const [users] = await this.pool.execute(
+        'SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = ?',
+        [userId]
+      );
+      return users.length > 0 ? users[0] : null;
+    } catch (error) {
+      console.error('Error fetching user by ID:', error);
+      throw error;
+    }
+  }
+
+  async createUser({ name, email, password, role = 'user' }) {
+    try {
+      const [result] = await this.pool.execute(
+        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+        [name, email, password, role]
+      );
+
+      return await this.getUserById(result.insertId);
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
+  }
+
+  async updateUser(userId, updateData) {
+    try {
+      const allowedFields = ['name', 'email', 'password', 'role'];
+      const updates = [];
+      const values = [];
+
+      Object.keys(updateData).forEach(key => {
+        if (allowedFields.includes(key) && updateData[key] !== undefined) {
+          updates.push(`${key} = ?`);
+          values.push(updateData[key]);
+        }
+      });
+
+      if (updates.length === 0) {
+        throw new Error('No valid fields to update');
+      }
+
+      values.push(userId);
+
+      const [result] = await this.pool.execute(
+        `UPDATE users SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        values
+      );
+
+      if (result.affectedRows === 0) {
+        return null;
+      }
+
+      return await this.getUserById(userId);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw error;
+    }
+  }
+
+  async deleteUser(userId) {
+    try {
+      const [result] = await this.pool.execute(
+        'DELETE FROM users WHERE id = ?',
+        [userId]
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw error;
+    }
   }
 
   // ================== SESSIONS ==================
@@ -144,6 +239,19 @@ class Database {
       return rows[0].count;
     } catch (error) {
       console.error('Error getting sessions count:', error);
+      throw error;
+    }
+  }
+
+  async getActiveSessionsByUserId(userId) {
+    try {
+      const [rows] = await this.pool.execute(
+        'SELECT session_id, ip_address, user_agent, created_at, updated_at FROM user_sessions WHERE user_id = ? AND is_active = 1',
+        [userId]
+      );
+      return rows;
+    } catch (error) {
+      console.error('Error getting user sessions:', error);
       throw error;
     }
   }
@@ -217,6 +325,24 @@ class Database {
       return await this.getOrderById(result.insertId);
     } catch (error) {
       console.error('Error creating order:', error);
+      throw error;
+    }
+  }
+
+  async updateOrder(orderId, { title, description, date }) {
+    try {
+      const [result] = await this.pool.execute(
+        'UPDATE orders SET title = ?, description = ?, date = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [title, description, date, orderId]
+      );
+
+      if (result.affectedRows === 0) {
+        return null;
+      }
+
+      return await this.getOrderById(orderId);
+    } catch (error) {
+      console.error('Error updating order:', error);
       throw error;
     }
   }
@@ -359,6 +485,16 @@ class Database {
 
   async createProduct(productData) {
     return await this.transaction(async (connection) => {
+      // Проверяем уникальность серийного номера
+      const [existing] = await connection.execute(
+        'SELECT id FROM products WHERE serial_number = ?',
+        [productData.serialNumber]
+      );
+
+      if (existing.length > 0) {
+        throw new Error(`Product with serial number ${productData.serialNumber} already exists`);
+      }
+
       const [result] = await connection.execute(`
         INSERT INTO products 
         (serial_number, is_new, photo, title, type, specification, guarantee_start, guarantee_end, order_id, date) 
@@ -366,7 +502,7 @@ class Database {
       `, [
         productData.serialNumber,
         productData.isNew,
-        productData.photo,
+        productData.photo || 'pathToFile.jpg',
         productData.title,
         productData.type,
         productData.specification,
@@ -382,7 +518,93 @@ class Database {
         for (let priceData of productData.price) {
           await connection.execute(
             'INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)',
-            [productId, priceData.value, priceData.symbol, priceData.isDefault]
+            [productId, priceData.value, priceData.symbol, priceData.isDefault || 0]
+          );
+        }
+      }
+
+      return await this.getProductById(productId);
+    });
+  }
+
+  async updateProduct(productId, productData) {
+    return await this.transaction(async (connection) => {
+      // Проверяем существование продукта
+      const [existing] = await connection.execute(
+        'SELECT id FROM products WHERE id = ?',
+        [productId]
+      );
+
+      if (existing.length === 0) {
+        throw new Error(`Product with ID ${productId} not found`);
+      }
+
+      // Если обновляется серийный номер, проверяем уникальность
+      if (productData.serialNumber) {
+        const [duplicate] = await connection.execute(
+          'SELECT id FROM products WHERE serial_number = ? AND id != ?',
+          [productData.serialNumber, productId]
+        );
+
+        if (duplicate.length > 0) {
+          throw new Error(`Product with serial number ${productData.serialNumber} already exists`);
+        }
+      }
+
+      // Обновляем основные данные продукта
+      const updateFields = [];
+      const updateValues = [];
+
+      const allowedFields = {
+        'serialNumber': 'serial_number',
+        'isNew': 'is_new',
+        'photo': 'photo',
+        'title': 'title',
+        'type': 'type',
+        'specification': 'specification',
+        'order': 'order_id',
+        'date': 'date'
+      };
+
+      Object.keys(allowedFields).forEach(key => {
+        if (productData[key] !== undefined) {
+          updateFields.push(`${allowedFields[key]} = ?`);
+          updateValues.push(productData[key]);
+        }
+      });
+
+      if (productData.guarantee) {
+        if (productData.guarantee.start) {
+          updateFields.push('guarantee_start = ?');
+          updateValues.push(productData.guarantee.start);
+        }
+        if (productData.guarantee.end) {
+          updateFields.push('guarantee_end = ?');
+          updateValues.push(productData.guarantee.end);
+        }
+      }
+
+      if (updateFields.length > 0) {
+        updateValues.push(productId);
+        await connection.execute(
+          `UPDATE products SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+          updateValues
+        );
+      }
+
+      // Обновляем цены если переданы
+      if (productData.price && Array.isArray(productData.price)) {
+        // Удаляем старые цены
+        await connection.execute(
+          'DELETE FROM product_prices WHERE product_id = ?',
+          [productId]
+        );
+
+        // Добавляем новые цены
+        for (let priceData of productData.price) {
+          await connection.execute(
+            'INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)',
+            [productId, priceData.value, priceData.symbol, priceData.isDefault || 0]
           );
         }
       }
@@ -425,6 +647,41 @@ class Database {
     }
   }
 
+  // ================== REFERENCE DATA ==================
+
+  async getProductTypes() {
+    try {
+      // Возвращаем типы из ENUM в схеме
+      const types = [
+        { value: 'Monitors', label: 'Мониторы' },
+        { value: 'Laptops', label: 'Ноутбуки' },
+        { value: 'Keyboards', label: 'Клавиатуры' },
+        { value: 'Phones', label: 'Телефоны' },
+        { value: 'Tablets', label: 'Планшеты' }
+      ];
+      return types;
+    } catch (error) {
+      console.error('Error fetching product types:', error);
+      throw error;
+    }
+  }
+
+  async getCurrencies() {
+    try {
+      // Возвращаем основные валюты
+      const currencies = [
+        { symbol: 'USD', name: 'US Dollar' },
+        { symbol: 'EUR', name: 'Euro' },
+        { symbol: 'UAH', name: 'Ukrainian Hryvnia' },
+        { symbol: 'RUB', name: 'Russian Ruble' }
+      ];
+      return currencies;
+    } catch (error) {
+      console.error('Error fetching currencies:', error);
+      throw error;
+    }
+  }
+
   // Создать таблицу user_sessions если не существует
   async createUserSessionsTable() {
     try {
@@ -439,13 +696,37 @@ class Database {
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           INDEX idx_session_id (session_id),
-          INDEX idx_user_id (user_id)
+          INDEX idx_user_id (user_id),
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
       `);
       console.log('✅ user_sessions table created/verified');
       return true;
     } catch (error) {
       console.error('❌ Error creating user_sessions table:', error);
+      return false;
+    }
+  }
+
+  // Создать индексы для оптимизации
+  async createOptimizationIndexes() {
+    try {
+      const indexes = [
+        'CREATE INDEX IF NOT EXISTS idx_products_type ON products(type)',
+        'CREATE INDEX IF NOT EXISTS idx_products_date ON products(date)',
+        'CREATE INDEX IF NOT EXISTS idx_orders_date ON orders(date)',
+        'CREATE INDEX IF NOT EXISTS idx_user_sessions_updated ON user_sessions(updated_at)',
+        'CREATE INDEX IF NOT EXISTS idx_product_prices_default ON product_prices(is_default)'
+      ];
+
+      for (const indexSql of indexes) {
+        await this.query(indexSql);
+      }
+
+      console.log('✅ Optimization indexes created/verified');
+      return true;
+    } catch (error) {
+      console.error('❌ Error creating indexes:', error);
       return false;
     }
   }
@@ -457,10 +738,13 @@ class Database {
     const isConnected = await this.testConnection(15, 3000);
     
     if (isConnected) {
-      console.log('🗄️  Database initialized successfully');
+      console.log('🗄️ Database initialized successfully');
       
       // Создаем таблицу сессий если не существует
       await this.createUserSessionsTable();
+      
+      // Создаем индексы для оптимизации
+      await this.createOptimizationIndexes();
       
       // Теперь можно безопасно очистить старые сессии
       await this.cleanupOldSessions(30);
@@ -469,6 +753,30 @@ class Database {
     }
     
     return isConnected;
+  }
+
+  // Метод для получения статистики БД
+  async getDatabaseStats() {
+    try {
+      const stats = {};
+      
+      const [orderCount] = await this.pool.execute('SELECT COUNT(*) as count FROM orders');
+      stats.orders = orderCount[0].count;
+      
+      const [productCount] = await this.pool.execute('SELECT COUNT(*) as count FROM products');
+      stats.products = productCount[0].count;
+      
+      const [userCount] = await this.pool.execute('SELECT COUNT(*) as count FROM users');
+      stats.users = userCount[0].count;
+      
+      const [sessionCount] = await this.pool.execute('SELECT COUNT(*) as count FROM user_sessions WHERE is_active = 1');
+      stats.activeSessions = sessionCount[0].count;
+      
+      return stats;
+    } catch (error) {
+      console.error('Error fetching database stats:', error);
+      throw error;
+    }
   }
 }
 

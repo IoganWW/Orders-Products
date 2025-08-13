@@ -1,23 +1,30 @@
+// client/src/store/slices/productsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ProductsState, ProductType } from '@/types/products';
-import axios from 'axios';
+import api from '@/services/api'; // Используем api вместо axios
 
-const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
-
-// Async thunks
+// Async thunks - обновляем для использования api interceptor
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async () => {
-    const response = await axios.get(`${API_URL}/api/products`);
-    return response.data;
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/api/products');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch products');
+    }
   }
 );
 
 export const deleteProduct = createAsyncThunk(
   'products/deleteProduct',
-  async (productId: number) => {
-    await axios.delete(`${API_URL}/api/products/${productId}`);
-    return productId;
+  async (productId: number, { rejectWithValue }) => {
+    try {
+      await api.delete(`/api/products/${productId}`);
+      return productId;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to delete product');
+    }
   }
 );
 
@@ -70,7 +77,7 @@ const productsSlice = createSlice({
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch products';
+        state.error = action.payload as string || action.error.message || 'Failed to fetch products';
       })
       // Delete product
       .addCase(deleteProduct.pending, (state) => {
@@ -85,7 +92,7 @@ const productsSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to delete product';
+        state.error = action.payload as string || action.error.message || 'Failed to delete product';
       });
   },
 });

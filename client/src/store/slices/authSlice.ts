@@ -1,11 +1,12 @@
 // client/src/store/slices/authSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AuthState, LoginCredentials, User } from '@/types/auth';
-import axios from 'axios';
+import axios from 'axios'; // Обычный axios для login (без токена)
+import api from '@/services/api'; // API interceptor для защищенных запросов
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
 
-// Async thunks
+// Login не требует токена, используем обычный axios
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
@@ -51,6 +52,19 @@ export const initializeAuth = createAsyncThunk(
       }
     }
     return null;
+  }
+);
+
+// Проверяем текущего пользователя через защищенный endpoint
+export const getCurrentUser = createAsyncThunk(
+  'auth/getCurrentUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/api/auth/me');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to get user data');
+    }
   }
 );
 
@@ -114,6 +128,10 @@ const authSlice = createSlice({
         state.token = null;
         state.isAuthenticated = false;
         state.loading = false;
+      })
+      // Get current user
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.user = action.payload.user;
       });
   },
 });

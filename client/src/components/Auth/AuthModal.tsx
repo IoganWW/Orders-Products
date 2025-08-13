@@ -1,3 +1,4 @@
+// client/src/components/Auth/AuthModal.tsx
 'use client';
 
 import React, { useState } from 'react';

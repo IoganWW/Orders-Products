@@ -1,24 +1,30 @@
 // client/src/store/slices/ordersSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { OrdersState, Order } from '@/types/orders';
-import axios from 'axios';
+import api from '@/services/api';
 
-const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
-
-// Async thunks
+// Async thunks - используем api вместо axios
 export const fetchOrders = createAsyncThunk(
   'orders/fetchOrders',
-  async () => {
-    const response = await axios.get(`${API_URL}/api/orders`);
-    return response.data;
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/api/orders');
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch orders');
+    }
   }
 );
 
 export const deleteOrder = createAsyncThunk(
   'orders/deleteOrder',
-  async (orderId: number) => {
-    await axios.delete(`${API_URL}/api/orders/${orderId}`);
-    return orderId;
+  async (orderId: number, { rejectWithValue }) => {
+    try {
+      await api.delete(`/api/orders/${orderId}`);
+      return orderId;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to delete order');
+    }
   }
 );
 

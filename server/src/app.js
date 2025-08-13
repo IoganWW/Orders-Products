@@ -22,17 +22,7 @@ app.use(cors());
 app.use(express.json());
 
 // JWT Secret (в продакшене должен быть в .env)
-const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_here';
-
-// Временная база пользователей (в продакшене использовать настоящую БД)
-const users = [
-  {
-    id: 1,
-    name: 'Администратор Системы',
-    email: 'admin@test.com',
-    password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' // password
-  }
-];
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware для проверки JWT токена
 const authenticateToken = (req, res, next) => {
@@ -58,7 +48,8 @@ const generateToken = (user) => {
     { 
       id: user.id, 
       email: user.email,
-      name: user.name 
+      name: user.name,
+      role: user.role 
     },
     JWT_SECRET,
     { expiresIn: '24h' }
@@ -83,8 +74,8 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ error: 'Пароль должен содержать буквы и цифры' });
     }
 
-    // Проверяем, существует ли пользователь
-    const existingUser = users.find(u => u.email === email);
+    // Проверяем, существует ли пользователь в БД
+    const existingUser = await db.getUserByEmail(email);
     if (existingUser) {
       return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
     }
@@ -92,15 +83,13 @@ app.post('/api/auth/register', async (req, res) => {
     // Хешируем пароль
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Создаем нового пользователя
-    const newUser = {
-      id: users.length + 1,
+    // Создаем нового пользователя в БД
+    const newUser = await db.createUser({
       name,
       email,
-      password: hashedPassword
-    };
-
-    users.push(newUser);
+      password: hashedPassword,
+      role: 'user'
+    });
 
     // Генерируем токен
     const token = generateToken(newUser);
@@ -111,7 +100,8 @@ app.post('/api/auth/register', async (req, res) => {
       user: {
         id: newUser.id,
         name: newUser.name,
-        email: newUser.email
+        email: newUser.email,
+        role: newUser.role
       }
     });
 
@@ -130,8 +120,8 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Email и пароль обязательны' });
     }
 
-    // Ищем пользователя
-    const user = users.find(u => u.email === email);
+    // Ищем пользователя в БД
+    const user = await db.getUserByEmail(email);
     if (!user) {
       return res.status(400).json({ error: 'Пользователь с таким email не найден' });
     }
@@ -151,7 +141,8 @@ app.post('/api/auth/login', async (req, res) => {
       user: {
         id: user.id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     });
 
@@ -162,25 +153,51 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Защищенный роут для проверки токена
-app.get('/api/auth/me', authenticateToken, (req, res) => {
-  res.json({
-    user: {
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email
+app.get('/api/auth/me', authenticateToken, async (req, res) => {
+  try {
+    // Получаем актуальные данные пользователя из БД
+    const user = await db.getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: 'Пользователь не найден' });
     }
-  });
+
+    res.json({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
 });
 
-// Socket.io обработчики с БД
+// Socket.io обработчики с авторизацией
 io.on('connection', async (socket) => {
   console.log('Client connected:', socket.id);
   
   try {
+    // Пытаемся получить userId из токена
+    let userId = null;
+    const token = socket.handshake.auth?.token;
+    
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        userId = decoded.id;
+        console.log(`Authenticated user ${userId} connected`);
+      } catch (err) {
+        console.log('Invalid token for socket connection');
+      }
+    }
+
     // Добавляем сессию в БД
     await db.addActiveSession(
       socket.id, 
-      null, // userId - пока null, позже добавим авторизацию
+      userId,
       socket.handshake.address,
       socket.handshake.headers['user-agent']
     );
@@ -233,7 +250,7 @@ setInterval(async () => {
   }
 }, (parseInt(process.env.SESSION_CLEANUP_INTERVAL) || 5) * 60 * 1000);
 
-// API роуты с БД
+// API роуты с защитой авторизации
 app.get('/api/health', async (req, res) => {
   try {
     const sessionCount = await db.getActiveSessionsCount();
@@ -252,8 +269,8 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// Orders API
-app.get('/api/orders', async (req, res) => {
+// ЗАЩИЩЕННЫЕ Orders API
+app.get('/api/orders', authenticateToken, async (req, res) => {
   try {
     const orders = await db.getAllOrders();
     res.json(orders);
@@ -263,7 +280,7 @@ app.get('/api/orders', async (req, res) => {
   }
 });
 
-app.post('/api/orders', async (req, res) => {
+app.post('/api/orders', authenticateToken, async (req, res) => {
   try {
     const { title, description, date } = req.body;
     
@@ -279,7 +296,7 @@ app.post('/api/orders', async (req, res) => {
   }
 });
 
-app.get('/api/orders/:id', async (req, res) => {
+app.get('/api/orders/:id', authenticateToken, async (req, res) => {
   try {
     const orderId = parseInt(req.params.id);
     const order = await db.getOrderById(orderId);
@@ -295,7 +312,7 @@ app.get('/api/orders/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/orders/:id', async (req, res) => {
+app.delete('/api/orders/:id', authenticateToken, async (req, res) => {
   try {
     const orderId = parseInt(req.params.id);
     
@@ -315,8 +332,8 @@ app.delete('/api/orders/:id', async (req, res) => {
   }
 });
 
-// Products API
-app.get('/api/products', async (req, res) => {
+// ЗАЩИЩЕННЫЕ Products API
+app.get('/api/products', authenticateToken, async (req, res) => {
   try {
     const products = await db.getAllProducts();
     res.json(products);
@@ -326,7 +343,7 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
-app.post('/api/products', async (req, res) => {
+app.post('/api/products', authenticateToken, async (req, res) => {
   try {
     const productData = req.body;
     console.log('Creating product:', productData);
@@ -345,7 +362,7 @@ app.post('/api/products', async (req, res) => {
   }
 });
 
-app.delete('/api/products/:id', async (req, res) => {
+app.delete('/api/products/:id', authenticateToken, async (req, res) => {
   try {
     const productId = parseInt(req.params.id);
     
@@ -365,7 +382,7 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
-app.put('/api/products/:id', async (req, res) => {
+app.put('/api/products/:id', authenticateToken, async (req, res) => {
   try {
     const productId = parseInt(req.params.id);
     
@@ -377,8 +394,8 @@ app.put('/api/products/:id', async (req, res) => {
   }
 });
 
-// Дополнительные API endpoints
-app.get('/api/product-types', async (req, res) => {
+// Дополнительные защищенные API endpoints
+app.get('/api/product-types', authenticateToken, async (req, res) => {
   try {
     const types = await db.getProductTypes();
     res.json(types);
@@ -388,7 +405,7 @@ app.get('/api/product-types', async (req, res) => {
   }
 });
 
-app.get('/api/currencies', async (req, res) => {
+app.get('/api/currencies', authenticateToken, async (req, res) => {
   try {
     const currencies = await db.getCurrencies();
     res.json(currencies);
@@ -412,11 +429,11 @@ const startServer = async () => {
     }
 
     server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`Socket.io server ready`);
-      console.log(`Database: ${process.env.DB_NAME || 'orders_products'}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`JWT Auth: enabled`);
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📡 Socket.io server ready`);
+      console.log(`🗄️  Database: ${process.env.DB_NAME || 'orders_products'}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🔐 JWT Auth: enabled`);
     });
 
   } catch (error) {
