@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const db = require('./services/database');
 require('dotenv').config();
 
@@ -18,6 +20,157 @@ const io = new Server(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// JWT Secret (в продакшене должен быть в .env)
+const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_jwt_key_here';
+
+// Временная база пользователей (в продакшене использовать настоящую БД)
+const users = [
+  {
+    id: 1,
+    name: 'Администратор Системы',
+    email: 'admin@test.com',
+    password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' // password
+  }
+];
+
+// Middleware для проверки JWT токена
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+// Функция генерации JWT токена
+const generateToken = (user) => {
+  return jwt.sign(
+    { 
+      id: user.id, 
+      email: user.email,
+      name: user.name 
+    },
+    JWT_SECRET,
+    { expiresIn: '24h' }
+  );
+};
+
+// AUTH ROUTES
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Валидация
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Пароль должен содержать минимум 6 символов' });
+    }
+
+    if (!/(?=.*[a-zA-Z])(?=.*\d)/.test(password)) {
+      return res.status(400).json({ error: 'Пароль должен содержать буквы и цифры' });
+    }
+
+    // Проверяем, существует ли пользователь
+    const existingUser = users.find(u => u.email === email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'Пользователь с таким email уже существует' });
+    }
+
+    // Хешируем пароль
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Создаем нового пользователя
+    const newUser = {
+      id: users.length + 1,
+      name,
+      email,
+      password: hashedPassword
+    };
+
+    users.push(newUser);
+
+    // Генерируем токен
+    const token = generateToken(newUser);
+
+    res.status(201).json({
+      message: 'Пользователь успешно зарегистрирован',
+      token,
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email
+      }
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Ошибка сервера при регистрации' });
+  }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Валидация
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email и пароль обязательны' });
+    }
+
+    // Ищем пользователя
+    const user = users.find(u => u.email === email);
+    if (!user) {
+      return res.status(400).json({ error: 'Пользователь с таким email не найден' });
+    }
+
+    // Проверяем пароль
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(400).json({ error: 'Неверный пароль' });
+    }
+
+    // Генерируем токен
+    const token = generateToken(user);
+
+    res.json({
+      message: 'Успешный вход в систему',
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Ошибка сервера при входе' });
+  }
+});
+
+// Защищенный роут для проверки токена
+app.get('/api/auth/me', authenticateToken, (req, res) => {
+  res.json({
+    user: {
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email
+    }
+  });
+});
 
 // Socket.io обработчики с БД
 io.on('connection', async (socket) => {
@@ -259,10 +412,11 @@ const startServer = async () => {
     }
 
     server.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📡 Socket.io server ready`);
-      console.log(`🗄️  Database: ${process.env.DB_NAME || 'orders_products'}`);
-      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Server running on port ${PORT}`);
+      console.log(`Socket.io server ready`);
+      console.log(`Database: ${process.env.DB_NAME || 'orders_products'}`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`JWT Auth: enabled`);
     });
 
   } catch (error) {

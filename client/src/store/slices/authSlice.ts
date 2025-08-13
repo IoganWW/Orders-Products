@@ -15,11 +15,12 @@ export const loginUser = createAsyncThunk(
       // Сохраняем токен в localStorage
       if (typeof window !== 'undefined') {
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       }
       
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Login failed');
+      return rejectWithValue(error.response?.data?.error || 'Login failed');
     }
   }
 );
@@ -30,7 +31,26 @@ export const logoutUser = createAsyncThunk(
     // Удаляем токен из localStorage
     if (typeof window !== 'undefined') {
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
+  }
+);
+
+export const initializeAuth = createAsyncThunk(
+  'auth/initializeAuth',
+  async () => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      
+      if (token && userData) {
+        return {
+          token,
+          user: JSON.parse(userData)
+        };
+      }
+    }
+    return null;
   }
 );
 
@@ -38,7 +58,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  loading: false,
+  loading: true, // Начинаем с loading true для инициализации
   error: null,
 };
 
@@ -53,10 +73,26 @@ const authSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isAuthenticated = true;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
     builder
+      // Initialize auth
+      .addCase(initializeAuth.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(initializeAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload) {
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.isAuthenticated = true;
+        }
+      })
+      .addCase(initializeAuth.rejected, (state) => {
+        state.loading = false;
+      })
       // Login
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
@@ -77,6 +113,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        state.loading = false;
       });
   },
 });

@@ -1,0 +1,159 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useAppDispatch } from '@/store';
+import { loginUser } from '@/store/slices/authSlice';
+import FormField from '@/components/UI/FormField';
+import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
+import styles from './Auth.module.css';
+
+interface LoginFormProps {
+  onSuccess: () => void;
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
+  const dispatch = useAppDispatch();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const initialValues = {
+    email: '',
+    password: '',
+  };
+
+  const validationConfig: FieldConfig = {
+    email: {
+      required: true,
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      custom: (value) => {
+        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          return 'Введите корректный email адрес';
+        }
+        return null;
+      }
+    },
+    password: {
+      required: true,
+      minLength: 6,
+      custom: (value) => {
+        if (value && value.length < 6) {
+          return 'Пароль должен содержать минимум 6 символов';
+        }
+        return null;
+      }
+    }
+  };
+
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    validateForm,
+    resetForm,
+    setFieldError
+  } = useFormValidation(initialValues, validationConfig);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      await dispatch(loginUser(values)).unwrap();
+      
+      const successEvent = new CustomEvent('showNotification', {
+        detail: { type: 'success', message: 'Успешный вход в систему!' }
+      });
+      window.dispatchEvent(successEvent);
+      
+      resetForm();
+      onSuccess();
+      
+    } catch (error: any) {
+      console.error('Login error:', error);
+      
+      // Устанавливаем ошибку для конкретного поля или общую ошибку
+      if (error.includes('email')) {
+        setFieldError('email', 'Пользователь с таким email не найден');
+      } else if (error.includes('password')) {
+        setFieldError('password', 'Неверный пароль');
+      } else {
+        const errorEvent = new CustomEvent('showNotification', {
+          detail: { type: 'error', message: error || 'Ошибка при входе в систему' }
+        });
+        window.dispatchEvent(errorEvent);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className={`${styles.authForm} auth-form`}>
+      <div className="text-center mb-4">
+        <i className="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
+        <h6 className="text-muted">Войдите в свой аккаунт</h6>
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <FormField
+          label="Email"
+          name="email"
+          type="email"
+          value={values.email}
+          error={errors.email}
+          touched={touched.email}
+          placeholder="example@company.com"
+          required
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+
+        <FormField
+          label="Пароль"
+          name="password"
+          type="password"
+          value={values.password}
+          error={errors.password}
+          touched={touched.password}
+          placeholder="Введите пароль"
+          required
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+
+        <button
+          type="submit"
+          className="btn btn-primary w-100 py-2 mt-3"
+          disabled={isSubmitting}
+          style={{ borderRadius: '8px', fontWeight: '500' }}
+        >
+          {isSubmitting ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" />
+              Вход...
+            </>
+          ) : (
+            <>
+              <i className="fas fa-sign-in-alt me-2"></i>
+              Войти
+            </>
+          )}
+        </button>
+
+        <div className="text-center mt-3">
+          <small className="text-muted">
+            Для тестирования используйте: admin@test.com / password
+          </small>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default LoginForm;

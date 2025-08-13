@@ -126,12 +126,19 @@
   width: 180px;
   display: flex;
   flex-direction: column;
-  padding-top: 150px;
+  padding-top: 50px;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
   position: relative;
   z-index: 100;
+}
+
+.sidebarAuth {
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8f9fa;
+  margin-bottom: 1rem;
 }
 
 .sidebarNav {
