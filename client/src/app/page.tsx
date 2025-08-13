@@ -62,7 +62,7 @@ export default function HomePage() {
             <div className="d-flex flex-wrap gap-3 justify-content-start statistics-blocks">
               <div className="bg-white rounded px-3 py-2 border">
                 <span className="text-muted small me-2">Приходы:</span>
-                <span className="fw-bold">{orders.length}</span>
+                <span className="fw-bold">{isAuthenticated ? orders.length : '—'}</span>
                 <Link href="/orders" className="btn btn-sm btn-outline-primary ms-2">
                   Управление
                 </Link>
@@ -70,7 +70,7 @@ export default function HomePage() {
               
               <div className="bg-white rounded px-3 py-2 border">
                 <span className="text-muted small me-2">Продукты:</span>
-                <span className="fw-bold">{products.length}</span>
+                <span className="fw-bold">{isAuthenticated ? products.length : '—'}</span>
                 <span className="text-muted small ms-2">(Новых: {newProductsCount}, Б/у: {usedProductsCount})</span>
                 <Link href="/products" className="btn btn-sm btn-outline-success ms-2">
                   Каталог

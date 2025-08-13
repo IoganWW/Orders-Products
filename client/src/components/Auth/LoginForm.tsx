@@ -78,7 +78,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       onSuccess();
       
       // Редирект на страницу Orders после успешного входа
-      router.push('/orders');
+      router.push('/');
       
     } catch (error: any) {
       console.error('Login error:', error);
@@ -151,12 +151,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             </>
           )}
         </button>
-
-        <div className="text-center mt-3">
-          <small className="text-muted">
-            Для тестирования используйте: admin@test.com / password
-          </small>
-        </div>
       </form>
     </div>
   );
