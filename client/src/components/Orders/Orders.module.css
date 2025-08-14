@@ -1,108 +1,48 @@
-.ordersContainer {
-  padding: 1rem;
-}
-
-/* Заголовок панели заказов */
-.ordersPanelHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgb(246, 235, 235);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 1rem 1.5rem;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 1rem;
-}
-
-.ordersTitle {
-  display: flex;
-  align-items: center;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
 .ordersList {
   min-height: 200px;
 }
 
-.loading {
-  min-height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-/* Order Card - Общая стилизация карточки */
 .orderCard {
-  display: flex;
-  align-items: center;
-  background: white;
-  min-height: 60px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
+  min-height: 70px;
+  max-height: 70px;
   cursor: pointer;
   transition: var(--transition);
-  padding: 5px 20px;
-  position: relative;
 }
 
-.orderCard:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
+.orderCard:hover,
 .orderCard.selected {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
 }
 
-/* Правило: Скрыть заголовок у всех карточек, когда открыта панель деталей */
-.ordersList.ordersList--detail-open .orderCard__titleContainer {
-  display: none;
+/* Скрыть элементы при открытой панели деталей */
+.ordersList.ordersList--detail-open .orderCard .orderCard__titleSection {
+  display: none !important;
 }
 
-/* Новое правило: Скрыть правую секцию (сумму и кнопку удаления) у всех карточек */
-.ordersList.ordersList--detail-open .orderCard__rightSection {
-  display: none;
+/* Переключение между названием и Order ID на мобильных */
+.ordersList.ordersList--detail-open .orderCard .d-lg-none .orderCard__mobileTitle {
+  display: none !important;
 }
 
-/* Левая часть: Название прихода */
-.orderCard__titleContainer {
-  flex-grow: 1; 
-  max-width: 50%;
-  min-width: 200px;
-  padding-right: 15px;
-  transition: all 0.2s ease-in-out;
+.ordersList.ordersList--detail-open .orderCard .d-lg-none .orderCard__mobileOrderId {
+  display: inline !important;
 }
 
-.orderCard__title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /* Обновлено: подчеркивание строго по ширине текста */
-  text-decoration: underline;
-  text-decoration-color: currentColor;
-  text-decoration-thickness: 1px; 
-  text-underline-offset: 2px; 
-  display: inline; 
+/* На экранах менее lg всегда показывать Order ID вместо названия */
+@media (max-width: 991.98px) {
+  .orderCard__mobileTitle {
+    display: none !important;
+  }
+  
+  .orderCard__mobileOrderId {
+    display: inline !important;
+  }
 }
 
-/* Центральная часть: Количество продуктов и дата */
-.orderCard__middleSection {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  justify-content: flex-start;
-  flex-shrink: 0;
-  color: var(--text-primary);
+/* При открытой панели деталей средняя секция займет всю доступную ширину */
+.ordersList.ordersList--detail-open .orderCard__middleSection {
+  flex-grow: 1 !important;
 }
 
 /* Обёртка для иконки */
@@ -111,74 +51,8 @@
   height: 32px;
   border-radius: 50%;
   background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 16px;
-  color: var(--text-primary);
   border: solid 2px #b9bcc3;
-}
-
-/* Новое правило: при открытой панели деталей центральная секция займет всю доступную ширину */
-.ordersList.ordersList--detail-open .orderCard__middleSection {
-  flex-grow: 1;
-}
-
-/* Блок с числом и надписью "Продукта" */
-.orderCard__productsValue {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  font-weight: 500;
-  line-height: 1.1;
-  font-size: 0.85rem;
-  margin-right: 30px;
-}
-
-.orderCard__productsCountNumber {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.orderCard__productsLabel {
-  font-size: 0.75rem;
-  color: var(--text-primary);
-}
-
-.orderCard__date {
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  white-space: nowrap;
-}
-
-/* Правая часть: Суммы и кнопка удаления */
-.orderCard__rightSection {
-  display: flex;
-  align-items: center;
-  gap: 30px; /* Увеличено расстояние между элементами */
-  justify-content: flex-start;
-  flex-shrink: 0;
-  margin-left: auto;
-  transition: all 0.2s ease-in-out; /* Добавим плавность при скрытии */
-}
-
-.orderCard__totals {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  margin-right: 50px;
-}
-
-.orderCard__totalMain {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  display: flex;
-  gap: 0.5rem;
-}
-
-.orderCard__totalSecondary {
-  white-space: nowrap;
-  font-size: 1.1rem;
 }
 
 /* Новый элемент: контейнер для стрелки */
@@ -189,8 +63,6 @@
   height: 100%;
   width: 50px; 
   display: none; 
-  justify-content: center;
-  align-items: center;
   background-color: #f0f0f0;
   border-top-right-radius: var(--border-radius);
   border-bottom-right-radius: var(--border-radius);
@@ -199,7 +71,7 @@
 
 /* Показываем стрелку только для выбранной карточки */
 .orderCard.selected .orderCard__arrowContainer {
-  display: flex;
+  display: flex !important;
 }
 
 .orderCard__arrowIcon {
@@ -214,14 +86,11 @@
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: background-color 0.2s ease;
 }
 
 .orderCard__deleteButton:hover {
-  background-color: #ffebeb;
+  background-color: #ffebeb !important;
 }
 
 .orderCard__deleteIcon {
@@ -232,7 +101,7 @@
 }
 
 .orderCard__deleteButton:hover .orderCard__deleteIcon {
-  color: #e74c3c;
+  color: #e74c3c !important;
 }
 
 /* Order Details - Общий контейнер */
@@ -245,15 +114,14 @@
   height: fit-content;
   max-height: calc(100vh - 80px);
   padding-bottom: 20px;
-  z-index: 1; /* Понижаем z-index, чтобы модалки были поверх */
+  z-index: 1;
 }
 
-/* Переносим эту кнопку ВНЕ orderDetails */
 .orderDetails__closeButton {
   position: absolute;
   top: 0;
   right: 0;
-  transform: translate(50%, -50%); /* Центр кнопки попадает в угол */
+  transform: translate(50%, -50%);
   background: white;
   cursor: pointer;
   padding: 5px;
@@ -279,7 +147,6 @@
   color: var(--text-secondary);
 }
 
-/* Заголовок панели деталей */
 .orderDetails__header {
   position: relative;
   padding: 1rem 1.5rem;
@@ -300,12 +167,10 @@
   color: var(--text-primary);
 }
 
-/* Основное содержимое панели */
 .orderDetails__content {
   padding: 0rem;
 }
 
-/* Кнопка "Добавить продукт" */
 .orderDetails__addProductButton {
   color: #4CAF50;
   padding: 10px 15px;
@@ -313,7 +178,6 @@
   font-weight: 500;
 }
 
-/* Список продуктов */
 .orderDetails__productsList {
   display: flex;
   flex-direction: column;
@@ -328,7 +192,6 @@
   border-radius: var(--border-radius);
 }
 
-/* Отдельный элемент продукта в списке */
 .orderDetails__productItem {
   display: flex;
   align-items: center;
@@ -376,32 +239,27 @@
   white-space: nowrap;
 }
 
-/* Цвета состояний продукта */
 .productCondition__new {
-  background-color: #e6ffe6;
-  color: #28a745;
+  background-color: #e6ffe6 !important;
+  color: #28a745 !important;
 }
 
 .productCondition__used {
-  background-color: #fff3cd;
-  color: #ffc107;
+  background-color: #fff3cd !important;
+  color: #ffc107 !important;
 }
 
 .orderDetails__productDeleteButton {
-  background: none;
-  border: none;
+  background: none !important;
+  border: none !important;
   cursor: pointer;
   padding: 5px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: background-color 0.2s ease;
-  flex-shrink: 0;
 }
 
 .orderDetails__productDeleteButton:hover {
-  background-color: #ffebeb;
+  background-color: #ffebeb !important;
 }
 
 .orderDetails__productDeleteIcon {
@@ -412,88 +270,51 @@
 }
 
 .orderDetails__productDeleteButton:hover .orderDetails__productDeleteIcon {
-  color: #e74c3c;
+  color: #e74c3c !important;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-  .ordersContainer .row {
-    flex-direction: column;
-  }
-
+/* Адаптивность для мобильных устройств */
+@media (max-width: 991.98px) {
   .orderDetails {
     max-height: none;
     position: relative;
-    top: 0;
-    z-index: 1; /* Сохраняем низкий z-index и на мобильных */
+  }
+}
+
+@media (max-width: 767.98px) {
+  .orderDetails__productItem {
+    padding: 15px 10px;
   }
 
+  .orderDetails__productInfo {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 575.98px) {
   .orderDetails__productItem {
+    padding: 10px;
     flex-wrap: wrap;
-    justify-content: center;
     text-align: center;
   }
 
   .orderDetails__productIcon {
+    order: 1;
     margin-bottom: 5px;
   }
 
   .orderDetails__productInfo {
+    order: 2;
     flex-basis: 100%;
-    text-align: center;
   }
 
   .orderDetails__productCondition {
-    margin-top: 10px;
-  }
-
-  .ordersPanelHeader {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-  }
-}
-
-@media (max-width: 900px) {
-  .orderCard {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 15px;
-  }
-
-  .orderCard__titleContainer,
-  .orderCard__middleSection,
-  .orderCard__rightSection {
-    flex-basis: 100%;
-    margin-bottom: 10px;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .orderCard__titleContainer {
-    order: 1;
-  }
-  .orderCard__middleSection {
-    order: 2;
-    gap: 10px;
-  }
-  .orderCard__rightSection {
     order: 3;
-    flex-direction: column;
-    gap: 10px;
+    margin-top: 5px;
   }
-  .orderCard__totals {
-    text-align: center;
-  }
-}
 
-@media (max-width: 500px) {
-  .orderCard__title {
-    font-size: 0.9rem;
-  }
-  .orderCard__productsCount,
-  .orderCard__date,
-  .orderCard__totals {
-    font-size: 0.8rem;
+  .orderDetails__productDeleteButton {
+    order: 4;
+    margin-top: 5px;
   }
 }

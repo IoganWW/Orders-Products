@@ -27,6 +27,7 @@ export const formatDate = (dateString: string) => {
   }
   
   try {
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     return {
       // Формат: 29.06.2017
       short: date.toLocaleDateString('en-GB', {
@@ -45,7 +46,7 @@ export const formatDate = (dateString: string) => {
       // ISO формат для datetime-local input
       iso: date.toISOString().slice(0, 16),
       // Формат: 29 / Июн / 2017 (ваш метод)
-      shortMonStr: `${date.getDate().toString().padStart(2, '0')} / ${date.toLocaleDateString('ru-RU', { month: 'short' })} / ${date.getFullYear()}`
+      shortMonStr: `${date.getDate().toString().padStart(2, '0')} / ${capitalize(date.toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '').slice(0, 3))} / ${date.getFullYear()}`
     };
   } catch (error) {
     console.error('Error formatting date:', dateString, error);

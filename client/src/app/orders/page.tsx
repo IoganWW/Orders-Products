@@ -15,10 +15,10 @@ export default function OrdersPage() {
     <AuthWrapper>
       <div className="page fade-in">
         <div className="page__header px-5">
-          <h1 className="page__title px-3">
+          <h1 className="page__title px-3 d-flex align-items-center">
             <i
-              className="fa-sharp fa-solid fa-circle-plus fa-sm"
-              style={{ color: " #25b01c", cursor: "pointer" }}
+              className="fa-sharp fa-solid fa-circle-plus fa-sm text-success me-2"
+              style={{ cursor: "pointer" }}
               onClick={() => setShowAddForm(true)}
               title="Добавить новый приход"
             ></i>

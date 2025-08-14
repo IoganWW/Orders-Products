@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
     <>
       <aside className={`${styles.sidebar} sidebar`}>
         {/* Блок авторизации */}
-        <div className={`${styles.sidebarAuth} sidebar-auth`}>
+        <div className={`${styles.sidebarAuth} sidebar-auth justify-content-center`}>
           {loading ? (
             <div className={authStyles.loading}>
               <span className="spinner-border spinner-border-sm me-2" />

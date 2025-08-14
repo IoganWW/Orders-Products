@@ -106,27 +106,12 @@
   margin: 0.1rem 0;
 }
 
-.userAvatar {
-  margin-left: 0.5rem;
-}
-
-.userAvatar img {
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.userAvatar img:hover {
-  transform: scale(1.05);
-}
-
 /* Sidebar */
 .sidebar {
   width: 180px;
   display: flex;
   flex-direction: column;
-  padding-top: 50px;
+  padding-top: 30px;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
@@ -135,10 +120,10 @@
 }
 
 .sidebarAuth {
+  height: 150px;
+  width: 150px;
   padding: 1rem;
   border-bottom: 1px solid #e5e7eb;
-  background: #f8f9fa;
-  margin-bottom: 1rem;
 }
 
 .sidebarNav {
@@ -153,7 +138,7 @@
 
 .navItem {
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   margin-left: 0.25rem;
 }
 
