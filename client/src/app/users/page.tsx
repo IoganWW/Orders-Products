@@ -34,7 +34,7 @@ export default function UsersPage() {
       manager: 'Менеджер',
       user: 'Пользователь'
     };
-    return roleConfig[role] || 'Пользователь';
+    return roleConfig[role] || role;
   };
 
   if (loading) {
