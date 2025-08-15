@@ -2,17 +2,18 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import AuthWrapper from '@/components/Auth/AuthWrapper';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchProducts } from '@/store/slices/productsSlice';
-import { 
-  ProductGroup, 
+import {
+  ProductGroup,
   createProductGroups
 } from '@/types/products';
 
 // Компонент статистики
-const GroupsStatistics: React.FC<{ groups: ProductGroup[], totalProducts: number }> = React.memo(({ 
-  groups, 
-  totalProducts 
+const GroupsStatistics: React.FC<{ groups: ProductGroup[], totalProducts: number }> = React.memo(({
+  groups,
+  totalProducts
 }) => (
   <div className="row mb-4">
     <div className="col-12">
@@ -21,12 +22,12 @@ const GroupsStatistics: React.FC<{ groups: ProductGroup[], totalProducts: number
           <span className="text-muted small me-2">Всего групп:</span>
           <span className="fw-bold">{groups.length}</span>
         </div>
-        
+
         <div className="bg-white rounded px-3 py-2 border">
           <span className="text-muted small me-2">Общее количество товаров:</span>
           <span className="fw-bold">{totalProducts}</span>
         </div>
-        
+
         <div className="bg-white rounded px-3 py-2 border">
           <button className="btn btn-sm btn-success border-0">
             <i className="fas fa-plus me-1"></i>
@@ -46,11 +47,11 @@ const ProductGroupCard: React.FC<{ group: ProductGroup }> = React.memo(({ group 
     <div className="bg-white rounded border p-4 h-100">
       <div className="d-flex align-items-start justify-content-between mb-3">
         <div className="d-flex align-items-center">
-          <div 
+          <div
             className="rounded d-flex align-items-center justify-content-center me-3"
-            style={{ 
-              width: '40px', 
-              height: '40px', 
+            style={{
+              width: '40px',
+              height: '40px',
               backgroundColor: '#f8f9fa',
               border: '2px solid #e9ecef'
             }}
@@ -66,9 +67,9 @@ const ProductGroupCard: React.FC<{ group: ProductGroup }> = React.memo(({ group 
           <i className="fas fa-edit"></i>
         </button>
       </div>
-      
+
       <p className="text-muted small mb-3">{group.description}</p>
-      
+
       <div className="d-flex gap-2">
         <button className="btn btn-sm btn-outline-secondary border-0 flex-fill">
           Просмотр
@@ -126,7 +127,7 @@ const EmptyGroupsState: React.FC = React.memo(() => (
 EmptyGroupsState.displayName = 'EmptyGroupsState';
 
 // Основной компонент
-export default function GroupsPage() {
+function GroupsPageContent() {
   const dispatch = useAppDispatch();
   const { products, loading, error } = useAppSelector(state => state.products);
 
@@ -172,5 +173,13 @@ export default function GroupsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GroupsPage() {
+  return (
+    <AuthWrapper>
+      <GroupsPageContent />
+    </AuthWrapper>
   );
 }

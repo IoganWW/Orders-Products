@@ -57,15 +57,8 @@
 
 /* Новый элемент: контейнер для стрелки */
 .orderCard__arrowContainer {
-  position: absolute; 
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 50px; 
-  display: none; 
+  width: 50px;
   background-color: #f0f0f0;
-  border-top-right-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
   transition: all 0.2s ease-in-out;
 }
 
@@ -81,11 +74,6 @@
 }
 
 .orderCard__deleteButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 50%;
   transition: background-color 0.2s ease;
 }
 
@@ -96,7 +84,6 @@
 .orderCard__deleteIcon {
   width: 20px;
   height: 20px;
-  color: var(--text-secondary);
   transition: color 0.2s ease;
 }
 

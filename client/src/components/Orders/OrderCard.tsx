@@ -77,7 +77,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
         </div>
 
         {/* Название и дата на мобильных */}
-        <div className="d-lg-none flex-grow-1 mx-3">
+        <div className="d-lg-none flex-grow-1 ms-5">
           <div className="fw-medium text-dark text-truncate">
             <span className={`${styles.orderCard__mobileOrderId} d-none`}>Order #{order.id}</span>
           </div>
@@ -87,18 +87,17 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
         </div>
 
         {/* Колонка 2: Дата */}
-        <div className="d-flex flex-fill justify-content-start">
+        <div className="d-none d-lg-flex flex-fill justify-content-start ms-4">
           <div className="text-muted small">
             {formattedDate.shortMonStr}
           </div>
         </div>
 
-        {/* Дополнительные колонки только на desktop И когда панель закрыта */}
+        {/* Колонка 3: Суммы */}
         {!isDetailPanelOpen && (
-          <div className="d-none d-lg-flex flex-grow-1 align-items-start">
-            {/* Колонка 3: Суммы */}
-            <div className={`${styles.orderCard__priceColumn} d-flex flex-fill justify-content-start`}>
-              <div className="d-flex flex-column">
+          <div className="d-none d-md-flex flex-grow-1 align-items-start">
+            <div className="d-flex flex-fill justify-content-start">
+              <div className="d-flex flex-column text-start">
                 {totals[1] && (
                   <div className="small text-muted">
                     {totals[1].formatted}
@@ -116,10 +115,10 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
 
         {/* Кнопка удаления - всегда справа */}
         {!isDetailPanelOpen && (
-          <div className={`${styles.orderCard__deleteSection} flex-shrink-0`}>
+          <div className="flex-shrink-0">
             <button
               type="button"
-              className={`${styles.orderCard__deleteButton} btn btn-link p-2 text-muted border-0`}
+              className={`${styles.orderCard__deleteButton} btn btn-link p-2 text-muted border-0 rounded-circle`}
               onClick={handleDeleteClick}
               title="Удалить приход"
             >
@@ -131,7 +130,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
         )}
 
         {/* Стрелка для выбранной карточки */}
-        <div className={`${styles.orderCard__arrowContainer} position-absolute top-0 end-0 h-100 d-none align-items-center justify-content-center`}>
+        <div className={`${styles.orderCard__arrowContainer} position-absolute top-0 end-0 h-100 d-none align-items-center justify-content-center rounded-end`}>
           <svg className={styles.orderCard__arrowIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M10 6L8.59 7.41L13.17 12L8.59 16.59L10 18L16 12L10 6Z" />
           </svg>

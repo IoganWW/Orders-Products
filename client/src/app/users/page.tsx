@@ -2,8 +2,9 @@
 'use client';
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { 
-  User, 
+import AuthWrapper from '@/components/Auth/AuthWrapper';
+import {
+  User,
   UserStatistics,
   calculateUserStatistics,
   getRoleLabel,
@@ -13,8 +14,8 @@ import { fetchUsers } from '@/services/api';
 import { formatDate } from '@/utils/dateUtils';
 
 // Компонент статистики пользователей
-const UsersStatistics: React.FC<{ statistics: UserStatistics }> = React.memo(({ 
-  statistics 
+const UsersStatistics: React.FC<{ statistics: UserStatistics }> = React.memo(({
+  statistics
 }) => (
   <div className="row mb-4">
     <div className="col-12">
@@ -23,17 +24,17 @@ const UsersStatistics: React.FC<{ statistics: UserStatistics }> = React.memo(({
           <span className="text-muted small me-2">Всего пользователей:</span>
           <span className="fw-bold">{statistics.totalUsers}</span>
         </div>
-        
+
         <div className="bg-white rounded px-3 py-2 border">
           <span className="text-muted small me-2">Администраторы:</span>
           <span className="fw-bold">{statistics.adminUsers}</span>
         </div>
-        
+
         <div className="bg-white rounded px-3 py-2 border">
           <span className="text-muted small me-2">Менеджеры:</span>
           <span className="fw-bold">{statistics.managerUsers}</span>
         </div>
-        
+
         <div className="bg-white rounded px-3 py-2 border">
           <button className="btn btn-sm btn-success border-0">
             <i className="fas fa-plus me-1"></i>
@@ -48,8 +49,8 @@ const UsersStatistics: React.FC<{ statistics: UserStatistics }> = React.memo(({
 UsersStatistics.displayName = 'UsersStatistics';
 
 // Компонент строки пользователя
-const UserTableRow: React.FC<{ 
-  user: User, 
+const UserTableRow: React.FC<{
+  user: User,
   onEdit: (userId: number) => void,
   onSettings: (userId: number) => void,
   onDelete: (userId: number) => void
@@ -61,11 +62,11 @@ const UserTableRow: React.FC<{
     <tr className="border-bottom">
       <td className="px-4 py-3">
         <div className="d-flex align-items-center">
-          <div 
+          <div
             className="rounded-circle d-flex align-items-center justify-content-center me-3"
-            style={{ 
-              width: '40px', 
-              height: '40px', 
+            style={{
+              width: '40px',
+              height: '40px',
               backgroundColor: '#f8f9fa',
               border: '2px solid #e9ecef'
             }}
@@ -78,40 +79,40 @@ const UserTableRow: React.FC<{
           </div>
         </div>
       </td>
-      
+
       <td className="px-4 py-3">
         <span className={`badge ${getRoleColor(user.role)}`}>
           {getRoleLabel(user.role)}
         </span>
       </td>
-      
+
       <td className="px-4 py-3">
         <div className="text-dark small">{createdDate.short}</div>
         <div className="text-muted small">{createdDate.long}</div>
       </td>
-      
+
       <td className="px-4 py-3">
         <div className="text-dark small">{updatedDate.short}</div>
         <div className="text-muted small">{updatedDate.long}</div>
       </td>
-      
+
       <td className="px-4 py-3 text-end">
         <div className="d-flex gap-1 justify-content-end">
-          <button 
+          <button
             className="btn btn-sm btn-outline-primary border-0"
             title="Редактировать"
             onClick={() => onEdit(user.id)}
           >
             <i className="fas fa-edit"></i>
           </button>
-          <button 
+          <button
             className="btn btn-sm btn-outline-secondary border-0"
             title="Настройки"
             onClick={() => onSettings(user.id)}
           >
             <i className="fas fa-cog"></i>
           </button>
-          <button 
+          <button
             className="btn btn-sm btn-outline-danger border-0"
             title="Удалить"
             onClick={() => onDelete(user.id)}
@@ -127,7 +128,7 @@ const UserTableRow: React.FC<{
 UserTableRow.displayName = 'UserTableRow';
 
 // Компонент таблицы пользователей
-const UsersTable: React.FC<{ 
+const UsersTable: React.FC<{
   users: User[],
   onEdit: (userId: number) => void,
   onSettings: (userId: number) => void,
@@ -170,8 +171,8 @@ const UsersTable: React.FC<{
           </thead>
           <tbody>
             {users.map((user) => (
-              <UserTableRow 
-                key={user.id} 
+              <UserTableRow
+                key={user.id}
                 user={user}
                 onEdit={onEdit}
                 onSettings={onSettings}
@@ -217,7 +218,7 @@ const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => (
 ErrorMessage.displayName = 'ErrorMessage';
 
 // Основной компонент
-export default function UsersPage() {
+function UsersPageContent() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -281,7 +282,7 @@ export default function UsersPage() {
         {/* Users Table */}
         <div className="row">
           <div className="col-12">
-            <UsersTable 
+            <UsersTable
               users={users}
               onEdit={handleEdit}
               onSettings={handleSettings}
@@ -291,5 +292,13 @@ export default function UsersPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <AuthWrapper>
+      <UsersPageContent />
+    </AuthWrapper>
   );
 }
