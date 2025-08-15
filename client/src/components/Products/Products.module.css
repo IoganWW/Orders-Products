@@ -1,3 +1,24 @@
+.productItemMini {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.productItemMini__iconContainer {
+  width: 24px;
+  height: 24px;
+  background: #f1f3f4;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .productsContainer {
   padding: 1rem;
   width: 100%;
@@ -7,7 +28,7 @@
 }
 
 /* Уменьшаем высоту на планшетах когда фильтры в 2 ряда */
-@media (max-width: 991px) {
+@media (max-width: 1200px) {
   .productsContainer {
     max-height: 400px;
   }

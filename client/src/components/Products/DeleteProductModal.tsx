@@ -1,6 +1,7 @@
 // client/src/components/Products/DeleteProductModal.tsx
 import React from 'react';
 import { Product } from '@/types/products';
+import ProductItemMini from './ProductItemMini';
 import styles from '../Products/Products.module.css';
 import Portal from '@/components/UI/Portal';
 
@@ -38,23 +39,7 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
             </button>
             <div className="modal-body py-0 mt-4">
               <h5 className="mb-3">Вы уверены, что хотите удалить этот продукт?</h5>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f8f9fa', padding: '1rem', borderRadius: '8px', marginBottom: '0.5rem' }}>
-                <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
-                <div className="px-4" style={{ width: '24px', height: '24px', background: '#f1f3f4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <i className="fas fa-desktop" style={{ fontSize: '1.2rem', color: '#3b4044ff' }}></i>
-                </div>
-                <div style={{ flex: 1, textAlign: 'left' }}>
-                  <div style={{ fontWeight: '500', color: '#333', marginBottom: '0.25rem' }}>
-                    {product.title}
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#6c757d' }}>
-                    SN-{product.serialNumber}
-                  </div>
-                </div>
-                <div style={{ fontSize: '0.8rem', color: '#28a745', fontWeight: '500', marginTop: '0.25rem' }}>
-                  {product.price.find(p => p.isDefault === 1)?.value} {product.price.find(p => p.isDefault === 1)?.symbol}
-                </div>
-              </div>
+                <ProductItemMini product={product} />
             </div>
             
             <div className="modal-footer justify-content-end border-0 pb-4" style={{backgroundColor:"#69b838ff"}}>

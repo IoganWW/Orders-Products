@@ -1,5 +1,6 @@
 // client/src/components/Orders/DeleteModal.tsx
 import React from 'react';
+import ProductItemMini from '../Products/ProductItemMini';
 import { useAppDispatch } from '@/store';
 import { deleteOrder } from '@/store/slices/ordersSlice';
 import { Order } from '@/types/orders';
@@ -46,24 +47,13 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
               {/* Список продуктов */}
               {order.products.length > 0 && (
                 <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-                  {order.products.map((product) => {
-                    return (
-                      <div key={product.id} style={{ display: 'flex', alignItems: 'center', gap: '2rem', padding: '0.75rem 1rem', background: 'white', borderRadius: '6px', marginBottom: '0.25rem', border: '1px solid #e9ecef' }}>
-                        <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
-                        <div className="px-4" style={{ width: '24px', height: '24px', background: '#f1f3f4', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <i className="fas fa-desktop" style={{ fontSize: '1.2rem', color: '#3b4044ff' }}></i>
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: '500', fontSize: '0.85rem', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {product.title}
-                          </div>
-                          <div style={{ fontSize: '0.75rem', color: '#6c757d' }}>
-                            SN: {product.serialNumber}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {order.products.length > 0 && (
+                    <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                      {order.products.map((product) => (
+                        <ProductItemMini key={product.id} product={product} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
