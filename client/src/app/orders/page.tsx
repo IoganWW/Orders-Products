@@ -5,9 +5,10 @@ import AuthWrapper from '@/components/Auth/AuthWrapper';
 import OrdersList from '@/components/Orders/OrdersList';
 import AddOrderForm from '@/components/Orders/AddOrderForm';
 import { useAppSelector } from '@/store';
+import { useTranslation } from 'react-i18next';
 
 export default function OrdersPage() {
-  // Получаем количество заказов из Redux-хранилища для отображения в заголовке
+  const { t } = useTranslation(['navigation', 'orders']);
   const ordersCount = useAppSelector(state => state.orders.orders.length);
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -20,9 +21,9 @@ export default function OrdersPage() {
               className="fa-sharp fa-solid fa-circle-plus fa-sm text-success me-2"
               style={{ cursor: "pointer" }}
               onClick={() => setShowAddForm(true)}
-              title="Добавить новый приход"
+              title={t('orders:addOrder')}
             ></i>
-            <span className="p-2">Приходы / {ordersCount}</span>
+            <span className="p-2">{t('navigation:orders')} / {ordersCount}</span>
           </h1>
         </div>
 

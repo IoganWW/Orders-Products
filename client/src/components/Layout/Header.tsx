@@ -45,7 +45,7 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      <div className={`${styles.headerRight} header-right me-4`}>
+      <div className={`${styles.headerRight} header-right me-3`}>
         <div className={`${styles.sessionCounter} session-counter`}>
           <span className="badge bg-secondary me-2">
             <i className="fas fa-users me-1"></i>

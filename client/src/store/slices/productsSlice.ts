@@ -31,8 +31,8 @@ export const deleteProduct = createAsyncThunk(
 const initialState: ProductsState = {
   products: [],
   filteredProducts: [],
-  selectedType: 'All',
-  specificationFilter: 'All',
+  selectedType: 'all',
+  specificationFilter: 'all',
   loading: false,
   error: null,
 };
@@ -40,8 +40,8 @@ const initialState: ProductsState = {
 // Функция для применения фильтров
 const applyFilters = (state: ProductsState) => {
   state.filteredProducts = state.products.filter(product => {
-    const typeMatch = state.selectedType === 'All' || product.type === state.selectedType;
-    const specMatch = state.specificationFilter === 'All' || 
+    const typeMatch = state.selectedType === 'all' || product.type === state.selectedType;
+    const specMatch = state.specificationFilter === 'all' || 
                      product.specification?.includes(state.specificationFilter);
     return typeMatch && specMatch;
   });
@@ -51,7 +51,7 @@ const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    setProductFilter: (state, action: PayloadAction<ProductType | 'All'>) => {
+    setProductFilter: (state, action: PayloadAction<ProductType | 'all'>) => {
       state.selectedType = action.payload;
       applyFilters(state); // Применяем все фильтры
     },

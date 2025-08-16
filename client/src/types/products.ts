@@ -15,12 +15,20 @@ export interface Product {
   date: string;
 }
 
-export type ProductType = 'Monitors' | 'Laptops' | 'Keyboards' | 'Phones' | 'Tablets';
+export type ProductType = 'monitors' | 'laptops' | 'keyboards' | 'phones' | 'tablets';
+
+export const PRODUCT_TYPE_LABELS: Record<ProductType, string> = {
+  monitors: 'products:monitors',
+  laptops: 'products:laptops',
+  keyboards: 'products:keyboards',
+  phones: 'products:phones',
+  tablets: 'products:tablets',
+};
 
 export interface ProductsState {
   products: Product[];
   filteredProducts: Product[];
-  selectedType: ProductType | 'All';
+  selectedType: ProductType | 'all';
   specificationFilter: string;
   loading: boolean;
   error: string | null;
@@ -41,19 +49,19 @@ export interface GroupsPageState {
 
 // Константы для описаний и иконок
 export const PRODUCT_TYPE_DESCRIPTIONS: Record<ProductType, string> = {
-  'Monitors': 'LCD и LED мониторы различных размеров',
-  'Laptops': 'Ноутбуки и портативные компьютеры',
-  'Keyboards': 'Клавиатуры механические и мембранные',
-  'Phones': 'Мобильные телефоны и смартфоны',
-  'Tablets': 'Планшеты и электронные книги'
+  monitors: 'LCD и LED мониторы различных размеров',
+  laptops: 'Ноутбуки и портативные компьютеры',
+  keyboards: 'Клавиатуры механические и мембранные',
+  phones: 'Мобильные телефоны и смартфоны',
+  tablets: 'Планшеты и электронные книги',
 };
 
 export const PRODUCT_TYPE_ICONS: Record<ProductType, LucideIcon> = {
-  'Monitors': Monitor,
-  'Laptops': Laptop,
-  'Keyboards': Keyboard,
-  'Phones': Phone,
-  'Tablets': Tablet
+  monitors: Monitor,
+  laptops: Laptop,
+  keyboards: Keyboard,
+  phones: Phone,
+  tablets: Tablet,
 };
 
 // Утилиты для работы с группами

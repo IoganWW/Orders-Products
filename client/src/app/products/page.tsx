@@ -6,27 +6,30 @@ import ProductsList from '@/components/Products/ProductsList';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setProductFilter, setSpecificationFilter } from '@/store/slices/productsSlice';
 import { ProductType } from '@/types/products';
+import { PRODUCT_TYPE_LABELS } from '@/types/products';
 import styles from '@/components/Products/Products.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function ProductsPage() {
+  const { t } = useTranslation(['navigation', 'products']);
   const dispatch = useAppDispatch();
   const { products, selectedType, specificationFilter } = useAppSelector(state => state.products);
   const productsCount = products.length;
 
-  const productTypes: (ProductType | 'All')[] = ['All', 'Monitors', 'Laptops', 'Keyboards', 'Phones', 'Tablets'];
+  const productTypes: (ProductType | 'all')[] = ['all', 'monitors', 'laptops', 'keyboards', 'phones', 'tablets'];
 
   // Получаем уникальные спецификации для фильтра
   const uniqueSpecifications = React.useMemo(() => {
     const specs = products.map(product => product.specification).filter(Boolean);
-    return ['All', ...Array.from(new Set(specs))];
+    return ['all', ...Array.from(new Set(specs))];
   }, [products]);
 
-  const getProductCount = (type: ProductType | 'All') => {
-    if (type === 'All') return products.length;
+  const getProductCount = (type: ProductType | 'all') => {
+    if (type === 'all') return products.length;
     return products.filter(product => product.type === type).length;
   };
 
-  const handleTypeFilterChange = (type: ProductType | 'All') => {
+  const handleTypeFilterChange = (type: ProductType | 'all') => {
     dispatch(setProductFilter(type));
   };
 
@@ -42,33 +45,36 @@ export default function ProductsPage() {
             {/* Заголовок с количеством */}
             <div className="col-xl-3 col-lg-12 mb-lg-3 mb-xl-0">
               <h1 className="page__title mb-2 px-3">
-                <span>Продукты / {productsCount}</span>
+                <span>{t('navigation:products')} / {productsCount}</span>
               </h1>
             </div>
 
             {/* Фильтры */}
             <div className="col-xl-9 col-lg-12 px-4">
               <div className="row g-3 justify-content-start">
+                {/* Фильтр по типу */}
                 <div className="col-lg-6 col-12">
                   <div className="d-flex align-items-center gap-2">
-                    <label className={styles.filterLabel}>Тип:</label>
+                    <label className={styles.filterLabel}>{t('products:type')}:</label>
                     <select
                       className={`form-select ${styles.filterSelect}`}
                       value={selectedType}
-                      onChange={(e) => handleTypeFilterChange(e.target.value as ProductType | 'All')}
+                      onChange={(e) => handleTypeFilterChange(e.target.value as ProductType | 'all')}
                     >
                       {productTypes.map((type) => (
                         <option key={type} value={type}>
-                          {type} ({getProductCount(type)})
+                          {type === 'all' ? t('products:all') : t(PRODUCT_TYPE_LABELS[type as ProductType])}
+                          ({getProductCount(type)})
                         </option>
                       ))}
                     </select>
                   </div>
                 </div>
 
+                {/* Фильтр по спецификациям */}
                 <div className="col-lg-6 col-12">
                   <div className="d-flex align-items-center gap-2">
-                    <label className={styles.filterLabel}>Спецификация:</label>
+                    <label className={styles.filterLabel}>{t('products:specifications')}:</label>
                     <select
                       className={`form-select ${styles.filterSelect}`}
                       value={specificationFilter}
@@ -76,7 +82,9 @@ export default function ProductsPage() {
                     >
                       {uniqueSpecifications.map((spec) => (
                         <option key={spec} value={spec}>
-                          {spec === 'All' ? 'All Specifications' : spec}
+                          {spec === 'all'
+                            ? `${t('products:all')} ${t('products:specifications')}`
+                            : spec}
                         </option>
                       ))}
                     </select>

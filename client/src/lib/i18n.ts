@@ -9,6 +9,8 @@ const resources = {
     common: {
       loading: 'Loading...',
       error: 'Error!',
+      login: 'Login',
+      logout: 'Logout',
       save: 'Save',
       cancel: 'Cancel',
       delete: 'Delete',
@@ -47,17 +49,15 @@ const resources = {
     },
     // Навигация
     navigation: {
-      dashboard: 'Dashboard',
-      orders: 'Orders', 
-      products: 'Products',
+      orders: 'Orders',
       groups: 'Groups',
+      products: 'Products',
       users: 'Users',
       settings: 'Settings'
     },
     // Приходы
     orders: {
       title: 'Orders Management',
-      subtitle: 'Manage your orders, view details, and track products',
       addOrder: 'Add Order',
       orderDetails: 'Order Details',
       products: 'Products',
@@ -74,7 +74,14 @@ const resources = {
       guarantee: 'Guarantee',
       all: 'All',
       new: 'New',
-      used: 'Used'
+      used: 'Used',
+      type: 'Type',
+      specifications: 'Specifications',
+      monitors: 'Monitors',
+      laptops: 'Laptops',
+      keyboards: 'Keyboards',
+      phones: 'Phones',
+      tablets: 'Tablets'
     },
     // Пользователи
     users: {
@@ -94,6 +101,8 @@ const resources = {
     common: {
       loading: 'Завантаження...',
       error: 'Помилка!',
+      login: 'Увійти',
+      logout: 'Вийти',
       save: 'Зберегти',
       cancel: 'Скасувати',
       delete: 'Видалити',
@@ -131,19 +140,16 @@ const resources = {
       dec: 'Гру'
     },
     navigation: {
-      dashboard: 'Панель управління',
       orders: 'Приходи',
-      products: 'Продукти', 
       groups: 'Групи',
+      products: 'Продукти', 
       users: 'Користувачі',
       settings: 'Налаштування'
     },
     orders: {
       title: 'Управління приходами',
-      subtitle: 'Керування приходами, перегляд деталей та відстеження продуктів',
       addOrder: 'Додати приход',
       orderDetails: 'Деталі приходу',
-      products: 'Продукти',
       deleteConfirm: 'Ви впевнені, що хочете видалити цей приход?'
     },
     products: {
@@ -156,7 +162,14 @@ const resources = {
       guarantee: 'Гарантія',
       all: 'Всі',
       new: 'Новий',
-      used: 'Вживаний'
+      used: 'Вживаний',
+      type: 'Тип',
+      specifications: 'Характеристики',
+      monitors: 'Монітори',
+      laptops: 'Ноутбуки',
+      keyboards: 'Клавіатури',
+      phones: 'Телефони',
+      tablets: 'Планшети'
     },
     users: {
       title: 'Користувачі системи',
@@ -175,6 +188,8 @@ const resources = {
     common: {
       loading: 'Загрузка...',
       error: 'Ошибка!',
+      login: 'Войти',
+      logout: 'Выйти',
       save: 'Сохранить',
       cancel: 'Отменить',
       delete: 'Удалить',
@@ -212,19 +227,16 @@ const resources = {
       dec: 'Дек'
     },
     navigation: {
-      dashboard: 'Панель управления',
       orders: 'Приходы',
+      groups: 'Группы',
       products: 'Продукты',
-      groups: 'Группы', 
       users: 'Пользователи',
       settings: 'Настройки'
     },
     orders: {
       title: 'Управление приходами',
-      subtitle: 'Управление приходами, просмотр деталей и отслеживание продуктов',
       addOrder: 'Добавить приход',
       orderDetails: 'Детали прихода',
-      products: 'Продукты',
       deleteConfirm: 'Вы уверены, что хотите удалить этот приход?'
     },
     products: {
@@ -237,7 +249,14 @@ const resources = {
       guarantee: 'Гарантия',
       all: 'Все',
       new: 'Новый',
-      used: 'Б/у'
+      used: 'Б/у',
+      type: 'Тип',
+      specifications: 'Характеристики',
+      monitors: 'Мониторы',
+      laptops: 'Ноутбуки',
+      keyboards: 'Клавиатуры',
+      phones: 'Телефоны',
+      tablets: 'Планшеты'
     },
     users: {
       title: 'Пользователи системы',

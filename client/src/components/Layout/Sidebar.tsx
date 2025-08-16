@@ -6,45 +6,48 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logoutUser } from '@/store/slices/authSlice';
+import { useTranslation } from 'react-i18next';
 import AuthModal from '@/components/Auth/AuthModal';
 import styles from './Layout.module.css';
 import authStyles from '@/components/Auth/Auth.module.css';
 
 const Sidebar: React.FC = () => {
+  const { t } = useTranslation(['navigation', 'common']);
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isAuthenticated, user, loading } = useAppSelector(state => state.auth);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const menuItems = [
     {
       href: '/orders',
-      label: 'ПРИХОД',
+      label: t('navigation:orders').toLocaleUpperCase(),
       icon: 'fas fa-arrow-down',
       isActive: pathname === '/orders'
     },
     {
       href: '/groups',
-      label: 'ГРУППЫ',
+      label: t('navigation:groups').toLocaleUpperCase(),
       icon: 'fas fa-layer-group',
       isActive: pathname === '/groups'
     },
     {
       href: '/products',
-      label: 'ПРОДУКТЫ',
+      label: t('navigation:products').toLocaleUpperCase(),
       icon: 'fas fa-box',
       isActive: pathname === '/products'
     },
     {
       href: '/users',
-      label: 'ПОЛЬЗОВАТЕЛИ',
+      label: t('navigation:users').toLocaleUpperCase(),
       icon: 'fas fa-users',
       isActive: pathname === '/users'
     },
     {
       href: '/settings',
-      label: 'НАСТРОЙКИ',
+      label: t('navigation:settings').toLocaleUpperCase(),
       icon: 'fas fa-cog',
       isActive: pathname === '/settings'
     }
@@ -53,15 +56,11 @@ const Sidebar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logoutUser()).unwrap();
-      
-      // Редирект на главную страницу
       router.push('/');
-      
       const successEvent = new CustomEvent('showNotification', {
         detail: { type: 'success', message: 'Вы успешно вышли из системы' }
       });
       window.dispatchEvent(successEvent);
-      
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -72,52 +71,65 @@ const Sidebar: React.FC = () => {
       .split(' ')
       .map(word => word.charAt(0))
       .join('')
+      .toUpperCase()
       .slice(0, 2);
   };
 
   return (
     <>
       <aside className={`${styles.sidebar} sidebar`}>
-        {/* Блок авторизации */}
-        <div className={`${styles.sidebarAuth} sidebar-auth justify-content-center`}>
+        {/* Updated Authorization Block */}
+        <div className={`${styles.sidebarAuth} sidebar-auth px-0 px-lg-2`}>
           {loading ? (
-            <div className={authStyles.loading}>
-              <span className="spinner-border spinner-border-sm me-2" />
-              Loading...
+            <div className="d-flex justify-content-center align-items-center h-100">
+              <span className="spinner-border spinner-border-sm" />
             </div>
           ) : isAuthenticated && user ? (
-            <div className={`${authStyles.userInfo} user-info`}>
-              <div className={`${authStyles.userAvatar} user-avatar`}>
-                {getInitials(user.name)}
+            <div className={`${authStyles.userProfile} user-profile position-relative`}>
+              <div className={`${authStyles.userAvatarWrapper}`}>
+                <div className={`${authStyles.userAvatar} user-avatar shadow-sm`}>
+                  {/* user.avatarUrl ? <img src={user.avatarUrl} alt={user.name} /> : <span>{getInitials(user.name)}</span> */}
+                  <span>{getInitials(user.name)}</span>
+                </div>
+                <button
+                  className={`${authStyles.settingsBtn} settings-btn btn btn-light btn-sm rounded-circle shadow-sm`}
+                  onClick={() => setProfileMenuOpen(!isProfileMenuOpen)}
+                  title="Настройки профиля"
+                >
+                  <i className="fas fa-cog"></i>
+                </button>
+                <button
+                  className={`
+                    ${authStyles.logoutBtn} 
+                    logout-btn btn btn-danger btn-sm rounded-circle shadow-sm
+                    ${isProfileMenuOpen ? authStyles.show : ''}
+                  `}
+                  onClick={handleLogout}
+                  title={t('common:logout')}
+                >
+                  <i className="fas fa-sign-out-alt"></i>
+                </button>
               </div>
-              <div className={`${authStyles.userDetails} user-details`}>
-                <p className={`${authStyles.userName} user-name`}>
+              <div className="text-center mt-2 d-none d-md-block">
+                <p className={`${authStyles.userName} user-name mb-0`}>
                   {user.name}
                 </p>
-                <p className={`${authStyles.userEmail} user-email`}>
-                  {user.email}
-                </p>
               </div>
-              <button
-                className={`${authStyles.logoutBtn} logout-btn`}
-                onClick={handleLogout}
-                title="Выйти"
-              >
-                <i className="fas fa-sign-out-alt"></i>
-              </button>
             </div>
           ) : (
-            <button
-              className={`${authStyles.loginBtn} login-btn`}
-              onClick={() => setShowAuthModal(true)}
-            >
-              <i className="fas fa-sign-in-alt"></i>
-              Войти
-            </button>
+            <div className="d-flex justify-content-center align-items-center h-100">
+              <button
+                className={`${authStyles.loginBtn} login-btn btn btn-success`}
+                onClick={() => setShowAuthModal(true)}
+              >
+                <i className="fas fa-sign-in-alt me-2"></i>
+                <span className="d-none d-md-inline">{t('common:login')}</span>
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Навигационное меню */}
+        {/* Navigation Menu */}
         <nav className={`${styles.sidebarNav} sidebar-nav`}>
           <ul className={`${styles.navList} nav-list`}>
             {menuItems.map((item) => (
@@ -130,7 +142,7 @@ const Sidebar: React.FC = () => {
                     ${item.isActive ? styles.active : ''}
                   `}
                 >
-                  <i className={`${item.icon} ${styles.navIcon} d-block d-md-none`}></i>
+                  <i className={`${item.icon} ${styles.navIcon}`}></i>
                   <span className={`${styles.navLabel} nav-label`}>
                     {item.label}
                   </span>
@@ -141,7 +153,7 @@ const Sidebar: React.FC = () => {
         </nav>
       </aside>
 
-      {/* Модалка авторизации */}
+      {/* Auth Modal */}
       <AuthModal
         show={showAuthModal}
         onClose={() => setShowAuthModal(false)}
