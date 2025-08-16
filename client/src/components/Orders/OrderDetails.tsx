@@ -4,6 +4,7 @@ import { Order } from '@/types/orders';
 import AddProductForm from '@/components/Products/AddProductForm';
 import styles from './Orders.module.css';
 import OrderProductsList from './OrderProductList';
+import { useTranslation } from 'react-i18next';
 
 // Обновленный интерфейс для OrderDetailsProps
 interface OrderDetailsProps {
@@ -13,6 +14,7 @@ interface OrderDetailsProps {
 }
 
 const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeleteProduct }) => {
+  const { t } = useTranslation(['products']);
   const [showAddProductForm, setShowAddProductForm] = useState(false);
 
   const handleAddProductClick = () => {
@@ -50,9 +52,9 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeletePro
             >
               <i
                 className="fa-sharp fa-solid fa-circle-plus fa-lg me-3"
-                title="Добавить новый продукт"
+                title={t('products:addProduct')}
               ></i>
-              Добавить продукт
+              {t('products:addProduct')}
             </button>
           </div>
 

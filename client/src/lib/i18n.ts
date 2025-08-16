@@ -61,7 +61,12 @@ const resources = {
       addOrder: 'Add Order',
       orderDetails: 'Order Details',
       products: 'Products',
-      deleteConfirm: 'Are you sure you want to delete this order?'
+      deleteConfirm: 'Are you sure you want to delete this order?',
+      noOrders: 'No orders',
+      firstOrder: 'Create first order',
+      noProducts: 'No products in this order',
+      order: 'Order',
+      product: 'Products'
     },
     // Продукты  
     products: {
@@ -75,6 +80,8 @@ const resources = {
       all: 'All',
       new: 'New',
       used: 'Used',
+      free: 'Free',
+      underRepair: 'Under repair',
       type: 'Type',
       specifications: 'Specifications',
       monitors: 'Monitors',
@@ -93,8 +100,9 @@ const resources = {
       totalUsers: 'Total users',
       admins: 'Administrators',
       admin: 'Administrator',
-      manager: 'Manager', 
-      user: 'User'
+      managers: 'Managers', 
+      user: 'User',
+      notFound: 'Users not found'
     }
   },
   uk: {
@@ -150,7 +158,12 @@ const resources = {
       title: 'Управління приходами',
       addOrder: 'Додати приход',
       orderDetails: 'Деталі приходу',
-      deleteConfirm: 'Ви впевнені, що хочете видалити цей приход?'
+      deleteConfirm: 'Ви впевнені, що хочете видалити цей приход?',
+      noOrders: 'Не має приходів',
+      firstOrder: 'Створити перший прихід',
+      noProducts: 'Не має продуктів у цьогму приходе',
+      order: 'Прихід',
+      product: 'Продуктів'
     },
     products: {
       title: 'Каталог продуктів',
@@ -163,6 +176,8 @@ const resources = {
       all: 'Всі',
       new: 'Новий',
       used: 'Вживаний',
+      free: 'Вільний',
+      underRepair: 'У ремонті',
       type: 'Тип',
       specifications: 'Характеристики',
       monitors: 'Монітори',
@@ -180,8 +195,9 @@ const resources = {
       totalUsers: 'Всього користувачів',
       admins: 'Адміністратори',
       admin: 'Адміністратор',
-      manager: 'Менеджер',
-      user: 'Користувач'
+      managers: 'Менеджери',
+      user: 'Користувач',
+      notFound: 'Користувачів не знайдено'
     }
   },
   ru: {
@@ -237,7 +253,12 @@ const resources = {
       title: 'Управление приходами',
       addOrder: 'Добавить приход',
       orderDetails: 'Детали прихода',
-      deleteConfirm: 'Вы уверены, что хотите удалить этот приход?'
+      deleteConfirm: 'Вы уверены, что хотите удалить этот приход?',
+      noOrders: 'Нет приходов',
+      firstOrder: 'Создать первый приход',
+      noProducts: 'Нет продуктов в этом приходе',
+      order: 'Приход',
+      product: 'Продукта'
     },
     products: {
       title: 'Каталог продуктов',
@@ -247,6 +268,8 @@ const resources = {
       condition: 'Состояние',
       price: 'Цена',
       guarantee: 'Гарантия',
+      free: 'Свободен',
+      underRepair: 'На ремонте',
       all: 'Все',
       new: 'Новый',
       used: 'Б/у',
@@ -267,8 +290,9 @@ const resources = {
       totalUsers: 'Всего пользователей',
       admins: 'Администраторы',
       admin: 'Администратор',
-      manager: 'Менеджер',
-      user: 'Пользователь'
+      managers: 'Менеджеры',
+      user: 'Пользователь',
+      notFound: 'Пользователи не найдены'
     }
   }
 };

@@ -12,39 +12,43 @@ import {
 } from '@/types/users';
 import { fetchUsers } from '@/services/api';
 import { formatDate } from '@/utils/dateUtils';
+import { useTranslation } from 'react-i18next';
 
 // Компонент статистики пользователей
 const UsersStatistics: React.FC<{ statistics: UserStatistics }> = React.memo(({
   statistics
-}) => (
-  <div className="row mb-4">
-    <div className="col-12">
-      <div className="d-flex flex-wrap gap-3 justify-content-start">
-        <div className="bg-white rounded px-3 py-2 border">
-          <span className="text-muted small me-2">Всего пользователей:</span>
-          <span className="fw-bold">{statistics.totalUsers}</span>
-        </div>
+}) => {
+  const { t } = useTranslation(['users']);
+  return (
+    <div className="row mb-4">
+      <div className="col-12">
+        <div className="d-flex flex-wrap gap-3 justify-content-start">
+          <div className="bg-white rounded px-3 py-2 border">
+            <span className="text-muted small me-2">{t('users:totalUsers')}:</span>
+            <span className="fw-bold">{statistics.totalUsers}</span>
+          </div>
 
-        <div className="bg-white rounded px-3 py-2 border">
-          <span className="text-muted small me-2">Администраторы:</span>
-          <span className="fw-bold">{statistics.adminUsers}</span>
-        </div>
+          <div className="bg-white rounded px-3 py-2 border">
+            <span className="text-muted small me-2">{t('users:admins')}:</span>
+            <span className="fw-bold">{statistics.adminUsers}</span>
+          </div>
 
-        <div className="bg-white rounded px-3 py-2 border">
-          <span className="text-muted small me-2">Менеджеры:</span>
-          <span className="fw-bold">{statistics.managerUsers}</span>
-        </div>
+          <div className="bg-white rounded px-3 py-2 border">
+            <span className="text-muted small me-2">{t('users:managers')}:</span>
+            <span className="fw-bold">{statistics.managerUsers}</span>
+          </div>
 
-        <div className="bg-white rounded px-3 py-2 border">
-          <button className="btn btn-sm btn-success border-0">
-            <i className="fas fa-plus me-1"></i>
-            Добавить пользователя
-          </button>
+          <div className="bg-white rounded px-3 py-2 border">
+            <button className="btn btn-sm btn-success border-0">
+              <i className="fas fa-plus me-1"></i>
+              {t('users:addUser')}
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-));
+  )
+});
 
 UsersStatistics.displayName = 'UsersStatistics';
 
@@ -134,13 +138,13 @@ const UsersTable: React.FC<{
   onSettings: (userId: number) => void,
   onDelete: (userId: number) => void
 }> = React.memo(({ users, onEdit, onSettings, onDelete }) => {
+  const { t } = useTranslation(['users', 'common']);
   if (users.length === 0) {
     return (
       <div className="bg-white rounded border">
         <div className="text-center py-5">
           <i className="fas fa-users fa-3x text-muted mb-3"></i>
-          <h5 className="text-muted">Пользователи не найдены</h5>
-          <p className="text-muted small">В системе пока нет зарегистрированных пользователей</p>
+          <h5 className="text-muted">{t('users:notFound')}</h5>
         </div>
       </div>
     );
@@ -153,19 +157,19 @@ const UsersTable: React.FC<{
           <thead className="table-light">
             <tr>
               <th className="border-0 px-4 py-3">
-                <span className="text-muted small fw-bold">ПОЛЬЗОВАТЕЛЬ</span>
+                <span className="text-muted small fw-bold">{t('users:user')}</span>
               </th>
               <th className="border-0 px-4 py-3">
-                <span className="text-muted small fw-bold">РОЛЬ</span>
+                <span className="text-muted small fw-bold">{t('common:role')}</span>
               </th>
               <th className="border-0 px-4 py-3">
-                <span className="text-muted small fw-bold">РЕГИСТРАЦИЯ</span>
+                <span className="text-muted small fw-bold">{t('users:registration')}</span>
               </th>
               <th className="border-0 px-4 py-3">
-                <span className="text-muted small fw-bold">ПОСЛЕДНЕЕ ОБНОВЛЕНИЕ</span>
+                <span className="text-muted small fw-bold">{t('users:lastUpdate')}</span>
               </th>
               <th className="border-0 px-4 py-3 text-end">
-                <span className="text-muted small fw-bold">ДЕЙСТВИЯ</span>
+                <span className="text-muted small fw-bold">{t('common:actions')}</span>
               </th>
             </tr>
           </thead>
@@ -189,36 +193,43 @@ const UsersTable: React.FC<{
 UsersTable.displayName = 'UsersTable';
 
 // Компонент загрузки
-const LoadingSpinner: React.FC = React.memo(() => (
-  <div className="bg-light min-vh-100">
-    <div className="container-fluid py-4 px-5">
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
-        <div className="spinner-border text-success" role="status">
-          <span className="visually-hidden">Загрузка...</span>
+const LoadingSpinner: React.FC = React.memo(() => {
+  const { t } = useTranslation(['common']);
+  return (
+    <div className="bg-light min-vh-100">
+      <div className="container-fluid py-4 px-5">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+          <div className="spinner-border text-success" role="status">
+            <span className="visually-hidden">{t('common:laoding')}</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-));
+  )
+});
 
 LoadingSpinner.displayName = 'LoadingSpinner';
 
 // Компонент ошибки
-const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => (
-  <div className="bg-light min-vh-100">
-    <div className="container-fluid py-4 px-5">
-      <div className="alert alert-danger">
-        <h4 className="alert-heading">Ошибка!</h4>
-        <p>{error}</p>
+const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => {
+  const { t } = useTranslation(['common']);
+  return (
+    <div className="bg-light min-vh-100">
+      <div className="container-fluid py-4 px-5">
+        <div className="alert alert-danger">
+          <h4 className="alert-heading">{t('common:error')}</h4>
+          <p>{error}</p>
+        </div>
       </div>
     </div>
-  </div>
-));
+  )
+});
 
 ErrorMessage.displayName = 'ErrorMessage';
 
 // Основной компонент
 function UsersPageContent() {
+  const { t } = useTranslation(['users']);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -271,8 +282,8 @@ function UsersPageContent() {
         {/* Header */}
         <div className="row mb-4">
           <div className="col-12">
-            <h1 className="h3 fw-bold text-dark mb-1">Пользователи системы</h1>
-            <p className="text-muted mb-0 small">Управление пользователями и их правами доступа</p>
+            <h1 className="h3 fw-bold text-dark mb-1">{t('users:title')}</h1>
+            <p className="text-muted mb-0 small">{t('users:subtitle')}</p>
           </div>
         </div>
 

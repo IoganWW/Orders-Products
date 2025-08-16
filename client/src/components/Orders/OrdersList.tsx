@@ -10,50 +10,56 @@ import OrderCard from './OrderCard';
 import OrderDetails from './OrderDetails';
 import styles from './Orders.module.css';
 import { Order } from '@/types/orders';
+import { useTranslation } from 'react-i18next';
 
 // Компонент загрузки
-const LoadingSpinner: React.FC = React.memo(() => (
-  <div className="d-flex justify-content-center align-items-center p-5">
-    <div className="spinner-border text-success" role="status">
-      <span className="visually-hidden">Загрузка...</span>
+const LoadingSpinner: React.FC = React.memo(() => {
+  const { t } = useTranslation(['common']);
+  return (
+    <div className="d-flex justify-content-center align-items-center p-5">
+      <div className="spinner-border text-success" role="status">
+        <span className="visually-hidden">{t('common:error')}</span>
+      </div>
     </div>
-  </div>
-));
+  )
+});
 
 LoadingSpinner.displayName = 'LoadingSpinner';
 
 // Компонент ошибки
-const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => (
-  <div className="alert alert-danger m-3" role="alert">
-    <h4 className="alert-heading">
-      <i className="fas fa-exclamation-triangle me-2"></i>
-      Ошибка!
-    </h4>
-    <p className="mb-0">{error}</p>
-  </div>
-));
+const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => {
+  const { t } = useTranslation(['common']);
+  return (
+    <div className="alert alert-danger m-3" role="alert">
+      <h4 className="alert-heading">
+        <i className="fas fa-exclamation-triangle me-2"></i>
+        {t('common:error')}
+      </h4>
+      <p className="mb-0">{error}</p>
+    </div>
+  )
+});
 
 ErrorMessage.displayName = 'ErrorMessage';
 
 // Компонент пустого состояния
-const EmptyOrdersState: React.FC<{ onAddOrder: () => void }> = React.memo(({ onAddOrder }) => (
+const EmptyOrdersState: React.FC<{ onAddOrder: () => void }> = React.memo(({ onAddOrder }) => {
+  const { t } = useTranslation(['orders']);
+  return (
   <div className="text-center p-5 text-muted">
     <div className="mb-4">
       <i className="fas fa-inbox fa-4x opacity-25"></i>
     </div>
-    <h5 className="text-muted mb-3">Нет приходов</h5>
-    <p className="mb-4">
-      Создайте первый приход, чтобы начать отслеживание поступлений товаров
-    </p>
+    <h5 className="text-muted mb-3">{t('oreders:noOrders')}</h5>
     <button
       className="btn btn-success"
       onClick={onAddOrder}
     >
       <i className="fa-sharp fa-solid fa-circle-plus me-2"></i>
-      Создать первый приход
+      {t('orders:firstOrder')}
     </button>
   </div>
-));
+)});
 
 EmptyOrdersState.displayName = 'EmptyOrdersState';
 
@@ -61,7 +67,7 @@ EmptyOrdersState.displayName = 'EmptyOrdersState';
 const OrdersList: React.FC = () => {
   const dispatch = useAppDispatch();
   const { orders, selectedOrder, loading, error } = useAppSelector(state => state.orders);
-  
+
   // Используем хук для автоматического обновления выбранного заказа
   useOrderRefresh();
 
@@ -78,13 +84,13 @@ const OrdersList: React.FC = () => {
   const handleDeleteProduct = useCallback(async (orderId: number, productId: number) => {
     try {
       console.log(`Удаляем продукт ID: ${productId} из заказа ID: ${orderId}`);
-      
+
       // Удаляем продукт на сервере
       await dispatch(deleteProduct(productId)).unwrap();
-      
+
       // Обновляем заказы
       await dispatch(fetchOrders()).unwrap();
-      
+
       // Обновляем выбранный заказ
       if (selectedOrder) {
         const updatedOrders = await dispatch(fetchOrders()).unwrap();
@@ -93,26 +99,22 @@ const OrdersList: React.FC = () => {
           dispatch(setSelectedOrder(updatedSelectedOrder));
         }
       }
-      
+
       // Показываем уведомление об успехе
       const successEvent = new CustomEvent('showNotification', {
         detail: { type: 'success', message: 'Продукт успешно удален!' }
       });
       window.dispatchEvent(successEvent);
-      
+
     } catch (error) {
       console.error('Error deleting product:', error);
-      
+
       const errorEvent = new CustomEvent('showNotification', {
         detail: { type: 'error', message: 'Ошибка при удалении продукта' }
       });
       window.dispatchEvent(errorEvent);
     }
   }, [dispatch, selectedOrder]);
-
-  const handleAddProduct = useCallback((orderId: number) => {
-    console.log(`Добавлен продукт в заказ ID: ${orderId}`);
-  }, []);
 
   const handleAddOrder = useCallback(() => {
     const event = new CustomEvent('showAddOrderForm');
@@ -147,7 +149,7 @@ const OrdersList: React.FC = () => {
             )}
           </div>
         </div>
-        
+
         {/* Колонка с деталями заказа */}
         {selectedOrder && (
           <div className="col-12 col-lg-7 col-xl-8">
@@ -156,7 +158,6 @@ const OrdersList: React.FC = () => {
                 order={selectedOrder}
                 onClose={() => dispatch(setSelectedOrder(null))}
                 onDeleteProduct={handleDeleteProduct}
-                onAddProduct={handleAddProduct}
               />
             </div>
           </div>

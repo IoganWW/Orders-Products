@@ -1,7 +1,7 @@
 // client/src/utils/dateUtils.ts
 import i18n from '@/lib/i18n';
 
-export const formatDate = (dateString: string) => {
+export const formatDate = (dateString: string, lang: string) => {
   // Проверяем, что входная строка валидна
   if (!dateString || dateString.trim() === '') {
     const fallbackDate = new Date();
@@ -29,16 +29,15 @@ export const formatDate = (dateString: string) => {
   }
   
   try {
-    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     return {
       // Формат: 29.06.2017
-      short: date.toLocaleDateString('en-GB', {
+      short: date.toLocaleDateString(lang, {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
       }),
       // Формат: June 29, 2017
-      long: date.toLocaleDateString('en-US', {
+      long: date.toLocaleDateString(lang, {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
@@ -48,7 +47,7 @@ export const formatDate = (dateString: string) => {
       // ISO формат для datetime-local input
       iso: date.toISOString().slice(0, 16),
       // Формат: 29 / Июн / 2017 (ваш метод)
-      shortMonStr: `${date.getDate().toString().padStart(2, '0')} / ${capitalize(date.toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '').slice(0, 3))} / ${date.getFullYear()}`
+      shortMonStr: `${date.getDate().toString().padStart(2, '0')} / ${getTranslatedMonth(date)} / ${date.getFullYear()}`
     };
   } catch (error) {
     console.error('Error formatting date:', dateString, error);
@@ -84,11 +83,15 @@ export const getDaysBetween = (startDate: string, endDate: string) => {
 };
 
 // Безопасная функция для форматирования даты с fallback
-export const safeDateFormat = (dateString?: string | null, fallback: string = 'Не указано') => {
+export const safeDateFormat = (
+  dateString?: string | null,
+  fallback: string = 'Не указано',
+  lang: string = i18n.language // 👈 язык по умолчанию из i18n
+) => {
   if (!dateString) return fallback;
-  
+
   try {
-    const formatted = formatDate(dateString);
+    const formatted = formatDate(dateString, lang);
     return formatted.short !== 'N/A' ? formatted.short : fallback;
   } catch (error) {
     return fallback;

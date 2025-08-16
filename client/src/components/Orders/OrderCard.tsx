@@ -4,6 +4,7 @@ import { formatDate } from '@/utils/dateUtils';
 import { calculateOrderTotal } from '@/utils/currencyUtils';
 import DeleteOrderModal from './DeleteOrderModal';
 import styles from './Orders.module.css';
+import { useTranslation } from 'react-i18next';
 
 interface OrderCardProps {
   order: Order;
@@ -13,10 +14,11 @@ interface OrderCardProps {
 }
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDetailPanelOpen = false }) => {
+  const { t, i18n } = useTranslation(['orders', 'common']);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Мемоизированные вычисления
-  const formattedDate = useMemo(() => formatDate(order.date), [order.date]);
+  const formattedDate = formatDate(order.date, i18n.language);
   const totals = useMemo(() => calculateOrderTotal(order.products), [order.products]);
 
   const handleCardClick = React.useCallback(() => {
@@ -72,14 +74,14 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
             <span className="fw-semibold fs-5">
               {order.products.length}
             </span>
-            <span className="small text-muted">Продукта</span>
+            <span className="small text-muted">{t('orders:product')}</span>
           </div>
         </div>
 
         {/* Название и дата на мобильных */}
         <div className="d-lg-none flex-grow-1 ms-5">
           <div className="fw-medium text-dark text-truncate">
-            <span className={`${styles.orderCard__mobileOrderId} d-none`}>Order #{order.id}</span>
+            <span className={`${styles.orderCard__mobileOrderId} d-none`}>{t('orders:order')} #{order.id}</span>
           </div>
           <div className="small text-muted">
             {formattedDate.shortMonStr}
@@ -120,7 +122,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
               type="button"
               className={`${styles.orderCard__deleteButton} btn btn-link p-2 text-muted border-0 rounded-circle`}
               onClick={handleDeleteClick}
-              title="Удалить приход"
+              title={t('common:delete')}
             >
               <svg className={styles.orderCard__deleteIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H5C4.45 4 4 4.45 4 5C4 5.55 4.45 6 5 6H19C19.55 6 20 5.55 20 5C20 4.45 19.55 4 19 4Z" />

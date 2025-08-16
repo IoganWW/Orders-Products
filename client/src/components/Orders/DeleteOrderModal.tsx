@@ -6,6 +6,7 @@ import { deleteOrder } from '@/store/slices/ordersSlice';
 import { Order } from '@/types/orders';
 import styles from '../Products/Products.module.css';
 import Portal from '@/components/UI/Portal';
+import { useTranslation } from 'react-i18next';
 
 interface DeleteModalProps {
   show: boolean;
@@ -14,6 +15,7 @@ interface DeleteModalProps {
 }
 
 const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
+  const { t } = useTranslation(['orders', 'common']);
   const dispatch = useAppDispatch();
 
   const handleDelete = async () => {
@@ -43,7 +45,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
               </svg>
             </button>
             <div className="modal-body px-0 py-0 mt-2">
-              <h5 className="p-4 fw-bold">Вы уверены, что хотите удалить этот приход?</h5>
+              <h5 className="p-4 fw-bold">{t('orders:deleteConfirm')}</h5>
               {/* Список продуктов */}
               {order.products.length > 0 && (
                 <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="d-flex flex-column gap-1">
@@ -61,7 +63,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
               {order.products.length === 0 && (
                 <div style={{ textAlign: 'center', color: '#6c757d', fontSize: '0.9rem', padding: '1rem' }}>
                   <i className="fas fa-inbox me-2"></i>
-                  В этом приходе нет продуктов
+                  {t('orders:noProducts')}
                 </div>
               )}
             </div>
@@ -73,7 +75,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
                 onClick={onClose}
                 style={{ fontWeight: '500', color: 'white' }}
               >
-                ОТМЕНИТЬ
+                {t('common:cancel')}
               </button>
               <button
                 type="button"
@@ -82,7 +84,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
                 style={{ borderRadius: '25px', fontWeight: '500', color: '#dc3545', border: 'none' }}
               >
                 <i className="fas fa-trash me-1"></i>
-                УДАЛИТЬ
+                {t('common:delete')}
               </button>
             </div>
           </div>
