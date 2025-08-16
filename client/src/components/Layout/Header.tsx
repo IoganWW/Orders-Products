@@ -1,10 +1,14 @@
 import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setCurrentTime } from '@/store/slices/appSlice';
+import { useTranslation } from 'react-i18next';
+import { formatHeaderDate } from '@/utils/dateUtils';
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import styles from './Layout.module.css';
 import Link from 'next/link';
 
 const Header: React.FC = () => {
+  const { t } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { currentTime, activeSessions, isConnected } = useAppSelector((state) => state.app);
 
@@ -17,26 +21,7 @@ const Header: React.FC = () => {
     return () => clearInterval(timer);
   }, [dispatch]);
 
-  const formatDate = (date: Date) => {
-    const weekly = date.toLocaleDateString('en-GB', {
-      weekday: "long",
-    });
-
-    const today = date.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-
-    const time = date.toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-
-    return { today, time, weekly };
-  };
-
-  const { today, time, weekly } = formatDate(currentTime);
+  const { today, time, weekly } = formatHeaderDate(currentTime);
 
   return (
     <header className={`${styles.header} header`}>
@@ -54,19 +39,21 @@ const Header: React.FC = () => {
           <i className="fas fa-search"></i>
           <input
             type="text"
-            placeholder="Поиск"
+            placeholder={t('search')}
             className="form-control"
           />
         </div>
       </div>
 
-      <div className={`${styles.headerRight} header-right me-5`}>
+      <div className={`${styles.headerRight} header-right me-4`}>
         <div className={`${styles.sessionCounter} session-counter`}>
           <span className="badge bg-secondary me-2">
             <i className="fas fa-users me-1"></i>
             {isConnected ? activeSessions : 0}
           </span>
         </div>
+
+        <LanguageSwitcher />
 
         <div className={`${styles.dateTime} date-time`}>
           <div className={`${styles.dateLabel} date-label`}>{weekly}</div>

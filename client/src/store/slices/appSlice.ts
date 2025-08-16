@@ -26,7 +26,7 @@ const appSlice = createSlice({
     toggleTheme: (state) => {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
     },
-    setLocale: (state, action: PayloadAction<'en' | 'uk'>) => {
+    setLocale: (state, action: PayloadAction<string>) => {
       state.locale = action.payload;
     },
   },

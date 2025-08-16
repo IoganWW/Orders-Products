@@ -1,4 +1,6 @@
 // client/src/utils/dateUtils.ts
+import i18n from '@/lib/i18n';
+
 export const formatDate = (dateString: string) => {
   // Проверяем, что входная строка валидна
   if (!dateString || dateString.trim() === '') {
@@ -91,4 +93,37 @@ export const safeDateFormat = (dateString?: string | null, fallback: string = '�
   } catch (error) {
     return fallback;
   }
+};
+
+// ============= НОВЫЕ i18n ФУНКЦИИ =============
+
+// Функция для получения переведенного дня недели
+export const getTranslatedWeekday = (date: Date) => {
+  const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  return i18n.t(`common:${dayKeys[dayOfWeek]}`);
+};
+
+// Функция для получения переведенного месяца
+export const getTranslatedMonth = (date: Date) => {
+  const month = date.getMonth(); // 0 = January, 1 = February, etc.
+  const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  return i18n.t(`common:${monthKeys[month]}`);
+};
+
+// Форматирование для Header с переводами
+export const formatHeaderDate = (date: Date) => {
+  const day = date.getDate();
+  const month = getTranslatedMonth(date);
+  const year = date.getFullYear();
+  const today = `${day} ${month} ${year}`;
+
+  const time = date.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const weekly = getTranslatedWeekday(date);
+
+  return { today, time, weekly };
 };

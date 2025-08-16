@@ -72,7 +72,7 @@ const initialState: AuthState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  loading: true, // Начинаем с loading true для инициализации
+  loading: true,
   error: null,
 };
 

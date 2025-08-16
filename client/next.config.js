@@ -4,7 +4,6 @@ const nextConfig = {
   // Enable standalone output for Docker
   output: 'standalone',
   
-  // Strict mode for development
   reactStrictMode: true,
   
   // Environment variables that will be available on both server and client

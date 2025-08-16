@@ -32,7 +32,7 @@ const initialState: ProductsState = {
   products: [],
   filteredProducts: [],
   selectedType: 'All',
-  specificationFilter: 'All', // Добавляем фильтр по спецификации
+  specificationFilter: 'All',
   loading: false,
   error: null,
 };

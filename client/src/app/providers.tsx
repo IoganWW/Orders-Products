@@ -5,10 +5,12 @@ import { Provider } from 'react-redux';
 import { useEffect } from 'react';
 import { store } from '@/store';
 import { initializeAuth } from '@/store/slices/authSlice';
+import '@/lib/i18n';
 
 function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Инициализируем авторизацию при загрузке приложения
+    import('@/lib/i18n');
     store.dispatch(initializeAuth());
   }, []);
 
