@@ -31,5 +31,5 @@ INSERT IGNORE INTO product_prices (product_id, value, symbol, is_default) VALUES
 
 -- Вставка тестовых пользователей (пароль: admin123)
 INSERT IGNORE INTO users (name, email, password, role) VALUES
-('Admin User', 'admin@example.com', '$2b$10$rXKSGZF.T8pATpyKvZW5.eF4h0r3.Bq9.L7FZiNZ9Y6E0GaZXRpay', 'admin'),
-('Test User', 'user@example.com', '$2b$10$rXKSGZF.T8pATpyKvZW5.eF4h0r3.Bq9.L7FZiNZ9Y6E0GaZXRpay', 'user');
+('Admin User', 'admin@example.com', '$2a$10$Vms1LnLzWFp/duhA9YzcEeCYln54egAiMii.34HRO8vWzZy3xEVPa', 'admin'),
+('Test User', 'user@example.com', '$2a$10$Vms1LnLzWFp/duhA9YzcEeCYln54egAiMii.34HRO8vWzZy3xEVPa', 'user');

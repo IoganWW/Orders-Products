@@ -5,10 +5,8 @@ import React, { useMemo } from 'react';
 import AuthWrapper from '@/components/Auth/AuthWrapper';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchProducts } from '@/store/slices/productsSlice';
-import {
-  ProductGroup,
-  createProductGroups
-} from '@/types/products';
+import { ProductGroup, createProductGroups } from '@/types/products';
+import ProductTypeIcon from '@/components/Products/ProductTypeIcon';
 
 // Компонент статистики
 const GroupsStatistics: React.FC<{ groups: ProductGroup[], totalProducts: number }> = React.memo(({
@@ -56,7 +54,7 @@ const ProductGroupCard: React.FC<{ group: ProductGroup }> = React.memo(({ group 
               border: '2px solid #e9ecef'
             }}
           >
-            <i className={`${group.icon} text-muted`}></i>
+            <ProductTypeIcon type={group.type}/>
           </div>
           <div>
             <h6 className="fw-bold mb-0">{group.type}</h6>

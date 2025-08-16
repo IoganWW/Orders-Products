@@ -44,7 +44,7 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className={`${styles.productsContainer} products-container ps-4 pe-1 px-lg-5`}>
+    <div className={`${styles.productsContainer} ps-4 pe-1 px-lg-5`}>
       <div className={`${styles.productsList} products-list`}>
         {filteredProducts.length === 0 ? (
           <div className="alert alert-info text-center">

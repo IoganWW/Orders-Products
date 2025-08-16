@@ -4,7 +4,7 @@ import { formatDate, isDateExpired } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/currencyUtils';
 import DeleteProductModal from './DeleteProductModal';
 import styles from './Products.module.css';
-import { Monitor, Keyboard, Laptop, Phone, Tablet } from 'lucide-react';
+import ProductTypeIcon from './ProductTypeIcon';
 
 interface ProductCardProps {
   product: Product;
@@ -20,18 +20,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
   const guaranteeStart = formatDate(product.guarantee.start);
   const guaranteeEnd = formatDate(product.guarantee.end);
   const isGuaranteeExpired = isDateExpired(product.guarantee.end);
-
-  // Иконка типа продукта
-  const getTypeIcon = () => {
-    switch (product.type) {
-      case 'Monitors': return <Monitor size={20} />;
-      case 'Keyboards': return <Keyboard size={20} />;
-      case 'Laptops': return <Laptop size={20} />;
-      case 'Phones': return <Phone size={20} />;
-      case 'Tablets': return <Tablet size={20} />;
-      default: return <div style={{ width: 20, height: 20 }}>📦</div>;
-    }
-  };
 
   // Обработчики удаления
   const handleDeleteClick = () => {
@@ -64,9 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         <div className={`${styles.productCard__col1} d-flex align-items-center`}>
           <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
           
-          <div className={styles.productCard__typeIcon}>
-            {getTypeIcon()}
-          </div>
+          <ProductTypeIcon type={product.type} />
           
           <div className={styles.productCard__titleAndSerial}>
             <h5 className={styles.productCard__title}>

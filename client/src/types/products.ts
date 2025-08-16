@@ -1,3 +1,6 @@
+import { Monitor, Keyboard, Laptop, Phone, Tablet } from 'lucide-react';
+import { LucideIcon } from 'lucide-react'; //
+
 export interface Product {
   id: number;
   serialNumber: number;
@@ -28,7 +31,6 @@ export interface ProductGroup {
   type: ProductType;
   count: number;
   description: string;
-  icon: string;
 }
 
 export interface GroupsPageState {
@@ -46,12 +48,12 @@ export const PRODUCT_TYPE_DESCRIPTIONS: Record<ProductType, string> = {
   'Tablets': 'Планшеты и электронные книги'
 };
 
-export const PRODUCT_TYPE_ICONS: Record<ProductType, string> = {
-  'Monitors': 'fas fa-desktop',
-  'Laptops': 'fas fa-laptop',
-  'Keyboards': 'fas fa-keyboard',
-  'Phones': 'fas fa-mobile-alt',
-  'Tablets': 'fas fa-tablet-alt'
+export const PRODUCT_TYPE_ICONS: Record<ProductType, LucideIcon> = {
+  'Monitors': Monitor,
+  'Laptops': Laptop,
+  'Keyboards': Keyboard,
+  'Phones': Phone,
+  'Tablets': Tablet
 };
 
 // Утилиты для работы с группами
@@ -63,7 +65,6 @@ export const createProductGroups = (products: Product[]): ProductGroup[] => {
         type,
         count: 0,
         description: PRODUCT_TYPE_DESCRIPTIONS[type],
-        icon: PRODUCT_TYPE_ICONS[type]
       };
     }
     acc[type].count++;

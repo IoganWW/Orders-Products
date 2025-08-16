@@ -22,7 +22,7 @@ const OrderProductsList: React.FC<OrderProductsListProps> = ({ products, orderId
 
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       await onDeleteProduct(orderId, productToDelete.id);
@@ -35,14 +35,14 @@ const OrderProductsList: React.FC<OrderProductsListProps> = ({ products, orderId
     }
   };
 
-    const handleCancelDelete = () => {
+  const handleCancelDelete = () => {
     setShowDeleteModal(false);
     setProductToDelete(null);
   };
 
   if (products.length === 0) {
     return (
-      <div className={`${styles.orderDetails__noProducts}`}>
+      <div className="bg-light mx-4 p-4">
         Нет продуктов в этом приходе.
       </div>
     );
@@ -50,18 +50,21 @@ const OrderProductsList: React.FC<OrderProductsListProps> = ({ products, orderId
 
   return (
     <>
-      <div className={`${styles.orderDetails__productsList}`}>
+      <div className="d-flex flex-column gap-1">
         {products.map((product) => (
-          <div key={product.id} className={styles.orderDetails__productItem}>
+          <div key={product.id} className={`border border-1 px-4 py-2 rounded-2 shadow-sm ${styles.productItemCard} ${styles.orderProductGrid}`}>
             <ProductItemMini product={product} />
+            <span className={`${product.isNew === 1 ? styles.statusAvailable : styles.statusOnRepair} d-none d-xl-flex justify-content-center`}>
+              {product.isNew === 1 ? 'Свободен' : 'На ремонте'}
+            </span>
             <button
               type="button"
-              className={`${styles.orderDetails__productDeleteButton}`}
+              className={`${styles.productCard__deleteButton} justify-self-end`}
               onClick={() => handleDeleteClick(product)}
               title="Удалить продукт"
               disabled={isDeleting}
             >
-              <svg className={styles.orderDetails__productDeleteIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg className={styles.productCard__deleteIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H5C4.45 4 4 4.45 4 5C4 5.55 4.45 6 5 6H19C19.55 6 20 5.55 20 5C20 4.45 19.55 4 19 4Z" />
               </svg>
             </button>

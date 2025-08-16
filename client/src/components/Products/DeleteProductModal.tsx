@@ -37,9 +37,11 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
                 <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" />
               </svg>
             </button>
-            <div className="modal-body py-0 mt-4">
-              <h5 className="mb-3">Вы уверены, что хотите удалить этот продукт?</h5>
+            <div className="modal-body px-0 py-0 mt-2">
+              <h5 className="p-4 fw-bold">Вы уверены, что хотите удалить этот продукт?</h5>
+              <div className='d-flex border border-1 justify-content-between align-items-center px-4 py-2 rounded-2'>
                 <ProductItemMini product={product} />
+              </div>
             </div>
             
             <div className="modal-footer justify-content-end border-0 pb-4" style={{backgroundColor:"#69b838ff"}}>

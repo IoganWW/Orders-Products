@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Order } from '@/types/orders';
 import { formatDate } from '@/utils/dateUtils';
 import { calculateOrderTotal } from '@/utils/currencyUtils';
-import DeleteModal from './DeleteModal';
+import DeleteOrderModal from './DeleteOrderModal';
 import styles from './Orders.module.css';
 
 interface OrderCardProps {
@@ -137,7 +137,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
         </div>
       </div>
 
-      <DeleteModal
+      <DeleteOrderModal
         show={showDeleteModal}
         order={order}
         onClose={handleCloseDeleteModal}

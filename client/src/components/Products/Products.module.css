@@ -1,22 +1,23 @@
 .productItemMini {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
+  gap: 2rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
-.productItemMini__iconContainer {
-  width: 24px;
-  height: 24px;
-  background: #f1f3f4;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+.productCard__infoContainer {
+  flex: 1;
+  text-align: left;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 575.98px) {
+  .orderDetails__productItem {
+    flex-wrap: wrap;
+    text-align: center;
+  }
 }
 
 .productsContainer {
@@ -25,6 +26,37 @@
   overflow-x: auto;
   overflow-y: scroll;
   max-height: 500px;
+}
+
+.orderProductGrid {
+  display: grid;
+  grid-template-columns: 1fr 100px 30px;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* На больших экранах (xl и выше) - 3 колонки */
+@media (min-width: 1200px) {
+  .orderProductGrid {
+    grid-template-columns: 1fr 100px 30px;
+  }
+}
+
+/* На экранах меньше xl - только 2 колонки (без статуса) */
+@media (max-width: 1199.98px) {
+  .orderProductGrid {
+    grid-template-columns: 1fr 30px;
+  }
+}
+
+.productItemCard {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.productItemCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Уменьшаем высоту на планшетах когда фильтры в 2 ряда */
@@ -106,14 +138,6 @@
   background-color: var(--text-primary);
 }
 
-.productCard__typeIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  flex-shrink: 0;
-  color: var(--text-primary);
-}
 
 .productCard__titleAndSerial {
   display: flex;

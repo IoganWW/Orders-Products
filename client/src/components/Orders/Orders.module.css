@@ -93,134 +93,16 @@
 
 /* Order Details - Общий контейнер */
 .orderDetails {
-  position: relative;
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
   height: fit-content;
   max-height: calc(100vh - 80px);
-  padding-bottom: 20px;
   z-index: 1;
 }
 
 .orderDetails__closeButton {
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: translate(50%, -50%);
-  background: white;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  transition: background-color 0.2s ease;
-  border: none;
-  display: flex;
   width: 35px;
   height: 35px;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 50;
-}
-
-.orderDetails__closeButton:hover {
-  background-color: #f0f0f0;
-}
-
-.orderDetails__closeButton svg {
-  width: 24px;
-  height: 24px;
-  color: var(--text-secondary);
-}
-
-.orderDetails__header {
-  position: relative;
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  color: var(--text-primary);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.orderDetails__title {
-  margin: 0;
-  font-weight: 600;
-  font-size: 1.25rem;
-  color: var(--text-primary);
-}
-
-.orderDetails__content {
-  padding: 0rem;
-}
-
-.orderDetails__addProductButton {
-  color: #4CAF50;
-  padding: 10px 15px;
+  transform: translate(50%, -50%); 
   cursor: pointer;
-  font-weight: 500;
-}
-
-.orderDetails__productsList {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.orderDetails__noProducts {
-  text-align: center;
-  color: var(--text-muted);
-  padding: 20px;
-  border: 1px dashed var(--border-color);
-  border-radius: var(--border-radius);
-}
-
-/* Адаптивность для мобильных устройств */
-@media (max-width: 991.98px) {
-  .orderDetails {
-    max-height: none;
-    position: relative;
-  }
-}
-
-@media (max-width: 767.98px) {
-  .orderDetails__productItem {
-    padding: 15px 10px;
-  }
-
-  .orderDetails__productInfo {
-    min-width: 0;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .orderDetails__productItem {
-    padding: 10px;
-    flex-wrap: wrap;
-    text-align: center;
-  }
-
-  .orderDetails__productIcon {
-    order: 1;
-    margin-bottom: 5px;
-  }
-
-  .orderDetails__productInfo {
-    order: 2;
-    flex-basis: 100%;
-  }
-
-  .orderDetails__productCondition {
-    order: 3;
-    margin-top: 5px;
-  }
-
-  .orderDetails__productDeleteButton {
-    order: 4;
-    margin-top: 5px;
-  }
+  transition: background-color 0.2s ease;
+  z-index: 50;
 }
