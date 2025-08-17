@@ -4,6 +4,7 @@ import { Product } from '@/types/products';
 import ProductItemMini from './ProductItemMini';
 import styles from '../Products/Products.module.css';
 import Portal from '@/components/UI/Portal';
+import { useTranslation } from 'react-i18next';
 
 interface DeleteProductModalProps {
   show: boolean;
@@ -20,6 +21,8 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
   onConfirm, 
   isDeleting = false 
 }) => {
+  const { t } = useTranslation(['common', 'products']);
+
   if (!show) return null;
 
   return (
@@ -38,7 +41,7 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
               </svg>
             </button>
             <div className="modal-body px-0 py-0 mt-2">
-              <h5 className="p-4 fw-bold">Вы уверены, что хотите удалить этот продукт?</h5>
+              <h5 className="p-4 fw-bold">{t('products:confirmDeleteProduct')}</h5>
               <div className='d-flex border border-1 justify-content-between align-items-center px-4 py-2 rounded-2'>
                 <ProductItemMini product={product} />
               </div>
@@ -52,7 +55,7 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
                 disabled={isDeleting}
                 style={{ fontWeight: '500', color: 'white' }}
               >
-                ОТМЕНИТЬ
+                {t('common:cancel')}
               </button>
               <button
                 type="button"
@@ -64,12 +67,12 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
                 {isDeleting ? (
                   <>
                     <span className="spinner-border spinner-border-sm me-1" />
-                    УДАЛЕНИЕ...
+                   {t('common:deleting')}...
                   </>
                 ) : (
                   <>
                     <i className="fas fa-trash me-1"></i>
-                    УДАЛИТЬ
+                    {t('common:delete')}
                   </>
                 )}
               </button>

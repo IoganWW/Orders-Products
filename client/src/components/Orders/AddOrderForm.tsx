@@ -7,6 +7,7 @@ import { fetchOrders } from '@/store/slices/ordersSlice';
 import FormField from '@/components/UI/FormField';
 import Portal from '@/components/UI/Portal';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
+import { useTranslation } from 'react-i18next';
 
 interface AddOrderFormProps {
   show: boolean;
@@ -14,6 +15,7 @@ interface AddOrderFormProps {
 }
 
 const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
+  const { t } = useTranslation(['orders', 'common']);
   const dispatch = useAppDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -83,7 +85,7 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
         
         // Показываем уведомление об успехе
         const successEvent = new CustomEvent('showNotification', {
-          detail: { type: 'success', message: 'Приход успешно создан!' }
+          detail: { type: 'success', message: t('orders:incomeCreatedSuccess') }
         });
         window.dispatchEvent(successEvent);
       } else {
@@ -93,7 +95,7 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
       console.error('Error creating order:', error);
       
       const errorEvent = new CustomEvent('showNotification', {
-        detail: { type: 'error', message: 'Ошибка при создании прихода' }
+        detail: { type: 'error', message: t('orders:incomeCreateError') }
       });
       window.dispatchEvent(errorEvent);
     } finally {
@@ -115,7 +117,7 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
           <div className="modal-content" style={{ borderRadius: '12px', border: '1px solid' }}>
             <div className="modal-header bg-success text-white" style={{ borderRadius: '12px 12px 0 0' }}>
               <h5 className="modal-title">
-                Добавить новый приход
+                {t('orders:addOrder')}
               </h5>
               <button
                 type="button"
@@ -130,12 +132,12 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
                 <div className="row">
                   <div className="col-md-6">
                     <FormField
-                      label="Название прихода"
+                      label={t('orders:incomeTitle')}
                       name="title"
                       value={values.title}
                       error={errors.title}
                       touched={touched.title}
-                      placeholder="Введите название прихода"
+                      placeholder={t('orders:enterIncomeTitle')}
                       required
                       onChange={handleChange}
                       onBlur={handleBlur}
@@ -144,7 +146,7 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
                   
                   <div className="col-md-6">
                     <FormField
-                      label="Дата прихода"
+                      label={t('orders:incomeDate')}
                       name="date"
                       type="datetime-local"
                       value={values.date}
@@ -158,22 +160,17 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
                 </div>
 
                 <FormField
-                  label="Описание прихода"
+                  label={t('orders:incomeDescription')}
                   name="description"
                   type="textarea"
                   value={values.description}
                   error={errors.description}
                   touched={touched.description}
-                  placeholder="Введите подробное описание прихода"
+                  placeholder={t('orders:enterIncomeDescription')}
                   required
                   onChange={handleChange}
                   onBlur={handleBlur}
                 />
-
-                <div className="alert alert-info mt-3">
-                  <i className="fas fa-info-circle me-2"></i>
-                  После создания прихода вы сможете добавить к нему продукты
-                </div>
               </div>
 
               <div className="modal-footer border-0" style={{ borderRadius: '0 0 12px 12px' }}>
@@ -183,7 +180,7 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
                   onClick={handleClose}
                   disabled={isSubmitting}
                 >
-                  Отмена
+                  {t('common:cancel')}
                 </button>
                 <button
                   type="submit"
@@ -193,12 +190,11 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
                   {isSubmitting ? (
                     <>
                       <span className="spinner-border spinner-border-sm me-2" />
-                      Создание...
+                      {t('common:adding')}...
                     </>
                   ) : (
                     <>
-                      <i className="fas fa-save me-2"></i>
-                      Создать приход
+                     {t('common:add')}
                     </>
                   )}
                 </button>

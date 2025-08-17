@@ -14,11 +14,11 @@ import { useTranslation } from 'react-i18next';
 
 // Компонент загрузки
 const LoadingSpinner: React.FC = React.memo(() => {
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['common', 'products']);
   return (
     <div className="d-flex justify-content-center align-items-center p-5">
       <div className="spinner-border text-success" role="status">
-        <span className="visually-hidden">{t('common:error')}</span>
+        <span className="visually-hidden">{t('common:loading')}</span>
       </div>
     </div>
   )
@@ -65,6 +65,7 @@ EmptyOrdersState.displayName = 'EmptyOrdersState';
 
 // Основной компонент
 const OrdersList: React.FC = () => {
+  const { t } = useTranslation(['products']);
   const dispatch = useAppDispatch();
   const { orders, selectedOrder, loading, error } = useAppSelector(state => state.orders);
 
@@ -102,7 +103,7 @@ const OrdersList: React.FC = () => {
 
       // Показываем уведомление об успехе
       const successEvent = new CustomEvent('showNotification', {
-        detail: { type: 'success', message: 'Продукт успешно удален!' }
+        detail: { type: 'success', message: `${t('products:productDeletedSuccess')}` }
       });
       window.dispatchEvent(successEvent);
 
@@ -110,11 +111,11 @@ const OrdersList: React.FC = () => {
       console.error('Error deleting product:', error);
 
       const errorEvent = new CustomEvent('showNotification', {
-        detail: { type: 'error', message: 'Ошибка при удалении продукта' }
+        detail: { type: 'error', message: `${t('products:productDeleteError')}` }
       });
       window.dispatchEvent(errorEvent);
     }
-  }, [dispatch, selectedOrder]);
+  }, [dispatch, selectedOrder, t]);
 
   const handleAddOrder = useCallback(() => {
     const event = new CustomEvent('showAddOrderForm');

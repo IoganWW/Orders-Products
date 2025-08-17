@@ -3,13 +3,23 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ProductsState, ProductType } from '@/types/products';
 import api from '@/services/api'; // Используем api вместо axios
 
+const normalizeProductType = (type: string): ProductType => {
+  // Приводим к нижнему регистру для соответствия типам i18n
+  return type.toLowerCase() as ProductType;
+};
+
 // Async thunks - обновляем для использования api interceptor
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get('/api/products');
-      return response.data;
+      // Нормализуем данные сразу при получении
+      const normalizedProducts = response.data.map((product: any) => ({
+        ...product,
+        type: normalizeProductType(product.type)
+      }));
+      return normalizedProducts;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.error || 'Failed to fetch products');
     }

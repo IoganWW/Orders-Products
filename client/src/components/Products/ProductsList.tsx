@@ -5,8 +5,10 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchProducts, deleteProduct } from '@/store/slices/productsSlice';
 import ProductCard from './ProductCard';
 import styles from './Products.module.css';
+import { useTranslation } from 'react-i18next';
 
 const ProductsList: React.FC = () => {
+  const { t } = useTranslation(['common', 'products']);
   const dispatch = useAppDispatch();
   const { filteredProducts, loading, error, selectedType } = useAppSelector(state => state.products);
   const { orders } = useAppSelector(state => state.orders);
@@ -28,7 +30,7 @@ const ProductsList: React.FC = () => {
     return (
       <div className={`${styles.loading} d-flex justify-content-center align-items-center`}>
         <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
+          <span className="visually-hidden">{t('common:loading')}</span>
         </div>
       </div>
     );
@@ -37,7 +39,7 @@ const ProductsList: React.FC = () => {
   if (error) {
     return (
       <div className="alert alert-danger" role="alert">
-        <h4 className="alert-heading">Error!</h4>
+        <h4 className="alert-heading">{t('common:error')}</h4>
         <p>{error}</p>
       </div>
     );
@@ -47,12 +49,12 @@ const ProductsList: React.FC = () => {
     <div className={`${styles.productsContainer} ps-4 pe-1 px-lg-5`}>
       <div className={`${styles.productsList} products-list`}>
         {filteredProducts.length === 0 ? (
-          <div className="alert alert-info text-center">
-            <h5>No products found</h5>
+          <div className="alert alert-info text-start">
+            <h5>{t('products:noProductsFound')}</h5>
             <p>
-              {selectedType === 'All' 
-                ? 'There are no products to display.' 
-                : `No products found in ${selectedType} category.`
+              {selectedType === 'all' 
+                ? t('products:noProductsToDisplay')
+                : `${t('products:noProductsInCategory')} ${selectedType}`
               }
             </p>
           </div>

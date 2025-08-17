@@ -5,6 +5,7 @@ import { formatPrice } from '@/utils/currencyUtils';
 import DeleteProductModal from './DeleteProductModal';
 import styles from './Products.module.css';
 import ProductTypeIcon from './ProductTypeIcon';
+import { useTranslation } from 'react-i18next';
 
 interface ProductCardProps {
   product: Product;
@@ -13,12 +14,13 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDeleteProduct }) => {
+  const { t, i18n } = useTranslation(['products', 'common']);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const price = formatPrice(product.price);
-  const guaranteeStart = formatDate(product.guarantee.start);
-  const guaranteeEnd = formatDate(product.guarantee.end);
+  const guaranteeStart = formatDate(product.guarantee.start, i18n.language);
+  const guaranteeEnd = formatDate(product.guarantee.end, i18n.language);
   const isGuaranteeExpired = isDateExpired(product.guarantee.end);
 
   // Обработчики удаления
@@ -65,23 +67,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         {/* Столбец 2: Статус */}
         <div className={`${styles.productCard__col2} d-lg-flex d-md-none d-sm-none d-none`}>
           <span className={`${product.isNew === 1 ? styles.statusAvailable : styles.statusOnRepair}`}>
-            {product.isNew === 1 ? 'Свободен' : 'На ремонте'}
+            {product.isNew === 1 ? t('products:free') : t('products:underRepair')}
           </span>
         </div>
         
         {/* Столбец 3: Гарантия */}
         <div className={`${styles.productCard__guaranteeDates} d-lg-flex d-md-flex d-sm-none d-none`}>
           <span>
-            <small className="text-muted">From:</small> {guaranteeStart.short}
+            <small className="text-muted">{t('common:from')}:</small> {guaranteeStart.short}
           </span>
           <span className={isGuaranteeExpired ? 'text-danger' : 'text-success'}>
-            <small className="text-muted">Until:</small> {guaranteeEnd.short}
+            <small className="text-muted">{t('common:until')}:</small> {guaranteeEnd.short}
           </span>
         </div>
 
         {/* Столбец 4: Новый/Б/У */}
         <div className={`${styles.productCard__col_newUsed} d-lg-flex d-md-none d-sm-none d-none`}>
-          <span>{product.isNew ? 'Новый' : 'Б/У'}</span>
+          <span>{product.isNew ? t('products:new') : t('products:used')}</span>
         </div>
 
         {/* Столбец 5: Цены */}
@@ -118,7 +120,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         {/* Столбец 9: Дата */}
         <div className={`${styles.productCard__col7} d-lg-flex d-md-none d-sm-none d-none`}>
           <small className={styles.productCard__footerDate}>
-            {formatDate(product.date).shortMonStr}
+            {formatDate(product.date, i18n.language).shortMonStr}
           </small>
         </div>
 
@@ -129,7 +131,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
               type="button"
               className={styles.productCard__deleteButton}
               onClick={handleDeleteClick}
-              title="Удалить продукт"
+              title={t('common:delete')}
               disabled={isDeleting}
             >
               <svg className={styles.productCard__deleteIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

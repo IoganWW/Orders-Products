@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 export default function ProductsPage() {
   const { t } = useTranslation(['navigation', 'products']);
   const dispatch = useAppDispatch();
-  const { products, selectedType, specificationFilter } = useAppSelector(state => state.products);
+  const { products, filteredProducts, selectedType, specificationFilter } = useAppSelector(state => state.products);
   const productsCount = products.length;
 
   const productTypes: (ProductType | 'all')[] = ['all', 'monitors', 'laptops', 'keyboards', 'phones', 'tablets'];
@@ -24,9 +24,19 @@ export default function ProductsPage() {
     return ['all', ...Array.from(new Set(specs))];
   }, [products]);
 
+  // Обновите функцию getProductCount в page.tsx
   const getProductCount = (type: ProductType | 'all') => {
-    if (type === 'all') return products.length;
-    return products.filter(product => product.type === type).length;
+    // Фильтруем только по спецификациям, игнорируя фильтр типа
+    const specFilteredProducts = products.filter(product => {
+      const specMatch = specificationFilter === 'all' ||
+        product.specification?.includes(specificationFilter);
+      return specMatch;
+    });
+
+    if (type === 'all') return specFilteredProducts.length;
+
+    // Теперь применяем фильтр по типу к отфильтрованным по спецификации
+    return specFilteredProducts.filter(product => product.type === type).length;
   };
 
   const handleTypeFilterChange = (type: ProductType | 'all') => {

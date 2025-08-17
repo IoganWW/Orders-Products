@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
       await dispatch(logoutUser()).unwrap();
       router.push('/');
       const successEvent = new CustomEvent('showNotification', {
-        detail: { type: 'success', message: 'Вы успешно вышли из системы' }
+        detail: { type: 'success', message: `${t('common:successLogout')}` }
       });
       window.dispatchEvent(successEvent);
     } catch (error) {
@@ -79,7 +79,7 @@ const Sidebar: React.FC = () => {
     <>
       <aside className={`${styles.sidebar} sidebar`}>
         {/* Updated Authorization Block */}
-        <div className={`${styles.sidebarAuth} sidebar-auth px-0 px-lg-2`}>
+        <div className={`${styles.sidebarAuth} sidebar-auth px-0 px-lg-2 mt-3`}>
           {loading ? (
             <div className="d-flex justify-content-center align-items-center h-100">
               <span className="spinner-border spinner-border-sm" />
@@ -94,7 +94,7 @@ const Sidebar: React.FC = () => {
                 <button
                   className={`${authStyles.settingsBtn} settings-btn btn btn-light btn-sm rounded-circle shadow-sm`}
                   onClick={() => setProfileMenuOpen(!isProfileMenuOpen)}
-                  title="Настройки профиля"
+                  title={t('common:profileSettings')}
                 >
                   <i className="fas fa-cog"></i>
                 </button>

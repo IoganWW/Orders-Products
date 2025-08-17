@@ -14,8 +14,10 @@ const resources = {
       save: 'Save',
       cancel: 'Cancel',
       delete: 'Delete',
+      deleting: 'Deleting',
       edit: 'Edit',
       add: 'Add',
+      adding: 'Adding',
       search: 'Search',
       total: 'Total',
       actions: 'Actions',
@@ -25,6 +27,11 @@ const resources = {
       name: 'Name',
       email: 'Email',
       role: 'Role',
+
+      successLogout: 'You have successfully logged out',
+      profileSettings: 'Profile Settings',
+      from: 'from',
+      until: 'until',
       // Дни недели
       monday: 'Monday',
       tuesday: 'Tuesday', 
@@ -58,7 +65,7 @@ const resources = {
     // Приходы
     orders: {
       title: 'Orders Management',
-      addOrder: 'Add Order',
+      addOrder: 'Add new Order',
       orderDetails: 'Order Details',
       products: 'Products',
       deleteConfirm: 'Are you sure you want to delete this order?',
@@ -66,7 +73,14 @@ const resources = {
       firstOrder: 'Create first order',
       noProducts: 'No products in this order',
       order: 'Order',
-      product: 'Products'
+      product: 'Products',
+      incomeTitle: 'Income Title',
+      enterIncomeTitle: 'Enter income title',
+      incomeDate: 'Income Date',
+      incomeDescription: 'Income Description',
+      enterIncomeDescription: 'Enter a detailed description of the income',
+      incomeCreatedSuccess: 'Order successfully created!',
+      incomeCreateError: 'Error creating order'
     },
     // Продукты  
     products: {
@@ -80,8 +94,16 @@ const resources = {
       all: 'All',
       new: 'New',
       used: 'Used',
+      noProductsFound: 'No products found',
       free: 'Free',
       underRepair: 'Under repair',
+
+      productDeletedSuccess: 'Product successfully deleted!',
+      productDeleteError: 'Error deleting product',
+      noProductsToDisplay: 'There are no products to display',
+      noProductsInCategory: 'No products found in this category',
+      confirmDeleteProduct: 'Are you sure you want to delete this product?',
+      
       type: 'Type',
       specifications: 'Specifications',
       monitors: 'Monitors',
@@ -114,8 +136,10 @@ const resources = {
       save: 'Зберегти',
       cancel: 'Скасувати',
       delete: 'Видалити',
+      deleting: 'Видалення',
       edit: 'Редагувати',
       add: 'Додати',
+      adding: 'Додавання',
       search: 'Пошук',
       total: 'Всього',
       actions: 'Дії',
@@ -125,6 +149,11 @@ const resources = {
       name: "Ім'я",
       email: 'Email',
       role: 'Роль',
+      from: 'з',
+      until: 'до',
+
+      successLogout: 'Ви успішно вийшли з системи',
+      profileSettings: 'Налаштування профілю',
       // Дні тижня
       monday: 'Понеділок',
       tuesday: 'Вівторок',
@@ -156,14 +185,21 @@ const resources = {
     },
     orders: {
       title: 'Управління приходами',
-      addOrder: 'Додати приход',
+      addOrder: 'Додати новий прихід',
       orderDetails: 'Деталі приходу',
       deleteConfirm: 'Ви впевнені, що хочете видалити цей приход?',
       noOrders: 'Не має приходів',
       firstOrder: 'Створити перший прихід',
-      noProducts: 'Не має продуктів у цьогму приходе',
+      noProducts: 'Не має продуктів у цьому приході',
       order: 'Прихід',
-      product: 'Продуктів'
+      product: 'Продуктів',
+      incomeTitle: 'Назва приходу',
+      enterIncomeTitle: 'Введіть назву приходу',
+      incomeDate: 'Дата приходу',
+      incomeDescription: 'Опис приходу',
+      enterIncomeDescription: 'Введіть докладний опис приходу',
+      incomeCreatedSuccess: 'Прихід успішно створено!',
+      incomeCreateError: 'Помилка при створенні приходу'
     },
     products: {
       title: 'Каталог продуктів',
@@ -176,8 +212,16 @@ const resources = {
       all: 'Всі',
       new: 'Новий',
       used: 'Вживаний',
+      noProductsFound: 'Товарів не знайдено',
       free: 'Вільний',
       underRepair: 'У ремонті',
+
+      productDeletedSuccess: 'Продукт успішно видалено!',
+      productDeleteError: 'Помилка при видаленні продукту',
+      noProductsToDisplay: 'Немає товарів для відображення',
+      noProductsInCategory: 'Товари в цій категорії не знайдено',
+      confirmDeleteProduct: 'Ви впевнені, що хочете видалити цей продукт?',
+
       type: 'Тип',
       specifications: 'Характеристики',
       monitors: 'Монітори',
@@ -209,8 +253,10 @@ const resources = {
       save: 'Сохранить',
       cancel: 'Отменить',
       delete: 'Удалить',
+      deleting: 'Удаление',
       edit: 'Редактировать',
       add: 'Добавить',
+      adding: 'Добавление',
       search: 'Поиск',
       total: 'Всего',
       actions: 'Действия',
@@ -220,6 +266,11 @@ const resources = {
       name: 'Имя',
       email: 'Email',
       role: 'Роль',
+      from: 'с',
+      until: 'по',
+
+      successLogout: 'Вы успешно вышли из системы',
+      profileSettings: 'Настройки профиля',
       // Дни недели
       monday: 'Понедельник',
       tuesday: 'Вторник',
@@ -251,14 +302,21 @@ const resources = {
     },
     orders: {
       title: 'Управление приходами',
-      addOrder: 'Добавить приход',
+      addOrder: 'Добавить новый приход',
       orderDetails: 'Детали прихода',
       deleteConfirm: 'Вы уверены, что хотите удалить этот приход?',
       noOrders: 'Нет приходов',
       firstOrder: 'Создать первый приход',
       noProducts: 'Нет продуктов в этом приходе',
       order: 'Приход',
-      product: 'Продукта'
+      product: 'Продукта',
+      incomeTitle: 'Название прихода',
+      enterIncomeTitle: 'Введите название прихода',
+      incomeDate: 'Дата прихода',
+      incomeDescription: 'Описание прихода',
+      enterIncomeDescription: 'Введите подробное описание прихода',
+      incomeCreatedSuccess: 'Приход успешно создан!',
+      incomeCreateError: 'Ошибка при создании прихода'
     },
     products: {
       title: 'Каталог продуктов',
@@ -273,6 +331,13 @@ const resources = {
       all: 'Все',
       new: 'Новый',
       used: 'Б/у',
+
+      noProductsFound: 'Товары не найдены',
+      productDeletedSuccess: 'Продукт успешно удален!',
+      productDeleteError: 'Ошибка при удалении продукта',
+      noProductsToDisplay: 'Нет товаров для отображения',
+      noProductsInCategory: 'Товары в данной категории не найдены',
+      confirmDeleteProduct: 'Вы уверены, что хотите удалить этот продукт?',
       type: 'Тип',
       specifications: 'Характеристики',
       monitors: 'Мониторы',

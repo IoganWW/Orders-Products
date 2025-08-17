@@ -18,8 +18,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Мемоизированные вычисления
-  const formattedDate = formatDate(order.date, i18n.language);
   const totals = useMemo(() => calculateOrderTotal(order.products), [order.products]);
+
+  const formattedDate = formatDate(order.date, i18n.language);
 
   const handleCardClick = React.useCallback(() => {
     onSelect(order);
