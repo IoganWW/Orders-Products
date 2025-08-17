@@ -30,6 +30,13 @@ jest.mock('react-i18next', () => ({
   }),
 }))
 
+// Mock i18n lib
+jest.mock('@/lib/i18n', () => ({
+  t: (key: string) => key,
+  language: 'en',
+  changeLanguage: jest.fn(),
+}))
+
 // Mock socket.io-client
 jest.mock('socket.io-client', () => ({
   io: jest.fn(() => ({

@@ -3,20 +3,13 @@ import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
-import type { RootState } from '@/store'
-
-// Импортируем slices правильно
 import ordersReducer from '@/store/slices/ordersSlice'
 import productsReducer from '@/store/slices/productsSlice'
 import appReducer from '@/store/slices/appSlice'
 import authReducer from '@/store/slices/authSlice'
+import type { RootState } from '@/store'
 
-// Настройка store для тестов
-interface ExtendedRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  preloadedState?: Partial<RootState>
-  store?: ReturnType<typeof setupStore>
-}
-
+// Настройка store для тестов - правильная типизация
 export function setupStore(preloadedState?: Partial<RootState>) {
   return configureStore({
     reducer: {
@@ -34,6 +27,15 @@ export function setupStore(preloadedState?: Partial<RootState>) {
         },
       }),
   })
+}
+
+// Создаем тип для тестового store
+export type TestStore = ReturnType<typeof setupStore>
+
+// Типизированная функция рендера
+interface ExtendedRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  preloadedState?: Partial<RootState>
+  store?: TestStore
 }
 
 export function renderWithProviders(
@@ -68,7 +70,7 @@ export const mockOrder = {
       isNew: 1 as const,
       photo: 'test.jpg',
       title: 'Test Product',
-      type: 'Monitors' as const,
+      type: 'monitors' as const,
       specification: 'Test spec',
       guarantee: {
         start: '2024-01-01 10:00:00',
@@ -90,7 +92,7 @@ export const mockProduct = {
   isNew: 1 as const,
   photo: 'test.jpg',
   title: 'Test Product',
-  type: 'Monitors' as const,
+  type: 'monitors' as const,
   specification: 'Test specification',
   guarantee: {
     start: '2024-01-01 10:00:00',

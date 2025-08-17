@@ -1,3 +1,6 @@
+// client/src/types/orders.ts
+import { Product } from "./products";
+
 export interface Order {
   id: number;
   title: string;

@@ -1,5 +1,6 @@
 import { Monitor, Keyboard, Laptop, Phone, Tablet } from 'lucide-react';
-import { LucideIcon } from 'lucide-react'; //
+import { LucideIcon } from 'lucide-react';
+import { Guarantee, Price } from './common';
 
 export interface Product {
   id: number;

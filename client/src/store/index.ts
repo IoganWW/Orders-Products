@@ -1,16 +1,17 @@
+// client/src/store/index.ts
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import ordersSlice from './slices/ordersSlice';
-import productsSlice from './slices/productsSlice';
-import appSlice from './slices/appSlice';
-import authSlice from './slices/authSlice';
+import ordersReducer from './slices/ordersSlice';
+import productsReducer from './slices/productsSlice';
+import appReducer from './slices/appSlice';
+import authReducer from './slices/authSlice';
 
 export const store = configureStore({
   reducer: {
-    orders: ordersSlice,
-    products: productsSlice,
-    app: appSlice,
-    auth: authSlice,
+    orders: ordersReducer,
+    products: productsReducer,
+    app: appReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

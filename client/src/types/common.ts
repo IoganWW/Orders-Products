@@ -1,3 +1,4 @@
+// client/src/types/common.ts
 export interface Price {
   value: number;
   symbol: string;

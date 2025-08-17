@@ -33,6 +33,13 @@ const customJestConfig = {
     '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}',
   ],
+  // Добавляем transform для ES modules
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
+  },
+  transformIgnorePatterns: [
+    'node_modules/(?!(react-country-flag)/)',
+  ],
 }
 
 export default createJestConfig(customJestConfig)
