@@ -108,8 +108,8 @@ jest.mock('@/store', () => ({
 }))
 
 // Mock API services
-jest.mock('@/services/api', () => ({
-  default: {
+jest.mock('@/services/api', () => {
+  const mockApi = {
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
@@ -118,11 +118,15 @@ jest.mock('@/services/api', () => ({
       request: { use: jest.fn() },
       response: { use: jest.fn() }
     }
-  },
-  fetchUsers: jest.fn(),
-  fetchOrders: jest.fn(),
-  fetchProducts: jest.fn()
-}))
+  };
+  return {
+    __esModule: true,
+    default: mockApi,
+    fetchUsers: jest.fn(),
+    fetchOrders: jest.fn(),
+    fetchProducts: jest.fn()
+  };
+});
 
 // Mock socket.io-client
 jest.mock('socket.io-client', () => ({
@@ -165,15 +169,22 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
-}
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
-})
+const createStorageMock = () => {
+  let store: { [key: string]: string } = {};
+
+  return {
+    getItem: jest.fn((key: string) => store[key] || null),
+    setItem: jest.fn((key: string, value: string) => {
+      store[key] = value.toString();
+    }),
+    removeItem: jest.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: jest.fn(() => {
+      store = {};
+    }),
+  };
+};
 
 // Mock sessionStorage
 const sessionStorageMock = {
@@ -182,6 +193,10 @@ const sessionStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 }
+
+Object.defineProperty(window, 'localStorage', { value: createStorageMock() });
+Object.defineProperty(window, 'sessionStorage', { value: createStorageMock() });
+
 Object.defineProperty(window, 'sessionStorage', {
   value: sessionStorageMock
 })

@@ -6,7 +6,34 @@ import {
   mockUser,
   clearAuthError, 
   setAuthFromStorage
-} from '@/test-utils/test-utils'
+} from '@/test-utils/test-utils';
+
+import authReducer, { 
+  loginUser, 
+  logoutUser, 
+  initializeAuth,
+} from '../slices/authSlice';
+
+import { AuthState } from '@/types/auth';
+import axios from 'axios';
+import api from '@/services/api';
+
+
+// Мокаем axios и api
+jest.mock('axios');
+jest.mock('@/services/api');
+
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockedApi = api as jest.Mocked<typeof api>;
+
+const initialState: AuthState = {
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    loading: true,
+    error: null,
+};
+
 
 describe('authSlice', () => {
   let store: TestStore
@@ -96,4 +123,67 @@ describe('authSlice', () => {
     expect(state.auth.token).toBe('test-token')
     expect(state.auth.isAuthenticated).toBe(true)
   })
+
+  describe('extraReducers', () => {
+    // --- Тесты для loginUser ---
+    describe('loginUser', () => {
+      it('should set loading true on pending', () => {
+        const action = { type: loginUser.pending.type };
+        const state = authReducer(initialState, action);
+        expect(state.loading).toBe(true);
+        expect(state.error).toBeNull();
+      });
+
+      it('should set user, token and isAuthenticated on fulfilled', () => {
+        const payload = { user: mockUser, token: 'new-token' };
+        const action = { type: loginUser.fulfilled.type, payload };
+        const state = authReducer(initialState, action);
+        expect(state.loading).toBe(false);
+        expect(state.isAuthenticated).toBe(true);
+        expect(state.user).toEqual(mockUser);
+        expect(state.token).toBe('new-token');
+      });
+
+      it('should set error on rejected', () => {
+        const payload = 'Invalid credentials';
+        const action = { type: loginUser.rejected.type, payload };
+        const state = authReducer(initialState, action);
+        expect(state.loading).toBe(false);
+        expect(state.isAuthenticated).toBe(false);
+        expect(state.error).toBe(payload);
+      });
+    });
+
+    // --- Тесты для logoutUser ---
+    describe('logoutUser', () => {
+      it('should reset state on fulfilled', () => {
+        const loggedInState: AuthState = { ...initialState, user: mockUser, token: 'token', isAuthenticated: true };
+        const action = { type: logoutUser.fulfilled.type };
+        const state = authReducer(loggedInState, action);
+        expect(state.user).toBeNull();
+        expect(state.token).toBeNull();
+        expect(state.isAuthenticated).toBe(false);
+      });
+    });
+
+    // --- Тесты для initializeAuth ---
+    describe('initializeAuth', () => {
+      it('should restore auth state on fulfilled with payload', () => {
+        const payload = { user: mockUser, token: 'stored-token' };
+        const action = { type: initializeAuth.fulfilled.type, payload };
+        const state = authReducer(initialState, action);
+        expect(state.loading).toBe(false);
+        expect(state.isAuthenticated).toBe(true);
+        expect(state.user).toEqual(mockUser);
+        expect(state.token).toBe('stored-token');
+      });
+
+      it('should do nothing on fulfilled with null payload', () => {
+        const action = { type: initializeAuth.fulfilled.type, payload: null };
+        const state = authReducer(initialState, action);
+        expect(state.loading).toBe(false);
+        expect(state.isAuthenticated).toBe(false);
+      });
+    });
+  });
 })

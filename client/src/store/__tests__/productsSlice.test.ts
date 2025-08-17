@@ -9,6 +9,12 @@ import {
   setProducts
 } from '@/test-utils/test-utils'
 
+import productsReducer, {
+  fetchProducts,
+  deleteProduct,
+} from '../slices/productsSlice';
+import { ProductsState } from '@/types/products';
+
 const mockProducts = [
   {
     id: 1,
@@ -47,6 +53,15 @@ const mockProducts = [
     date: '2024-01-01 10:00:00'
   }
 ]
+
+const initialState: ProductsState = {
+  products: [],
+  filteredProducts: [],
+  selectedType: 'all',
+  specificationFilter: 'all',
+  loading: false,
+  error: null,
+};
 
 describe('productsSlice', () => {
   let store: TestStore
@@ -137,4 +152,67 @@ describe('productsSlice', () => {
     const state = storeWithError.getState()
     expect(state.products.error).toBeNull()
   })
+
+  describe('extraReducers', () => {
+    // --- Тесты для fetchProducts ---
+    describe('fetchProducts', () => {
+      it('should set loading true on pending', () => {
+        const action = { type: fetchProducts.pending.type };
+        const state = productsReducer(initialState, action);
+        expect(state.loading).toBe(true);
+      });
+
+      it('should set products on fulfilled and apply filters', () => {
+        const stateWithFilter: ProductsState = { ...initialState, selectedType: 'monitors' };
+        const action = { type: fetchProducts.fulfilled.type, payload: mockProducts };
+        const state = productsReducer(stateWithFilter, action);
+
+        expect(state.loading).toBe(false);
+        expect(state.products).toEqual(mockProducts);
+        // Проверяем, что фильтры применились
+        expect(state.filteredProducts.length).toBe(1);
+        expect(state.filteredProducts[0].type).toBe('monitors');
+      });
+
+      it('should set error on rejected', () => {
+        const action = { type: fetchProducts.rejected.type, error: { message: 'Failed to fetch' } };
+        const state = productsReducer(initialState, action);
+        expect(state.loading).toBe(false);
+        expect(state.error).toBe('Failed to fetch');
+      });
+    });
+
+    // --- Тесты для deleteProduct ---
+    describe('deleteProduct', () => {
+      const stateWithProducts: ProductsState = {
+        ...initialState,
+        products: mockProducts,
+        filteredProducts: mockProducts,
+      };
+
+      it('should set loading true on pending', () => {
+        const action = { type: deleteProduct.pending.type };
+        const state = productsReducer(stateWithProducts, action);
+        expect(state.loading).toBe(true);
+      });
+
+      it('should remove product on fulfilled', () => {
+        const action = { type: deleteProduct.fulfilled.type, payload: 1 }; // Удаляем продукт с id: 1
+        const state = productsReducer(stateWithProducts, action);
+        
+        expect(state.loading).toBe(false);
+        expect(state.products.length).toBe(1);
+        expect(state.products[0].id).toBe(2);
+        expect(state.filteredProducts.length).toBe(1);
+        expect(state.filteredProducts[0].id).toBe(2);
+      });
+      
+      it('should set error on rejected', () => {
+        const action = { type: deleteProduct.rejected.type, error: { message: 'Failed to delete' } };
+        const state = productsReducer(stateWithProducts, action);
+        expect(state.loading).toBe(false);
+        expect(state.error).toBe('Failed to delete');
+      });
+    });
+  });
 })
