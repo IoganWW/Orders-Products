@@ -11,7 +11,8 @@ const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/src/test-utils/setupTests.ts'],
   testEnvironment: 'jest-environment-jsdom',
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
-  moduleNameMapping: {
+  // ИСПРАВЛЕНО: moduleNameMapping -> moduleNameMapper
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   collectCoverageFrom: [
@@ -37,9 +38,6 @@ const customJestConfig = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!(react-country-flag)/)',
-  ],
 }
 
 export default createJestConfig(customJestConfig)

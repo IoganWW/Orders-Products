@@ -25,16 +25,103 @@ jest.mock('react-i18next', () => ({
     t: (key: string) => key,
     i18n: {
       changeLanguage: jest.fn(),
-      language: 'en',
+      language: 'uk',
     },
   }),
 }))
 
-// Mock i18n lib
-jest.mock('@/lib/i18n', () => ({
-  t: (key: string) => key,
-  language: 'en',
-  changeLanguage: jest.fn(),
+// Mock i18n lib - ВАЖНО: этот мок должен быть до импорта dateUtils
+jest.mock('@/lib/i18n', () => {
+  const mockI18n = {
+    t: jest.fn((key: string) => {
+      // Возвращаем фиктивные переводы для месяцев и дней
+      const translations: { [key: string]: string } = {
+        'common:jan': 'Січ',
+        'common:feb': 'Лют', 
+        'common:mar': 'Бер',
+        'common:apr': 'Кві',
+        'common:may': 'Тра',
+        'common:jun': 'Чер',
+        'common:jul': 'Лип',
+        'common:aug': 'Сер',
+        'common:sep': 'Вер',
+        'common:oct': 'Жов',
+        'common:nov': 'Лис',
+        'common:dec': 'Гру',
+        'common:monday': 'Понеділок',
+        'common:tuesday': 'Вівторок',
+        'common:wednesday': 'Середа',
+        'common:thursday': 'Четвер',
+        'common:friday': "П'ятниця",
+        'common:saturday': 'Субота',
+        'common:sunday': 'Неділя'
+      }
+      return translations[key] || key
+    }),
+    language: 'uk'
+  }
+  
+  return {
+    default: mockI18n,
+    __esModule: true
+  }
+})
+
+// Mock store
+jest.mock('@/store', () => ({
+  store: {
+    getState: jest.fn(() => ({
+      auth: {
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        loading: false,
+        error: null
+      },
+      orders: {
+        orders: [],
+        selectedOrder: null,
+        loading: false,
+        error: null
+      },
+      products: {
+        products: [],
+        filteredProducts: [],
+        selectedType: 'all',
+        specificationFilter: 'all',
+        loading: false,
+        error: null
+      },
+      app: {
+        activeSessions: 0,
+        currentTime: new Date(),
+        isConnected: false,
+        theme: 'light',
+        locale: 'uk'
+      }
+    })),
+    dispatch: jest.fn(),
+    subscribe: jest.fn()
+  },
+  useAppDispatch: jest.fn(() => jest.fn()),
+  useAppSelector: jest.fn()
+}))
+
+// Mock API services
+jest.mock('@/services/api', () => ({
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+    interceptors: {
+      request: { use: jest.fn() },
+      response: { use: jest.fn() }
+    }
+  },
+  fetchUsers: jest.fn(),
+  fetchOrders: jest.fn(),
+  fetchProducts: jest.fn()
 }))
 
 // Mock socket.io-client
@@ -50,6 +137,13 @@ jest.mock('socket.io-client', () => ({
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}))
+
+// Mock ResizeObserver
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
@@ -79,4 +173,15 @@ const localStorageMock = {
 }
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock
+})
+
+// Mock sessionStorage
+const sessionStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+}
+Object.defineProperty(window, 'sessionStorage', {
+  value: sessionStorageMock
 })

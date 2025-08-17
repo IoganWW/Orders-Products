@@ -1,6 +1,12 @@
 // client/src/store/__tests__/authSlice.test.ts
-import { setupStore, type TestStore, mockUser } from '@/test-utils/test-utils'
-import { clearError, setAuthFromStorage } from '../slices/authSlice'
+import { 
+  setupStore, 
+  type TestStore, 
+  type MockRootState,
+  mockUser,
+  clearAuthError, 
+  setAuthFromStorage
+} from '@/test-utils/test-utils'
 
 describe('authSlice', () => {
   let store: TestStore
@@ -9,9 +15,17 @@ describe('authSlice', () => {
     store = setupStore()
   })
 
-  it('should handle clearError', () => {
-    // Создаем store с ошибкой
-    const storeWithError = setupStore({
+  it('should have correct initial state', () => {
+    const state = store.getState()
+    expect(state.auth.user).toBeNull()
+    expect(state.auth.token).toBeNull()
+    expect(state.auth.isAuthenticated).toBe(false)
+    expect(state.auth.loading).toBe(true) // В реальном authSlice loading изначально true
+    expect(state.auth.error).toBeNull()
+  })
+
+  it('should clear error', () => {
+    const preloadedState: Partial<MockRootState> = {
       auth: {
         user: null,
         token: null,
@@ -19,15 +33,16 @@ describe('authSlice', () => {
         loading: false,
         error: 'Test error'
       }
-    })
+    }
 
-    storeWithError.dispatch(clearError())
+    const storeWithError = setupStore(preloadedState)
+    storeWithError.dispatch(clearAuthError())
     
     const state = storeWithError.getState()
     expect(state.auth.error).toBeNull()
   })
 
-  it('should handle setAuthFromStorage', () => {
+  it('should set auth from storage', () => {
     const authData = {
       user: mockUser,
       token: 'test-token'
@@ -42,13 +57,43 @@ describe('authSlice', () => {
     expect(state.auth.loading).toBe(false)
   })
 
-  it('should have correct initial state', () => {
-    const state = store.getState()
-    
-    expect(state.auth.user).toBeNull()
-    expect(state.auth.token).toBeNull()
+  it('should handle user authentication state correctly', () => {
+    // Начальное состояние - не авторизован
+    let state = store.getState()
     expect(state.auth.isAuthenticated).toBe(false)
-    expect(state.auth.loading).toBe(true)
+    expect(state.auth.user).toBeNull()
+
+    // После авторизации
+    store.dispatch(setAuthFromStorage({
+      user: mockUser,
+      token: 'auth-token'
+    }))
+
+    state = store.getState()
+    expect(state.auth.isAuthenticated).toBe(true)
+    expect(state.auth.user).toEqual(mockUser)
+    expect(state.auth.token).toBe('auth-token')
+  })
+
+  it('should maintain auth state after clearing error', () => {
+    // Устанавливаем авторизованное состояние с ошибкой
+    const preloadedState: Partial<MockRootState> = {
+      auth: {
+        user: mockUser,
+        token: 'test-token',
+        isAuthenticated: true,
+        loading: false,
+        error: 'Some error'
+      }
+    }
+
+    const storeWithAuth = setupStore(preloadedState)
+    storeWithAuth.dispatch(clearAuthError())
+    
+    const state = storeWithAuth.getState()
     expect(state.auth.error).toBeNull()
+    expect(state.auth.user).toEqual(mockUser)
+    expect(state.auth.token).toBe('test-token')
+    expect(state.auth.isAuthenticated).toBe(true)
   })
 })
