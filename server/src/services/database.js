@@ -8,91 +8,98 @@ class Database {
   }
 
   async createPool() {
-  if (this.pool) {
-    return this.pool;
-  }
-
-  try {
-    // Для Railway MySQL 9 используем отдельные переменные
-    if (process.env.DATABASE_URL || process.env.MYSQLHOST) {
-      console.log("🚂 Connecting to Railway MySQL 9...");
-      
-      // Парсим URL или используем отдельные переменные
-      let config;
-      
-      if (process.env.DATABASE_URL) {
-        // Если есть DATABASE_URL, парсим его
-        const url = new URL(process.env.DATABASE_URL);
-        config = {
-          host: url.hostname,
-          port: parseInt(url.port) || 3306,
-          user: url.username,
-          password: url.password,
-          database: url.pathname.slice(1), // убираем первый /
-        };
-      } else {
-        // Используем отдельные переменные Railway
-        config = {
-          host: process.env.MYSQLHOST,
-          port: parseInt(process.env.MYSQLPORT) || 3306,
-          user: process.env.MYSQLUSER,
-          password: process.env.MYSQLPASSWORD,
-          database: process.env.MYSQLDATABASE,
-        };
-      }
-
-      // Создаем пул с настройками для MySQL 9
-      this.pool = mysql.createPool({
-        ...config,
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0,
-        charset: "utf8mb4",
-        acquireTimeout: 60000,
-        // Настройки для MySQL 9
-        ssl: {
-          rejectUnauthorized: false
-        },
-        authPlugins: {
-          mysql_native_password: () => require('mysql2/lib/auth_plugins/mysql_native_password'),
-          caching_sha2_password: () => require('mysql2/lib/auth_plugins/caching_sha2_password')
-        },
-        // Дополнительные настройки
-        multipleStatements: false,
-        dateStrings: false,
-        supportBigNumbers: true,
-        bigNumberStrings: false,
-      });
-
-    } else {
-      // Локальная разработка
-      console.log("🏠 Using local database connection");
-      
-      this.pool = mysql.createPool({
-        host: process.env.DB_HOST || "localhost",
-        user: process.env.DB_USER || "root",
-        password: process.env.DB_PASSWORD || "",
-        database: process.env.DB_NAME || "orders_products",
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0,
-        charset: "utf8mb4",
-        acquireTimeout: 60000,
-        multipleStatements: false,
-        dateStrings: false,
-        supportBigNumbers: true,
-        bigNumberStrings: false,
-      });
+    if (this.pool) {
+      return this.pool;
     }
 
-    console.log("✅ MySQL pool created successfully");
-    return this.pool;
+    try {
+      // Для Railway MySQL 9 используем отдельные переменные
+      if (process.env.DATABASE_URL || process.env.MYSQLHOST) {
+        console.log("🚂 Connecting to Railway MySQL 9...");
 
-  } catch (error) {
-    console.error("❌ Error creating MySQL pool:", error);
-    throw error;
+        // Парсим URL или используем отдельные переменные
+        let config;
+
+        if (process.env.DATABASE_URL) {
+          // Если есть DATABASE_URL, парсим его
+          const url = new URL(process.env.DATABASE_URL);
+          config = {
+            host: url.hostname,
+            port: parseInt(url.port) || 3306,
+            user: url.username,
+            password: url.password,
+            database: url.pathname.slice(1), // убираем первый /
+          };
+        } else {
+          // Используем отдельные переменные Railway
+          config = {
+            host: process.env.MYSQLHOST,
+            port: parseInt(process.env.MYSQLPORT) || 3306,
+            user: process.env.MYSQLUSER,
+            password: process.env.MYSQLPASSWORD,
+            database: process.env.MYSQLDATABASE,
+          };
+        }
+
+        // Создаем пул с настройками для MySQL 9
+        this.pool = mysql.createPool({
+          ...config,
+          waitForConnections: true,
+          connectionLimit: 10,
+          queueLimit: 0,
+          charset: "utf8mb4",
+          acquireTimeout: 60000,
+          // Настройки для MySQL 9
+          ssl: {
+            rejectUnauthorized: false,
+          },
+          authPlugins: {
+            mysql_native_password: () =>
+              require("mysql2/lib/auth_plugins/mysql_native_password"),
+            caching_sha2_password: () =>
+              require("mysql2/lib/auth_plugins/caching_sha2_password"),
+          },
+          // Дополнительные настройки
+          multipleStatements: false,
+          dateStrings: false,
+          supportBigNumbers: true,
+          bigNumberStrings: false,
+        });
+      } else {
+        // Локальная разработка
+        console.log("🏠 Using local database connection");
+
+        this.pool = mysql.createPool({
+          host: process.env.DB_HOST || "localhost",
+          user: process.env.DB_USER || "root",
+          password: process.env.DB_PASSWORD || "",
+          database: process.env.DB_NAME || "orders_products",
+          waitForConnections: true,
+          connectionLimit: 10,
+          queueLimit: 0,
+          charset: "utf8mb4",
+          acquireTimeout: 60000,
+          multipleStatements: false,
+          dateStrings: false,
+          supportBigNumbers: true,
+          bigNumberStrings: false,
+        });
+      }
+
+      console.log("🔍 MySQL connection config:", {
+        host: config.host,
+        port: config.port,
+        user: config.user,
+        database: config.database,
+        hasPassword: !!config.password,
+      });
+      console.log("✅ MySQL pool created successfully");
+      return this.pool;
+    } catch (error) {
+      console.error("❌ Error creating MySQL pool:", error);
+      throw error;
+    }
   }
-}
 
   // Базовые методы для запросов
   async query(sql, params = []) {
@@ -266,11 +273,13 @@ class Database {
   async seedInitialData() {
     try {
       // Проверяем есть ли пользователи
-      const [userCount] = await this.query("SELECT COUNT(*) as count FROM users");
-      
+      const [userCount] = await this.query(
+        "SELECT COUNT(*) as count FROM users"
+      );
+
       if (userCount[0].count === 0) {
         console.log("📝 Adding initial test data...");
-        
+
         // Добавляем тестового пользователя
         await this.query(`
           INSERT INTO users (name, email, password, role) VALUES 
@@ -358,7 +367,12 @@ class Database {
   }
 
   // ================== SESSIONS ==================
-  async addActiveSession(sessionId, userId = null, ipAddress = null, userAgent = null) {
+  async addActiveSession(
+    sessionId,
+    userId = null,
+    ipAddress = null,
+    userAgent = null
+  ) {
     try {
       const [result] = await this.pool.execute(
         `INSERT INTO user_sessions (session_id, user_id, ip_address, user_agent, is_active) 
@@ -618,20 +632,20 @@ class Database {
   async initDatabase() {
     console.log("🔄 Initializing database connection...");
 
-    const isConnected = await this.testConnection(15, 3000);
+    const isConnected = await this.testConnection(3, 2000);
 
     if (isConnected) {
       console.log("🗄️ Database connected successfully");
 
       // Создаем таблицы если их нет
       await this.createTablesIfNotExist();
-      
+
       // Добавляем тестовые данные если нужно
       await this.seedInitialData();
 
       // Очищаем старые сессии
       await this.cleanupOldSessions(30);
-      
+
       console.log("✅ Database initialization completed");
     } else {
       console.error("💥 Database initialization failed");

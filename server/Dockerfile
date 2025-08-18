@@ -1,5 +1,5 @@
 # server/Dockerfile
-FROM node:18-alpine AS base
+FROM node:18-alpine
 
 # Install curl for healthcheck
 RUN apk add --no-cache curl
@@ -10,22 +10,17 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Development stage
-FROM base AS development
-ENV NODE_ENV=development
-RUN npm install
-COPY . .
-EXPOSE 3001
-CMD ["npm", "run", "dev"]
-
 # Production dependencies stage
-FROM base AS deps
-ENV NODE_ENV=production
+FROM node:18-alpine AS deps
+WORKDIR /app
+COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Production stage
-FROM base AS production
-ENV NODE_ENV=production
+FROM node:18-alpine AS production
+RUN apk add --no-cache curl
+
+WORKDIR /app
 
 # Copy production dependencies
 COPY --from=deps /app/node_modules ./node_modules
@@ -42,11 +37,14 @@ RUN chown -R nodejs:nodejs /app
 USER nodejs
 
 # Expose port
-EXPOSE 3001
+EXPOSE $PORT
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:3001/api/health || exit 1
+# Увеличиваем timeout для подключения к БД
+ENV DB_CONNECTION_TIMEOUT=60000
+
+# Убираем healthcheck чтобы не мешал запуску БД
+# HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+#   CMD curl -f http://localhost:$PORT/api/health || exit 1
 
 # Start the application
 CMD ["npm", "start"]
