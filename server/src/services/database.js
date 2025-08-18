@@ -18,7 +18,9 @@ class Database {
       let config;
 
       // Проверяем Railway переменные
-      if (process.env.MYSQLHOST) {
+      if (process.env.MYSQLHOST || process.env.DB_HOST) {
+        console.log("🚂 Connecting to MySQL...");
+
         console.log("🚂 Connecting to Railway MySQL...");
         console.log("🔍 MySQL config check:");
         console.log("  MYSQLHOST:", process.env.MYSQLHOST ? "✅" : "❌");
@@ -29,11 +31,11 @@ class Database {
         );
 
         config = {
-          host: process.env.MYSQLHOST,
-          port: parseInt(process.env.MYSQLPORT) || 3306,
-          user: process.env.MYSQLUSER,
-          password: process.env.MYSQLPASSWORD,
-          database: process.env.MYSQLDATABASE,
+          host: process.env.MYSQLHOST || process.env.DB_HOST,
+          port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT) || 3306,
+          user: process.env.MYSQLUSER || process.env.DB_USER,
+          password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
+          database: process.env.MYSQLDATABASE || process.env.DB_NAME,
         };
 
         console.log("🔍 Connection config:", {
