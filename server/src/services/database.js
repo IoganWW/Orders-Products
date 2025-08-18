@@ -257,12 +257,24 @@ class Database {
   // Добавить тестовые данные если таблицы пустые
   async seedInitialData() {
     try {
-      // Проверяем есть ли пользователи
       const [userCount] = await this.query(
         "SELECT COUNT(*) as count FROM users"
       );
 
-      if (userCount[0].count === 0) {
+      // Более безопасный способ получения count
+      let count = 0;
+      if (
+        userCount &&
+        userCount.length > 0 &&
+        userCount[0] &&
+        "count" in userCount[0]
+      ) {
+        count = parseInt(userCount[0].count) || 0;
+      }
+
+      console.log(`ℹ️ Количество пользователей в базе: ${count}`);
+
+      if (count === 0) {
         console.log("📝 Adding initial test data...");
 
         // Добавляем тестового пользователя
