@@ -229,7 +229,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                         onBlur={() => handleBlur('type')}
                       >
                         {productTypes.map(type => (
-                          <option key={type} value={type}>{type}</option>
+                          <option key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</option>
                         ))}
                       </select>
                     </FormField>

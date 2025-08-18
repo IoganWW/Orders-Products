@@ -8,22 +8,26 @@ const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
 
 // Login не требует токена, используем обычный axios
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
-  async (credentials: LoginCredentials, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${API_URL}/api/auth/login`, credentials);
-      
-      // Сохраняем токен в localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      }
-      
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || 'Login failed');
-    }
-  }
+ 'auth/loginUser',
+ async (credentials: LoginCredentials, { rejectWithValue }) => {
+   try {
+     const response = await axios.post(`${API_URL}/api/auth/login`, credentials);
+     
+     if (response.data.success) {
+       // Сохраняем токен в localStorage
+       if (typeof window !== 'undefined') {
+         localStorage.setItem('token', response.data.data.token);
+         localStorage.setItem('user', JSON.stringify(response.data.data.user));
+       }
+       
+       return response.data.data;
+     } else {
+       return rejectWithValue(response.data.error || 'Login failed');
+     }
+   } catch (error: any) {
+     return rejectWithValue(error.response?.data?.error || 'Login failed');
+   }
+ }
 );
 
 export const logoutUser = createAsyncThunk(
@@ -61,9 +65,9 @@ export const getCurrentUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get('/api/auth/me');
-      return response.data;
+      return response.data; // interceptor уже обработал
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || 'Failed to get user data');
+      return rejectWithValue(error.message || 'Failed to get user data');
     }
   }
 );

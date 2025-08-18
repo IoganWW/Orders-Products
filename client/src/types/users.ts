@@ -1,3 +1,4 @@
+// client/src/types/users.ts
 export interface User {
   id: number;
   name: string;
@@ -7,7 +8,14 @@ export interface User {
   updated_at: string;
 }
 
-// Новые интерфейсы для пользователей
+// Интерфейс для Redux slice состояния
+export interface UsersState {
+  users: User[];
+  loading: boolean;
+  error: string | null;
+}
+
+// Интерфейс для компонента страницы (если нужен отдельно)
 export interface UsersPageState {
   users: User[];
   loading: boolean;
@@ -27,6 +35,8 @@ export const USER_ROLES = {
   MANAGER: 'manager',
   USER: 'user'
 } as const;
+
+export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
 
 export const USER_ROLE_LABELS: Record<string, string> = {
   [USER_ROLES.ADMIN]: 'Администратор',
@@ -56,4 +66,17 @@ export const calculateUserStatistics = (users: User[]): UserStatistics => {
     managerUsers: users.filter(u => u.role === USER_ROLES.MANAGER).length,
     regularUsers: users.filter(u => u.role === USER_ROLES.USER).length
   };
+};
+
+// Дополнительные утилиты
+export const isAdmin = (user: User): boolean => {
+  return user.role === USER_ROLES.ADMIN;
+};
+
+export const isManager = (user: User): boolean => {
+  return user.role === USER_ROLES.MANAGER;
+};
+
+export const canEditUsers = (user: User): boolean => {
+  return isAdmin(user) || isManager(user);
 };

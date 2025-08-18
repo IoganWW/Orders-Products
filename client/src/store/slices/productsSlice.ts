@@ -10,32 +10,32 @@ const normalizeProductType = (type: string): ProductType => {
 
 // Async thunks - обновляем для использования api interceptor
 export const fetchProducts = createAsyncThunk(
-  'products/fetchProducts',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await api.get('/api/products');
-      // Нормализуем данные сразу при получении
-      const normalizedProducts = response.data.map((product: any) => ({
-        ...product,
-        type: normalizeProductType(product.type)
-      }));
-      return normalizedProducts;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || 'Failed to fetch products');
-    }
-  }
+ 'products/fetchProducts',
+ async (_, { rejectWithValue }) => {
+   try {
+     const response = await api.get('/api/products');
+     // Нормализуем данные сразу при получении
+     const normalizedProducts = response.data.map((product: any) => ({
+       ...product,
+       type: normalizeProductType(product.type)
+     }));
+     return normalizedProducts;
+   } catch (error: any) {
+     return rejectWithValue(error.message || 'Failed to fetch products');
+   }
+ }
 );
 
 export const deleteProduct = createAsyncThunk(
-  'products/deleteProduct',
-  async (productId: number, { rejectWithValue }) => {
-    try {
-      await api.delete(`/api/products/${productId}`);
-      return productId;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || 'Failed to delete product');
-    }
-  }
+ 'products/deleteProduct',
+ async (productId: number, { rejectWithValue }) => {
+   try {
+     await api.delete(`/api/products/${productId}`);
+     return productId; // Просто возвращаем ID - interceptor обработал success
+   } catch (error: any) {
+     return rejectWithValue(error.message || 'Failed to delete product');
+   }
+ }
 );
 
 const initialState: ProductsState = {

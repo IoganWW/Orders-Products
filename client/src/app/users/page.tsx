@@ -1,8 +1,10 @@
 // client/src/app/users/page.tsx
 'use client';
 
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback } from 'react';
 import AuthWrapper from '@/components/Auth/AuthWrapper';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { fetchUsers, deleteUser } from '@/store/slices/usersSlice';
 import {
   User,
   UserStatistics,
@@ -10,7 +12,6 @@ import {
   getRoleLabel,
   getRoleColor
 } from '@/types/users';
-import { fetchUsers } from '@/services/api';
 import { formatDate } from '@/utils/dateUtils';
 import { useTranslation } from 'react-i18next';
 
@@ -59,8 +60,11 @@ const UserTableRow: React.FC<{
   onSettings: (userId: number) => void,
   onDelete: (userId: number) => void
 }> = React.memo(({ user, onEdit, onSettings, onDelete }) => {
-  const createdDate = useMemo(() => formatDate(user.created_at), [user.created_at]);
-  const updatedDate = useMemo(() => formatDate(user.updated_at), [user.updated_at]);
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language;
+
+  const createdDate = useMemo(() => formatDate(user.created_at, currentLang), [user.created_at, currentLang]);
+  const updatedDate = useMemo(() => formatDate(user.updated_at, currentLang), [user.updated_at, currentLang]);
 
   return (
     <tr className="border-bottom">
@@ -139,6 +143,7 @@ const UsersTable: React.FC<{
   onDelete: (userId: number) => void
 }> = React.memo(({ users, onEdit, onSettings, onDelete }) => {
   const { t } = useTranslation(['users', 'common']);
+  
   if (users.length === 0) {
     return (
       <div className="bg-white rounded border">
@@ -200,7 +205,7 @@ const LoadingSpinner: React.FC = React.memo(() => {
       <div className="container-fluid py-4 px-5">
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
           <div className="spinner-border text-success" role="status">
-            <span className="visually-hidden">{t('common:laoding')}</span>
+            <span className="visually-hidden">{t('common:loading')}</span>
           </div>
         </div>
       </div>
@@ -230,31 +235,18 @@ ErrorMessage.displayName = 'ErrorMessage';
 // Основной компонент
 function UsersPageContent() {
   const { t } = useTranslation(['users']);
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
+  
+  // Получаем данные из Redux store
+  const { users, loading, error } = useAppSelector(state => state.users);
 
   // Мемоизированная статистика
   const statistics = useMemo(() => calculateUserStatistics(users), [users]);
 
   // Загрузка пользователей
   useEffect(() => {
-    const getUsers = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const data = await fetchUsers();
-        setUsers(data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        setError('Ошибка загрузки пользователей');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getUsers();
-  }, []);
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   // Обработчики действий
   const handleEdit = useCallback((userId: number) => {
@@ -269,8 +261,10 @@ function UsersPageContent() {
 
   const handleDelete = useCallback((userId: number) => {
     console.log('Delete user:', userId);
-    // Здесь будет логика удаления
-  }, []);
+    if (window.confirm('Вы уверены, что хотите удалить пользователя?')) {
+      dispatch(deleteUser(userId));
+    }
+  }, [dispatch]);
 
   // Состояния загрузки и ошибок
   if (loading) return <LoadingSpinner />;

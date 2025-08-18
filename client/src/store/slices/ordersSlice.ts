@@ -4,28 +4,29 @@ import { OrdersState, Order } from '@/types/orders';
 import api from '@/services/api';
 
 // Async thunks - используем api вместо axios
+// ordersSlice.ts - упрощенная версия
 export const fetchOrders = createAsyncThunk(
-  'orders/fetchOrders',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await api.get('/api/orders');
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || 'Failed to fetch orders');
-    }
-  }
+ 'orders/fetchOrders',
+ async (_, { rejectWithValue }) => {
+   try {
+     const response = await api.get('/api/orders');
+     return response.data; // interceptor уже обработал {success, data}
+   } catch (error: any) {
+     return rejectWithValue(error.message || 'Failed to fetch orders');
+   }
+ }
 );
 
 export const deleteOrder = createAsyncThunk(
-  'orders/deleteOrder',
-  async (orderId: number, { rejectWithValue }) => {
-    try {
-      await api.delete(`/api/orders/${orderId}`);
-      return orderId;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error || 'Failed to delete order');
-    }
-  }
+ 'orders/deleteOrder',
+ async (orderId: number, { rejectWithValue }) => {
+   try {
+     await api.delete(`/api/orders/${orderId}`);
+     return orderId; // Просто возвращаем ID
+   } catch (error: any) {
+     return rejectWithValue(error.message || 'Failed to delete order');
+   }
+ }
 );
 
 const initialState: OrdersState = {

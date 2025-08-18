@@ -12,7 +12,7 @@ const api = axios.create({
 // Флаг для предотвращения множественных уведомлений
 let isLogoutInProgress = false;
 
-// Добавляем interceptor для автоматического добавления токена
+// Request interceptor для автоматического добавления токена
 api.interceptors.request.use(
   (config) => {
     // Получаем токен из localStorage или Redux store
@@ -40,11 +40,30 @@ api.interceptors.request.use(
   }
 );
 
-// Interceptor для обработки ошибок авторизации
+// Response interceptor для автоматической обработки ответов
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Если ответ имеет структуру {success, data}, извлекаем data
+    if (response.data && typeof response.data === 'object' && 'success' in response.data) {
+      if (response.data.success) {
+        // Заменяем response.data на response.data.data
+        return {
+          ...response,
+          data: response.data.data
+        };
+      } else {
+        // Если success: false, бросаем ошибку
+        const error = new Error(response.data.error || 'API request failed');
+        error.status = response.status;
+        throw error;
+      }
+    }
+    
+    // Если старый формат, возвращаем как есть
+    return response;
+  },
   (error) => {
-    // Если получили 401 или 403 ошибку и logout еще не в процессе
+    // Обработка 401/403 ошибок авторизации
     if (error.response && 
         (error.response.status === 401 || error.response.status === 403) &&
         !isLogoutInProgress) {
@@ -86,39 +105,15 @@ api.interceptors.response.use(
       }
     }
     
-    return Promise.reject(error);
+    // Обработка ошибок с новым форматом
+    if (error.response?.data?.error) {
+      const apiError = new Error(error.response.data.error);
+      apiError.status = error.response.status;
+      throw apiError;
+    }
+    
+    throw error;
   }
 );
-
-// API методы
-export const fetchUsers = async () => {
-  try {
-    const response = await api.get('/api/users');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    throw error;
-  }
-};
-
-export const fetchOrders = async () => {
-  try {
-    const response = await api.get('/api/orders');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-    throw error;
-  }
-};
-
-export const fetchProducts = async () => {
-  try {
-    const response = await api.get('/api/products');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    throw error;
-  }
-};
 
 export default api;

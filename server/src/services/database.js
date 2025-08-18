@@ -1,5 +1,5 @@
-const mysql = require('mysql2/promise');
-require('dotenv').config();
+const mysql = require("mysql2/promise");
+require("dotenv").config();
 
 class Database {
   constructor() {
@@ -14,14 +14,14 @@ class Database {
     }
 
     this.pool = mysql.createPool({
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || 'orders_products',
+      host: process.env.DB_HOST || "localhost",
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASSWORD || "",
+      database: process.env.DB_NAME || "orders_products",
       waitForConnections: true,
       connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
       queueLimit: 0,
-      charset: 'utf8mb4',
+      charset: "utf8mb4",
       // Важные настройки для Docker
       acquireTimeout: 60000,
       timeout: 60000,
@@ -30,7 +30,7 @@ class Database {
       multipleStatements: false,
       dateStrings: false,
       supportBigNumbers: true,
-      bigNumberStrings: false
+      bigNumberStrings: false,
     });
 
     return this.pool;
@@ -45,7 +45,7 @@ class Database {
       const [rows] = await this.pool.execute(sql, params);
       return rows;
     } catch (error) {
-      console.error('Database query error:', error);
+      console.error("Database query error:", error);
       throw error;
     }
   }
@@ -54,7 +54,7 @@ class Database {
     if (!this.pool) {
       await this.createPool();
     }
-    
+
     const connection = await this.pool.getConnection();
     try {
       await connection.beginTransaction();
@@ -84,29 +84,30 @@ class Database {
         if (!this.pool) {
           await this.createPool();
         }
-        
+
         const connection = await this.pool.getConnection();
         await connection.ping();
         connection.release();
-        
+
         console.log(`✅ MySQL connected successfully (attempt ${attempt})`);
         this.isConnected = true;
         return true;
-        
       } catch (error) {
-        console.log(`⏳ MySQL connection attempt ${attempt}/${maxRetries} failed: ${error.message}`);
-        
+        console.log(
+          `⏳ MySQL connection attempt ${attempt}/${maxRetries} failed: ${error.message}`
+        );
+
         if (attempt === maxRetries) {
-          console.error('❌ MySQL connection failed after all retries');
+          console.error("❌ MySQL connection failed after all retries");
           this.isConnected = false;
           return false;
         }
-        
-        console.log(`⏸️ Waiting ${delay/1000}s before retry...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+
+        console.log(`⏸️ Waiting ${delay / 1000}s before retry...`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
-    
+
     return false;
   }
 
@@ -114,11 +115,11 @@ class Database {
   async getAllUsers() {
     try {
       const [rows] = await this.pool.execute(
-        'SELECT id, name, email, role, created_at, updated_at FROM users ORDER BY created_at DESC'
+        "SELECT id, name, email, role, created_at, updated_at FROM users ORDER BY created_at DESC"
       );
       return rows;
     } catch (error) {
-      console.error('Error fetching all users:', error);
+      console.error("Error fetching all users:", error);
       throw error;
     }
   }
@@ -126,12 +127,12 @@ class Database {
   async getUserByEmail(email) {
     try {
       const [users] = await this.pool.execute(
-        'SELECT id, name, email, password, role, created_at, updated_at FROM users WHERE email = ?',
+        "SELECT id, name, email, password, role, created_at, updated_at FROM users WHERE email = ?",
         [email]
       );
       return users.length > 0 ? users[0] : null;
     } catch (error) {
-      console.error('Error fetching user by email:', error);
+      console.error("Error fetching user by email:", error);
       throw error;
     }
   }
@@ -139,37 +140,37 @@ class Database {
   async getUserById(userId) {
     try {
       const [users] = await this.pool.execute(
-        'SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = ?',
+        "SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = ?",
         [userId]
       );
       return users.length > 0 ? users[0] : null;
     } catch (error) {
-      console.error('Error fetching user by ID:', error);
+      console.error("Error fetching user by ID:", error);
       throw error;
     }
   }
 
-  async createUser({ name, email, password, role = 'user' }) {
+  async createUser({ name, email, password, role = "user" }) {
     try {
       const [result] = await this.pool.execute(
-        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+        "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
         [name, email, password, role]
       );
 
       return await this.getUserById(result.insertId);
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error("Error creating user:", error);
       throw error;
     }
   }
 
   async updateUser(userId, updateData) {
     try {
-      const allowedFields = ['name', 'email', 'password', 'role'];
+      const allowedFields = ["name", "email", "password", "role"];
       const updates = [];
       const values = [];
 
-      Object.keys(updateData).forEach(key => {
+      Object.keys(updateData).forEach((key) => {
         if (allowedFields.includes(key) && updateData[key] !== undefined) {
           updates.push(`${key} = ?`);
           values.push(updateData[key]);
@@ -177,13 +178,15 @@ class Database {
       });
 
       if (updates.length === 0) {
-        throw new Error('No valid fields to update');
+        throw new Error("No valid fields to update");
       }
 
       values.push(userId);
 
       const [result] = await this.pool.execute(
-        `UPDATE users SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        `UPDATE users SET ${updates.join(
+          ", "
+        )}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
         values
       );
 
@@ -193,7 +196,7 @@ class Database {
 
       return await this.getUserById(userId);
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error("Error updating user:", error);
       throw error;
     }
   }
@@ -201,19 +204,24 @@ class Database {
   async deleteUser(userId) {
     try {
       const [result] = await this.pool.execute(
-        'DELETE FROM users WHERE id = ?',
+        "DELETE FROM users WHERE id = ?",
         [userId]
       );
       return result.affectedRows > 0;
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       throw error;
     }
   }
 
   // ================== SESSIONS ==================
 
-  async addActiveSession(sessionId, userId = null, ipAddress = null, userAgent = null) {
+  async addActiveSession(
+    sessionId,
+    userId = null,
+    ipAddress = null,
+    userAgent = null
+  ) {
     try {
       const [result] = await this.pool.execute(
         `INSERT INTO user_sessions (session_id, user_id, ip_address, user_agent, is_active) 
@@ -224,7 +232,7 @@ class Database {
       );
       return result;
     } catch (error) {
-      console.error('Error adding session:', error);
+      console.error("Error adding session:", error);
       throw error;
     }
   }
@@ -232,12 +240,12 @@ class Database {
   async removeActiveSession(sessionId) {
     try {
       const [result] = await this.pool.execute(
-        'UPDATE user_sessions SET is_active = 0 WHERE session_id = ?',
+        "UPDATE user_sessions SET is_active = 0 WHERE session_id = ?",
         [sessionId]
       );
       return result;
     } catch (error) {
-      console.error('Error removing session:', error);
+      console.error("Error removing session:", error);
       throw error;
     }
   }
@@ -245,11 +253,11 @@ class Database {
   async getActiveSessionsCount() {
     try {
       const [rows] = await this.pool.execute(
-        'SELECT COUNT(*) as count FROM user_sessions WHERE is_active = 1'
+        "SELECT COUNT(*) as count FROM user_sessions WHERE is_active = 1"
       );
       return rows[0].count;
     } catch (error) {
-      console.error('Error getting sessions count:', error);
+      console.error("Error getting sessions count:", error);
       throw error;
     }
   }
@@ -257,12 +265,12 @@ class Database {
   async getActiveSessionsByUserId(userId) {
     try {
       const [rows] = await this.pool.execute(
-        'SELECT session_id, ip_address, user_agent, created_at, updated_at FROM user_sessions WHERE user_id = ? AND is_active = 1',
+        "SELECT session_id, ip_address, user_agent, created_at, updated_at FROM user_sessions WHERE user_id = ? AND is_active = 1",
         [userId]
       );
       return rows;
     } catch (error) {
-      console.error('Error getting user sessions:', error);
+      console.error("Error getting user sessions:", error);
       throw error;
     }
   }
@@ -270,7 +278,7 @@ class Database {
   async cleanupOldSessions(minutesOld = 30) {
     try {
       const [result] = await this.pool.execute(
-        'UPDATE user_sessions SET is_active = 0 WHERE updated_at < DATE_SUB(NOW(), INTERVAL ? MINUTE)',
+        "UPDATE user_sessions SET is_active = 0 WHERE updated_at < DATE_SUB(NOW(), INTERVAL ? MINUTE)",
         [minutesOld]
       );
       if (result.affectedRows > 0) {
@@ -278,7 +286,7 @@ class Database {
       }
       return result;
     } catch (error) {
-      console.error('Error cleaning up sessions:', error);
+      console.error("Error cleaning up sessions:", error);
       throw error;
     }
   }
@@ -300,7 +308,7 @@ class Database {
 
       return orders;
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      console.error("Error fetching orders:", error);
       throw error;
     }
   }
@@ -308,7 +316,7 @@ class Database {
   async getOrderById(orderId) {
     try {
       const [orders] = await this.pool.execute(
-        'SELECT id, title, description, date, created_at, updated_at FROM orders WHERE id = ?',
+        "SELECT id, title, description, date, created_at, updated_at FROM orders WHERE id = ?",
         [orderId]
       );
 
@@ -318,10 +326,10 @@ class Database {
 
       const order = orders[0];
       order.products = await this.getProductsByOrderId(orderId);
-      
+
       return order;
     } catch (error) {
-      console.error('Error fetching order by ID:', error);
+      console.error("Error fetching order by ID:", error);
       throw error;
     }
   }
@@ -329,13 +337,13 @@ class Database {
   async createOrder({ title, description, date }) {
     try {
       const [result] = await this.pool.execute(
-        'INSERT INTO orders (title, description, date) VALUES (?, ?, ?)',
+        "INSERT INTO orders (title, description, date) VALUES (?, ?, ?)",
         [title, description, date]
       );
 
       return await this.getOrderById(result.insertId);
     } catch (error) {
-      console.error('Error creating order:', error);
+      console.error("Error creating order:", error);
       throw error;
     }
   }
@@ -343,7 +351,7 @@ class Database {
   async updateOrder(orderId, { title, description, date }) {
     try {
       const [result] = await this.pool.execute(
-        'UPDATE orders SET title = ?, description = ?, date = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        "UPDATE orders SET title = ?, description = ?, date = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
         [title, description, date, orderId]
       );
 
@@ -353,7 +361,7 @@ class Database {
 
       return await this.getOrderById(orderId);
     } catch (error) {
-      console.error('Error updating order:', error);
+      console.error("Error updating order:", error);
       throw error;
     }
   }
@@ -361,12 +369,12 @@ class Database {
   async deleteOrder(orderId) {
     try {
       const [result] = await this.pool.execute(
-        'DELETE FROM orders WHERE id = ?',
+        "DELETE FROM orders WHERE id = ?",
         [orderId]
       );
       return result;
     } catch (error) {
-      console.error('Error deleting order:', error);
+      console.error("Error deleting order:", error);
       throw error;
     }
   }
@@ -375,7 +383,8 @@ class Database {
 
   async getProductsByOrderId(orderId) {
     try {
-      const [products] = await this.pool.execute(`
+      const [products] = await this.pool.execute(
+        `
         SELECT 
           p.id,
           p.serial_number as serialNumber,
@@ -393,12 +402,14 @@ class Database {
         FROM products p
         WHERE p.order_id = ?
         ORDER BY p.created_at DESC
-      `, [orderId]);
+      `,
+        [orderId]
+      );
 
       for (let product of products) {
         product.guarantee = {
           start: product.guarantee_start,
-          end: product.guarantee_end
+          end: product.guarantee_end,
         };
         delete product.guarantee_start;
         delete product.guarantee_end;
@@ -409,7 +420,7 @@ class Database {
 
       return products;
     } catch (error) {
-      console.error('Error fetching products by order ID:', error);
+      console.error("Error fetching products by order ID:", error);
       throw error;
     }
   }
@@ -438,7 +449,7 @@ class Database {
       for (let product of products) {
         product.guarantee = {
           start: product.guarantee_start,
-          end: product.guarantee_end
+          end: product.guarantee_end,
         };
         delete product.guarantee_start;
         delete product.guarantee_end;
@@ -449,14 +460,15 @@ class Database {
 
       return products;
     } catch (error) {
-      console.error('Error fetching all products:', error);
+      console.error("Error fetching all products:", error);
       throw error;
     }
   }
 
   async getProductById(productId) {
     try {
-      const [products] = await this.pool.execute(`
+      const [products] = await this.pool.execute(
+        `
         SELECT 
           p.id,
           p.serial_number as serialNumber,
@@ -471,7 +483,9 @@ class Database {
           p.date
         FROM products p
         WHERE p.id = ?
-      `, [productId]);
+      `,
+        [productId]
+      );
 
       if (products.length === 0) {
         return null;
@@ -480,16 +494,16 @@ class Database {
       const product = products[0];
       product.guarantee = {
         start: product.guarantee_start,
-        end: product.guarantee_end
+        end: product.guarantee_end,
       };
       delete product.guarantee_start;
       delete product.guarantee_end;
 
       product.price = await this.getProductPrices(product.id);
-      
+
       return product;
     } catch (error) {
-      console.error('Error fetching product by ID:', error);
+      console.error("Error fetching product by ID:", error);
       throw error;
     }
   }
@@ -498,38 +512,48 @@ class Database {
     return await this.transaction(async (connection) => {
       // Проверяем уникальность серийного номера
       const [existing] = await connection.execute(
-        'SELECT id FROM products WHERE serial_number = ?',
+        "SELECT id FROM products WHERE serial_number = ?",
         [productData.serialNumber]
       );
 
       if (existing.length > 0) {
-        throw new Error(`Product with serial number ${productData.serialNumber} already exists`);
+        throw new Error(
+          `Product with serial number ${productData.serialNumber} already exists`
+        );
       }
 
-      const [result] = await connection.execute(`
+      const [result] = await connection.execute(
+        `
         INSERT INTO products 
         (serial_number, is_new, photo, title, type, specification, guarantee_start, guarantee_end, order_id, date) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [
-        productData.serialNumber,
-        productData.isNew,
-        productData.photo || 'pathToFile.jpg',
-        productData.title,
-        productData.type,
-        productData.specification,
-        productData.guarantee.start,
-        productData.guarantee.end,
-        productData.order,
-        productData.date
-      ]);
+      `,
+        [
+          productData.serialNumber,
+          productData.isNew,
+          productData.photo || "pathToFile.jpg",
+          productData.title,
+          productData.type,
+          productData.specification,
+          productData.guarantee.start,
+          productData.guarantee.end,
+          productData.order,
+          productData.date,
+        ]
+      );
 
       const productId = result.insertId;
 
       if (productData.price && Array.isArray(productData.price)) {
         for (let priceData of productData.price) {
           await connection.execute(
-            'INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)',
-            [productId, priceData.value, priceData.symbol, priceData.isDefault || 0]
+            "INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)",
+            [
+              productId,
+              priceData.value,
+              priceData.symbol,
+              priceData.isDefault || 0,
+            ]
           );
         }
       }
@@ -542,7 +566,7 @@ class Database {
     return await this.transaction(async (connection) => {
       // Проверяем существование продукта
       const [existing] = await connection.execute(
-        'SELECT id FROM products WHERE id = ?',
+        "SELECT id FROM products WHERE id = ?",
         [productId]
       );
 
@@ -553,12 +577,14 @@ class Database {
       // Если обновляется серийный номер, проверяем уникальность
       if (productData.serialNumber) {
         const [duplicate] = await connection.execute(
-          'SELECT id FROM products WHERE serial_number = ? AND id != ?',
+          "SELECT id FROM products WHERE serial_number = ? AND id != ?",
           [productData.serialNumber, productId]
         );
 
         if (duplicate.length > 0) {
-          throw new Error(`Product with serial number ${productData.serialNumber} already exists`);
+          throw new Error(
+            `Product with serial number ${productData.serialNumber} already exists`
+          );
         }
       }
 
@@ -567,17 +593,17 @@ class Database {
       const updateValues = [];
 
       const allowedFields = {
-        'serialNumber': 'serial_number',
-        'isNew': 'is_new',
-        'photo': 'photo',
-        'title': 'title',
-        'type': 'type',
-        'specification': 'specification',
-        'order': 'order_id',
-        'date': 'date'
+        serialNumber: "serial_number",
+        isNew: "is_new",
+        photo: "photo",
+        title: "title",
+        type: "type",
+        specification: "specification",
+        order: "order_id",
+        date: "date",
       };
 
-      Object.keys(allowedFields).forEach(key => {
+      Object.keys(allowedFields).forEach((key) => {
         if (productData[key] !== undefined) {
           updateFields.push(`${allowedFields[key]} = ?`);
           updateValues.push(productData[key]);
@@ -586,11 +612,11 @@ class Database {
 
       if (productData.guarantee) {
         if (productData.guarantee.start) {
-          updateFields.push('guarantee_start = ?');
+          updateFields.push("guarantee_start = ?");
           updateValues.push(productData.guarantee.start);
         }
         if (productData.guarantee.end) {
-          updateFields.push('guarantee_end = ?');
+          updateFields.push("guarantee_end = ?");
           updateValues.push(productData.guarantee.end);
         }
       }
@@ -598,7 +624,9 @@ class Database {
       if (updateFields.length > 0) {
         updateValues.push(productId);
         await connection.execute(
-          `UPDATE products SET ${updateFields.join(', ')}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+          `UPDATE products SET ${updateFields.join(
+            ", "
+          )}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
           updateValues
         );
       }
@@ -607,15 +635,20 @@ class Database {
       if (productData.price && Array.isArray(productData.price)) {
         // Удаляем старые цены
         await connection.execute(
-          'DELETE FROM product_prices WHERE product_id = ?',
+          "DELETE FROM product_prices WHERE product_id = ?",
           [productId]
         );
 
         // Добавляем новые цены
         for (let priceData of productData.price) {
           await connection.execute(
-            'INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)',
-            [productId, priceData.value, priceData.symbol, priceData.isDefault || 0]
+            "INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)",
+            [
+              productId,
+              priceData.value,
+              priceData.symbol,
+              priceData.isDefault || 0,
+            ]
           );
         }
       }
@@ -627,12 +660,12 @@ class Database {
   async deleteProduct(productId) {
     try {
       const [result] = await this.pool.execute(
-        'DELETE FROM products WHERE id = ?',
+        "DELETE FROM products WHERE id = ?",
         [productId]
       );
       return result;
     } catch (error) {
-      console.error('Error deleting product:', error);
+      console.error("Error deleting product:", error);
       throw error;
     }
   }
@@ -641,7 +674,8 @@ class Database {
 
   async getProductPrices(productId) {
     try {
-      const [prices] = await this.pool.execute(`
+      const [prices] = await this.pool.execute(
+        `
         SELECT 
           pp.value,
           pp.symbol,
@@ -649,11 +683,13 @@ class Database {
         FROM product_prices pp
         WHERE pp.product_id = ?
         ORDER BY pp.is_default DESC, pp.symbol
-      `, [productId]);
+      `,
+        [productId]
+      );
 
       return prices;
     } catch (error) {
-      console.error('Error fetching product prices:', error);
+      console.error("Error fetching product prices:", error);
       throw error;
     }
   }
@@ -664,15 +700,15 @@ class Database {
     try {
       // Возвращаем типы из ENUM в схеме
       const types = [
-        { value: 'Monitors', label: 'Мониторы' },
-        { value: 'Laptops', label: 'Ноутбуки' },
-        { value: 'Keyboards', label: 'Клавиатуры' },
-        { value: 'Phones', label: 'Телефоны' },
-        { value: 'Tablets', label: 'Планшеты' }
+        { value: "Monitors", label: "Мониторы" },
+        { value: "Laptops", label: "Ноутбуки" },
+        { value: "Keyboards", label: "Клавиатуры" },
+        { value: "Phones", label: "Телефоны" },
+        { value: "Tablets", label: "Планшеты" },
       ];
       return types;
     } catch (error) {
-      console.error('Error fetching product types:', error);
+      console.error("Error fetching product types:", error);
       throw error;
     }
   }
@@ -681,14 +717,14 @@ class Database {
     try {
       // Возвращаем основные валюты
       const currencies = [
-        { symbol: 'USD', name: 'US Dollar' },
-        { symbol: 'EUR', name: 'Euro' },
-        { symbol: 'UAH', name: 'Ukrainian Hryvnia' },
-        { symbol: 'RUB', name: 'Russian Ruble' }
+        { symbol: "USD", name: "US Dollar" },
+        { symbol: "EUR", name: "Euro" },
+        { symbol: "UAH", name: "Ukrainian Hryvnia" },
+        { symbol: "RUB", name: "Russian Ruble" },
       ];
       return currencies;
     } catch (error) {
-      console.error('Error fetching currencies:', error);
+      console.error("Error fetching currencies:", error);
       throw error;
     }
   }
@@ -711,10 +747,10 @@ class Database {
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )
       `);
-      console.log('✅ user_sessions table created/verified');
+      console.log("✅ user_sessions table created/verified");
       return true;
     } catch (error) {
-      console.error('❌ Error creating user_sessions table:', error);
+      console.error("❌ Error creating user_sessions table:", error);
       return false;
     }
   }
@@ -723,46 +759,46 @@ class Database {
   async createOptimizationIndexes() {
     try {
       const indexes = [
-        'CREATE INDEX IF NOT EXISTS idx_products_type ON products(type)',
-        'CREATE INDEX IF NOT EXISTS idx_products_date ON products(date)',
-        'CREATE INDEX IF NOT EXISTS idx_orders_date ON orders(date)',
-        'CREATE INDEX IF NOT EXISTS idx_user_sessions_updated ON user_sessions(updated_at)',
-        'CREATE INDEX IF NOT EXISTS idx_product_prices_default ON product_prices(is_default)'
+        "CREATE INDEX IF NOT EXISTS idx_products_type ON products(type)",
+        "CREATE INDEX IF NOT EXISTS idx_products_date ON products(date)",
+        "CREATE INDEX IF NOT EXISTS idx_orders_date ON orders(date)",
+        "CREATE INDEX IF NOT EXISTS idx_user_sessions_updated ON user_sessions(updated_at)",
+        "CREATE INDEX IF NOT EXISTS idx_product_prices_default ON product_prices(is_default)",
       ];
 
       for (const indexSql of indexes) {
         await this.query(indexSql);
       }
 
-      console.log('✅ Optimization indexes created/verified');
+      console.log("✅ Optimization indexes created/verified");
       return true;
     } catch (error) {
-      console.error('❌ Error creating indexes:', error);
+      console.error("❌ Error creating indexes:", error);
       return false;
     }
   }
 
   // Инициализация БД при запуске с retry
   async initDatabase() {
-    console.log('🔄 Initializing database connection...');
-    
+    console.log("🔄 Initializing database connection...");
+
     const isConnected = await this.testConnection(15, 3000);
-    
+
     if (isConnected) {
-      console.log('🗄️ Database initialized successfully');
-      
+      console.log("🗄️ Database initialized successfully");
+
       // Создаем таблицу сессий если не существует
       await this.createUserSessionsTable();
-      
+
       // Создаем индексы для оптимизации
       await this.createOptimizationIndexes();
-      
+
       // Теперь можно безопасно очистить старые сессии
       await this.cleanupOldSessions(30);
     } else {
-      console.error('💥 Database initialization failed');
+      console.error("💥 Database initialization failed");
     }
-    
+
     return isConnected;
   }
 
@@ -770,22 +806,30 @@ class Database {
   async getDatabaseStats() {
     try {
       const stats = {};
-      
-      const [orderCount] = await this.pool.execute('SELECT COUNT(*) as count FROM orders');
+
+      const [orderCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM orders"
+      );
       stats.orders = orderCount[0].count;
-      
-      const [productCount] = await this.pool.execute('SELECT COUNT(*) as count FROM products');
+
+      const [productCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM products"
+      );
       stats.products = productCount[0].count;
-      
-      const [userCount] = await this.pool.execute('SELECT COUNT(*) as count FROM users');
+
+      const [userCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM users"
+      );
       stats.users = userCount[0].count;
-      
-      const [sessionCount] = await this.pool.execute('SELECT COUNT(*) as count FROM user_sessions WHERE is_active = 1');
+
+      const [sessionCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM user_sessions WHERE is_active = 1"
+      );
       stats.activeSessions = sessionCount[0].count;
-      
+
       return stats;
     } catch (error) {
-      console.error('Error fetching database stats:', error);
+      console.error("Error fetching database stats:", error);
       throw error;
     }
   }
