@@ -23,8 +23,7 @@ services:
       DB_NAME: orders_products_dev
       CLIENT_URL: http://localhost:3000
     volumes:
-      - ./server/src:/app/src
-      - ./server/package.json:/app/package.json
+      - ./server:/app
       - /app/node_modules
     command: npm run dev
 
