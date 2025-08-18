@@ -17,25 +17,25 @@ class Database {
     try {
       let config;
 
-      // Проверяем Railway переменные
-      if (process.env.MYSQLHOST || process.env.DB_HOST) {
-        console.log("🚂 Connecting to MySQL...");
-
+      // Проверяем Railway переменные (приоритет DB_* переменным)
+      if (process.env.DB_HOST || process.env.MYSQLHOST) {
         console.log("🚂 Connecting to Railway MySQL...");
         console.log("🔍 MySQL config check:");
+        console.log("  DB_HOST:", process.env.DB_HOST ? "✅" : "❌");
+        console.log("  DB_USER:", process.env.DB_USER ? "✅" : "❌");
+        console.log("  DB_PASSWORD:", process.env.DB_PASSWORD ? "✅" : "❌");
+        console.log("  DB_NAME:", process.env.DB_NAME ? "✅" : "❌");
+
+        // Fallback проверка MYSQL* переменных
         console.log("  MYSQLHOST:", process.env.MYSQLHOST ? "✅" : "❌");
         console.log("  MYSQLUSER:", process.env.MYSQLUSER ? "✅" : "❌");
-        console.log(
-          "  MYSQLDATABASE:",
-          process.env.MYSQLDATABASE ? "✅" : "❌"
-        );
 
         config = {
-          host: process.env.MYSQLHOST || process.env.DB_HOST,
-          port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT) || 3306,
-          user: process.env.MYSQLUSER || process.env.DB_USER,
-          password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
-          database: process.env.MYSQLDATABASE || process.env.DB_NAME,
+          host: process.env.DB_HOST || process.env.MYSQLHOST,
+          port: parseInt(process.env.DB_PORT || process.env.MYSQLPORT) || 3306,
+          user: process.env.DB_USER || process.env.MYSQLUSER,
+          password: process.env.DB_PASSWORD || process.env.MYSQLPASSWORD,
+          database: process.env.DB_NAME || process.env.MYSQLDATABASE,
         };
 
         console.log("🔍 Connection config:", {
@@ -68,14 +68,17 @@ class Database {
         connectionLimit: 10,
         queueLimit: 0,
         charset: "utf8mb4",
-        // Убираем acquireTimeout - не поддерживается в MySQL2
-        // acquireTimeout: 60000,
         multipleStatements: false,
         dateStrings: false,
         supportBigNumbers: true,
         bigNumberStrings: false,
-        // Для Railway MySQL
-        ssl: process.env.MYSQLHOST ? { rejectUnauthorized: false } : false,
+        // Для Railway MySQL - SSL обязательно
+        ssl:
+          config.host !== "localhost" && config.host !== "127.0.0.1"
+            ? {
+                rejectUnauthorized: false,
+              }
+            : false,
       });
 
       console.log("✅ MySQL pool created successfully");
@@ -621,9 +624,18 @@ class Database {
   async initDatabase() {
     console.log("🔄 Initializing database connection...");
 
-    // Показываем какие переменные доступны
+    // Показываем все доступные переменные для отладки
     console.log("🔍 Environment variables:");
     console.log("  NODE_ENV:", process.env.NODE_ENV);
+    console.log("  DB_HOST:", process.env.DB_HOST ? "✅ Found" : "❌ Missing");
+    console.log("  DB_USER:", process.env.DB_USER ? "✅ Found" : "❌ Missing");
+    console.log(
+      "  DB_PASSWORD:",
+      process.env.DB_PASSWORD ? "✅ Found" : "❌ Missing"
+    );
+    console.log("  DB_NAME:", process.env.DB_NAME ? "✅ Found" : "❌ Missing");
+
+    // Fallback переменные
     console.log(
       "  MYSQLHOST:",
       process.env.MYSQLHOST ? "✅ Found" : "❌ Missing"
@@ -633,17 +645,15 @@ class Database {
       process.env.MYSQLUSER ? "✅ Found" : "❌ Missing"
     );
 
-    const isConnected = await this.testConnection(3, 2000);
+    const isConnected = await this.testConnection(5, 3000); // Увеличили попытки
 
     if (isConnected) {
       console.log("🗄️ Database connected successfully");
       await this.createTablesIfNotExist();
       await this.seedInitialData();
-      await this.cleanupOldSessions(30);
       console.log("✅ Database initialization completed");
     } else {
       console.error("💥 Database initialization failed");
-      // НЕ бросаем ошибку, продолжаем работу
       console.log("⚠️ App will continue without database...");
     }
 
