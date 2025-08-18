@@ -7,31 +7,65 @@ class Database {
     this.isConnected = false;
   }
 
-  // Создание пула с Railway DATABASE_URL
   async createPool() {
-    if (this.pool) {
-      return this.pool;
-    }
+  if (this.pool) {
+    return this.pool;
+  }
 
-    // Проверяем есть ли DATABASE_URL (Railway)
-    if (process.env.DATABASE_URL) {
-      console.log("🚂 Using Railway DATABASE_URL connection");
+  try {
+    // Для Railway MySQL 9 используем отдельные переменные
+    if (process.env.DATABASE_URL || process.env.MYSQLHOST) {
+      console.log("🚂 Connecting to Railway MySQL 9...");
       
+      // Парсим URL или используем отдельные переменные
+      let config;
+      
+      if (process.env.DATABASE_URL) {
+        // Если есть DATABASE_URL, парсим его
+        const url = new URL(process.env.DATABASE_URL);
+        config = {
+          host: url.hostname,
+          port: parseInt(url.port) || 3306,
+          user: url.username,
+          password: url.password,
+          database: url.pathname.slice(1), // убираем первый /
+        };
+      } else {
+        // Используем отдельные переменные Railway
+        config = {
+          host: process.env.MYSQLHOST,
+          port: parseInt(process.env.MYSQLPORT) || 3306,
+          user: process.env.MYSQLUSER,
+          password: process.env.MYSQLPASSWORD,
+          database: process.env.MYSQLDATABASE,
+        };
+      }
+
+      // Создаем пул с настройками для MySQL 9
       this.pool = mysql.createPool({
-        uri: process.env.DATABASE_URL,
+        ...config,
         waitForConnections: true,
-        connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
+        connectionLimit: 10,
         queueLimit: 0,
         charset: "utf8mb4",
         acquireTimeout: 60000,
-        // Убираем timeout и reconnect для Railway
+        // Настройки для MySQL 9
+        ssl: {
+          rejectUnauthorized: false
+        },
+        authPlugins: {
+          mysql_native_password: () => require('mysql2/lib/auth_plugins/mysql_native_password'),
+          caching_sha2_password: () => require('mysql2/lib/auth_plugins/caching_sha2_password')
+        },
+        // Дополнительные настройки
         multipleStatements: false,
         dateStrings: false,
         supportBigNumbers: true,
         bigNumberStrings: false,
       });
+
     } else {
-      // Fallback для локальной разработки
+      // Локальная разработка
       console.log("🏠 Using local database connection");
       
       this.pool = mysql.createPool({
@@ -40,7 +74,7 @@ class Database {
         password: process.env.DB_PASSWORD || "",
         database: process.env.DB_NAME || "orders_products",
         waitForConnections: true,
-        connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
+        connectionLimit: 10,
         queueLimit: 0,
         charset: "utf8mb4",
         acquireTimeout: 60000,
@@ -51,8 +85,14 @@ class Database {
       });
     }
 
+    console.log("✅ MySQL pool created successfully");
     return this.pool;
+
+  } catch (error) {
+    console.error("❌ Error creating MySQL pool:", error);
+    throw error;
   }
+}
 
   // Базовые методы для запросов
   async query(sql, params = []) {
