@@ -14,12 +14,8 @@ const app = express();
 
 const initialize = async () => {
   try {
-    // Проверяем подключение к БД
-    const dbConnected = await db.initDatabase();
-
-    if (!dbConnected) {
-      throw new Error("Failed to connect to database");
-    }
+    // Инициализируем БД, но не блокируем запуск при ошибке
+    await db.initDatabase();
 
     // Middleware setup
     app.use(corsMiddleware);
@@ -27,25 +23,23 @@ const initialize = async () => {
     app.use(express.json());
 
     // Routes
-    app.use("/api", routes);
-
-    // Error handling (должен быть последним)
+    app.use('/api', routes);
     app.use(errorHandler);
 
-    // 404 handler
-    app.use("*", (req, res) => {
-      res.status(404).json({
-        success: false,
-        message: "API endpoint not found",
-      });
-    });
-
     const server = createServer(app);
-
+    
     return { app, server };
   } catch (error) {
-    console.error("❌ App initialization failed:", error);
-    throw error;
+    console.error('❌ App initialization error:', error);
+    // НЕ бросаем ошибку, продолжаем работу
+    
+    // Базовая настройка без БД
+    app.use(corsMiddleware);
+    app.use(express.json());
+    app.use('/api', routes);
+    
+    const server = createServer(app);
+    return { app, server };
   }
 };
 
