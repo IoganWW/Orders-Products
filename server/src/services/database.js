@@ -257,53 +257,45 @@ class Database {
   // Добавить тестовые данные если таблицы пустые
   async seedInitialData() {
     try {
+      // Проверяем есть ли пользователи
       const [userCount] = await this.query(
         "SELECT COUNT(*) as count FROM users"
       );
 
-      // Более безопасный способ получения count
-      let count = 0;
-      if (
-        userCount &&
-        userCount.length > 0 &&
-        userCount[0] &&
-        "count" in userCount[0]
-      ) {
-        count = parseInt(userCount[0].count) || 0;
-      }
-
+      const count = userCount[0]?.count || 0;
       console.log(`ℹ️ Количество пользователей в базе: ${count}`);
 
       if (count === 0) {
         console.log("📝 Adding initial test data...");
 
-        // Добавляем тестового пользователя
+        // ИСПРАВЛЕНИЕ: Добавляем INSERT IGNORE
         await this.query(`
-          INSERT INTO users (name, email, password, role) VALUES 
-          ('Admin', 'admin@example.com', '$2a$10$example_hash_here', 'admin'),
-          ('Test User', 'user@example.com', '$2a$10$example_hash_here', 'user')
-        `);
+        INSERT IGNORE INTO users (name, email, password, role) VALUES 
+        ('Admin', 'admin@example.com', '$2a$10$example_hash_here', 'admin'),
+        ('Test User', 'user@example.com', '$2a$10$example_hash_here', 'user')
+      `);
 
-        // Добавляем тестовый приход
         await this.query(`
-          INSERT INTO orders (title, description, date, user_id) VALUES 
-          ('Тестовый приход', 'Первый тестовый приход товаров', CURDATE(), 1)
-        `);
+        INSERT IGNORE INTO orders (title, description, date) VALUES 
+        ('Тестовый приход', 'Первый тестовый приход товаров', CURDATE())
+      `);
 
-        // Добавляем тестовый продукт
         await this.query(`
-          INSERT INTO products (serial_number, title, type, specification, order_id, date) VALUES 
-          ('MBP-001', 'MacBook Pro', 'Laptops', '13 inch, M1 chip', 1, CURDATE())
-        `);
+        INSERT IGNORE INTO products (serial_number, title, type, specification, order_id, date) VALUES 
+        ('MBP-001', 'MacBook Pro', 'Laptops', '13 inch, M1 chip', 1, CURDATE())
+      `);
 
-        // Добавляем цены
         await this.query(`
-          INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES 
-          (1, 1299.99, 'USD', TRUE),
-          (1, 1199.99, 'EUR', FALSE)
-        `);
+        INSERT IGNORE INTO product_prices (product_id, value, symbol, is_default) VALUES 
+        (1, 1299.99, 'USD', TRUE),
+        (1, 1199.99, 'EUR', FALSE)
+      `);
 
         console.log("✅ Initial test data added");
+      } else {
+        console.log(
+          `ℹ️ Найдено пользователей: ${count}, пропускаем инициализацию`
+        );
       }
     } catch (error) {
       console.error("❌ Error seeding initial data:", error);

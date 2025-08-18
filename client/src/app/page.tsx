@@ -25,11 +25,26 @@ export default function HomePage() {
     }
   }, [dispatch, isAuthenticated, authLoading]);
 
-  // Исправленное вычисление статистики
   const totalRevenue = orders.reduce((sum, order) => {
+    // Проверяем существование order.products
+    if (!order.products || !Array.isArray(order.products)) {
+      return sum;
+    }
+
     return sum + order.products.reduce((orderSum, product) => {
+      // Проверяем существование product.price
+      if (!product.price || !Array.isArray(product.price) || product.price.length === 0) {
+        return orderSum;
+      }
+
       const defaultPrice = product.price.find(p => p.isDefault === 1);
-      const priceValue = parseFloat(defaultPrice?.value) || 0;
+
+      // Дополнительная проверка на существование defaultPrice
+      if (!defaultPrice || !defaultPrice.value) {
+        return orderSum;
+      }
+
+      const priceValue = parseFloat(defaultPrice.value) || 0;
       return orderSum + priceValue;
     }, 0);
   }, 0);
@@ -46,7 +61,7 @@ export default function HomePage() {
           <div className="col-12">
             <h1 className="h3 fw-bold text-dark mb-1">Панель управления</h1>
             <p className="text-muted mb-0 small">Система управления приходами и продуктами</p>
-          
+
             {!isAuthenticated && !authLoading && (
               <div className="alert alert-info">
                 <i className="fas fa-info-circle me-2"></i>
@@ -67,7 +82,7 @@ export default function HomePage() {
                   Управление
                 </Link>
               </div>
-              
+
               <div className="bg-white rounded px-3 py-2 border">
                 <span className="text-muted small me-2">Продукты:</span>
                 <span className="fw-bold">{isAuthenticated ? products.length : '—'}</span>
@@ -76,22 +91,22 @@ export default function HomePage() {
                   Каталог
                 </Link>
               </div>
-              
+
               <div className="bg-white rounded px-3 py-2 border">
                 <span className="text-muted small me-2">Стоимость:</span>
                 <span className="fw-bold">{totalRevenue.toLocaleString()} ₴</span>
                 <span className="text-muted small ms-2">(Средний: {Math.round(averageOrder).toLocaleString()} ₴)</span>
               </div>
-              
+
               <div className="bg-white rounded px-3 py-2 border">
                 <span className="text-muted small me-2">Сессии:</span>
                 <span className="fw-bold">{activeSessions}</span>
-                <div 
-                  className="d-inline-block rounded-circle ms-2 me-1" 
-                  style={{ 
-                    width: '6px', 
-                    height: '6px', 
-                    backgroundColor: isConnected ? '#28a745' : '#dc3545' 
+                <div
+                  className="d-inline-block rounded-circle ms-2 me-1"
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    backgroundColor: isConnected ? '#28a745' : '#dc3545'
                   }}
                 ></div>
                 <span className="text-muted small">

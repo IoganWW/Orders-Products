@@ -14,17 +14,18 @@ export const formatPrice = (prices: Price[]) => {
 
 export const calculateOrderTotal = (products: any[]) => {
   const totals: { [key: string]: number } = {};
-  
-  products.forEach(product => {
-    product.price.forEach((price: Price) => {
-      if (!totals[price.symbol]) {
-        totals[price.symbol] = 0;
+     
+  products?.forEach(product => {
+    product.price?.forEach((price: Price) => {
+      if (price?.symbol && price?.value !== undefined) {
+        if (!totals[price.symbol]) {
+          totals[price.symbol] = 0;
+        }
+        totals[price.symbol] += Number(price.value) || 0;
       }
-
-      totals[price.symbol] += Number(price.value);
     });
   });
-  
+     
   return Object.entries(totals).map(([symbol, value]) => ({
     value,
     symbol,
