@@ -4,9 +4,9 @@
   "description": "Orders & Products Management System",
   "scripts": {
     "dev:client": "cd client && npm run dev",
-    "dev:server": "cd server && npm run dev", 
+    "dev:server": "cd server && npm run dev",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "build": "cd client && npm run build && cd ../server && npm run build",
+    "build": "cd server && npm install --omit=dev",
     "start": "cd server && npm start",
     "docker:build": "docker-compose build",
     "docker:start": "docker-compose up -d",
@@ -15,7 +15,11 @@
     "docker:logs": "docker-compose logs -f",
     "docker:clean": "docker-compose down -v --rmi all"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
     "concurrently": "^8.2.0"
   }
 }
+
