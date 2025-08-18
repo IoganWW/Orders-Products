@@ -19,16 +19,16 @@ class Database {
 
       // Проверяем Railway переменные
       if (process.env.MYSQLHOST || process.env.DB_HOST) {
-        console.log("🚂 Connecting to MySQL...");
+        //console.log("🚂 Connecting to MySQL...");
 
-        console.log("🚂 Connecting to Railway MySQL...");
+        /*console.log("🚂 Connecting to Railway MySQL...");
         console.log("🔍 MySQL config check:");
         console.log("  MYSQLHOST:", process.env.MYSQLHOST ? "✅" : "❌");
         console.log("  MYSQLUSER:", process.env.MYSQLUSER ? "✅" : "❌");
         console.log(
           "  MYSQLDATABASE:",
           process.env.MYSQLDATABASE ? "✅" : "❌"
-        );
+        );*/
 
         config = {
           host: process.env.MYSQLHOST || process.env.DB_HOST,
@@ -550,6 +550,50 @@ class Database {
     }
   }
 
+  async createProduct(productData) {
+    return await this.transaction(async (connection) => {
+      // Проверяем уникальность серийного номера
+      const [existing] = await connection.execute(
+        'SELECT id FROM products WHERE serial_number = ?',
+        [productData.serialNumber]
+      );
+
+      if (existing.length > 0) {
+        throw new Error(`Product with serial number ${productData.serialNumber} already exists`);
+      }
+
+      const [result] = await connection.execute(`
+        INSERT INTO products 
+        (serial_number, is_new, photo, title, type, specification, guarantee_start, guarantee_end, order_id, date) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
+        productData.serialNumber,
+        productData.isNew,
+        productData.photo || 'pathToFile.jpg',
+        productData.title,
+        productData.type,
+        productData.specification,
+        productData.guarantee.start,
+        productData.guarantee.end,
+        productData.order,
+        productData.date
+      ]);
+
+      const productId = result.insertId;
+
+      if (productData.price && Array.isArray(productData.price)) {
+        for (let priceData of productData.price) {
+          await connection.execute(
+            'INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)',
+            [productId, priceData.value, priceData.symbol, priceData.isDefault || 0]
+          );
+        }
+      }
+
+      return await this.getProductById(productId);
+    });
+  }
+
   async deleteProduct(productId) {
     try {
       const [result] = await this.pool.execute(
@@ -627,16 +671,10 @@ class Database {
     console.log("🔄 Initializing database connection...");
 
     // Показываем какие переменные доступны
-    console.log("🔍 Environment variables:");
-    console.log("  NODE_ENV:", process.env.NODE_ENV);
-    console.log(
-      "  MYSQLHOST:",
-      process.env.MYSQLHOST ? "✅ Found" : "❌ Missing"
-    );
-    console.log(
-      "  MYSQLUSER:",
-      process.env.MYSQLUSER ? "✅ Found" : "❌ Missing"
-    );
+    //console.log("🔍 Environment variables:");
+    //console.log("  NODE_ENV:", process.env.NODE_ENV);
+    //console.log("  MYSQLHOST:", process.env.MYSQLHOST ? "✅ Found" : "❌ Missing");
+    //console.log("  MYSQLUSER:", process.env.MYSQLUSER ? "✅ Found" : "❌ Missing");
 
     const isConnected = await this.testConnection(3, 2000);
 
