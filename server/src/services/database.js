@@ -7,83 +7,32 @@ class Database {
     this.isConnected = false;
   }
 
-  // Исправленный метод createPool() в server/src/services/database.js
-
   async createPool() {
     if (this.pool) {
       return this.pool;
     }
 
-    try {
-      let config;
+    this.pool = mysql.createPool({
+      host: process.env.DB_HOST || "localhost",
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASSWORD || "",
+      database: process.env.DB_NAME || "orders_products",
+      waitForConnections: true,
+      connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 10,
+      queueLimit: 0,
+      charset: "utf8mb4",
+      // Важные настройки для Docker
+      acquireTimeout: 60000,
+      timeout: 60000,
+      reconnect: true,
+      // Дополнительные настройки безопасности
+      multipleStatements: false,
+      dateStrings: false,
+      supportBigNumbers: true,
+      bigNumberStrings: false,
+    });
 
-      // Проверяем Railway переменные
-      if (process.env.MYSQLHOST || process.env.DB_HOST) {
-        //console.log("🚂 Connecting to MySQL...");
-
-        /*console.log("🚂 Connecting to Railway MySQL...");
-        console.log("🔍 MySQL config check:");
-        console.log("  MYSQLHOST:", process.env.MYSQLHOST ? "✅" : "❌");
-        console.log("  MYSQLUSER:", process.env.MYSQLUSER ? "✅" : "❌");
-        console.log(
-          "  MYSQLDATABASE:",
-          process.env.MYSQLDATABASE ? "✅" : "❌"
-        );*/
-
-        config = {
-          host: process.env.MYSQLHOST || process.env.DB_HOST,
-          port: parseInt(process.env.MYSQLPORT || process.env.DB_PORT) || 3306,
-          user: process.env.MYSQLUSER || process.env.DB_USER,
-          password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD,
-          database: process.env.MYSQLDATABASE || process.env.DB_NAME,
-        };
-
-        console.log("🔍 Connection config:", {
-          host: config.host,
-          port: config.port,
-          user: config.user,
-          database: config.database,
-          hasPassword: !!config.password,
-        });
-      } else {
-        console.log("🏠 Using local database connection");
-
-        config = {
-          host: process.env.DB_HOST || "localhost",
-          user: process.env.DB_USER || "root",
-          password: process.env.DB_PASSWORD || "",
-          database: process.env.DB_NAME || "orders_products",
-          port: 3306,
-        };
-      }
-
-      // Создаем пул с исправленной конфигурацией
-      this.pool = mysql.createPool({
-        host: config.host,
-        port: config.port,
-        user: config.user,
-        password: config.password,
-        database: config.database,
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0,
-        charset: "utf8mb4",
-        // Убираем acquireTimeout - не поддерживается в MySQL2
-        // acquireTimeout: 60000,
-        multipleStatements: false,
-        dateStrings: false,
-        supportBigNumbers: true,
-        bigNumberStrings: false,
-        // Для Railway MySQL
-        ssl: process.env.MYSQLHOST ? { rejectUnauthorized: false } : false,
-      });
-
-      console.log("✅ MySQL pool created successfully");
-      return this.pool;
-    } catch (error) {
-      console.error("❌ Error creating MySQL pool:", error);
-      throw error;
-    }
+    return this.pool;
   }
 
   // Базовые методы для запросов
@@ -162,147 +111,6 @@ class Database {
     return false;
   }
 
-  // Создать все необходимые таблицы для Railway
-  async createTablesIfNotExist() {
-    try {
-      console.log("🗄️ Creating tables if not exist...");
-
-      // Создаем таблицу users
-      await this.query(`
-        CREATE TABLE IF NOT EXISTS users (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(255) NOT NULL,
-          email VARCHAR(255) UNIQUE NOT NULL,
-          password VARCHAR(255) NOT NULL,
-          role VARCHAR(50) DEFAULT 'user',
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )
-      `);
-
-      // Создаем таблицу orders
-      await this.query(`
-        CREATE TABLE IF NOT EXISTS orders (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          title VARCHAR(255) NOT NULL,
-          description TEXT,
-          date DATETIME NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )
-      `);
-
-      // Создаем таблицу products
-      await this.query(`
-        CREATE TABLE IF NOT EXISTS products (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            serial_number VARCHAR(100) NOT NULL UNIQUE,
-            is_new TINYINT(1) DEFAULT 1,
-            photo VARCHAR(500) DEFAULT 'pathToFile.jpg',
-            title VARCHAR(255) NOT NULL,
-            type ENUM('Monitors', 'Laptops', 'Keyboards', 'Phones', 'Tablets') NOT NULL,
-            specification TEXT,
-            guarantee_start DATETIME NOT NULL,
-            guarantee_end DATETIME NOT NULL,
-            order_id INT NOT NULL,
-            date DATETIME NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-            INDEX idx_order_id (order_id),
-            INDEX idx_serial_number (serial_number)
-        )
-      `);
-
-      // Создаем таблицу product_prices
-      await this.query(`
-        CREATE TABLE IF NOT EXISTS product_prices (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          product_id INT NOT NULL,
-          value DECIMAL(10,2) NOT NULL,
-          symbol VARCHAR(10) NOT NULL DEFAULT 'USD',
-          is_default BOOLEAN DEFAULT FALSE,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
-        )
-      `);
-
-      // Создаем таблицу user_sessions
-      await this.query(`
-        CREATE TABLE IF NOT EXISTS user_sessions (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          user_id INT NULL,
-          session_id VARCHAR(255) NOT NULL UNIQUE,
-          ip_address VARCHAR(45),
-          user_agent TEXT,
-          is_active TINYINT(1) NOT NULL DEFAULT 1,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-          INDEX idx_session_id (session_id),
-          INDEX idx_user_id (user_id),
-          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-        )
-      `);
-
-      console.log("✅ All tables created/verified successfully");
-      return true;
-    } catch (error) {
-      console.error("❌ Error creating tables:", error);
-      return false;
-    }
-  }
-
-  // Добавить тестовые данные если таблицы пустые
-  async seedInitialData() {
-    /*try {
-      // Проверяем есть ли приходы (orders)
-      const [orderCount] = await this.query(
-        "SELECT COUNT(*) as count FROM orders"
-      );
-
-      const count = orderCount[0]?.count || 0;
-      console.log(`ℹ️ Количество приходов в базе: ${count}`);
-
-      if (count === 0) {
-        console.log("📝 Adding initial test data...");
-
-        // Добавляем пользователей
-        await this.query(`
-        INSERT IGNORE INTO users (name, email, password, role) VALUES 
-        ('Admin', 'admin@example.com', '$2a$10$example_hash_here', 'admin'),
-        ('Test User', 'user@example.com', '$2a$10$example_hash_here', 'user')
-      `);
-
-        // Добавляем приход
-        await this.query(`
-        INSERT IGNORE INTO orders (title, description, date) VALUES 
-        ('Тестовый приход', 'Первый тестовый приход товаров', CURDATE())
-      `);
-
-        // Добавляем продукт
-        await this.query(`
-        INSERT IGNORE INTO products (serial_number, title, type, specification, order_id, date) VALUES 
-        ('MBP-001', 'MacBook Pro', 'Laptops', '13 inch, M1 chip', 1, CURDATE())
-      `);
-
-        // Добавляем цены
-        await this.query(`
-        INSERT IGNORE INTO product_prices (product_id, value, symbol, is_default) VALUES 
-        (1, 1299.99, 'USD', TRUE),
-        (1, 1199.99, 'EUR', FALSE)
-      `);
-
-        console.log("✅ Initial test data added");
-      } else {
-        console.log(
-          `ℹ️ Найдены приходы: ${count}, пропускаем инициализацию данных`
-        );
-      }
-    } catch (error) {
-      console.error("❌ Error seeding initial data:", error);
-    }*/
-  }
-
   // ================== USERS ==================
   async getAllUsers() {
     try {
@@ -356,6 +164,56 @@ class Database {
     }
   }
 
+  async updateUser(userId, updateData) {
+    try {
+      const allowedFields = ["name", "email", "password", "role"];
+      const updates = [];
+      const values = [];
+
+      Object.keys(updateData).forEach((key) => {
+        if (allowedFields.includes(key) && updateData[key] !== undefined) {
+          updates.push(`${key} = ?`);
+          values.push(updateData[key]);
+        }
+      });
+
+      if (updates.length === 0) {
+        throw new Error("No valid fields to update");
+      }
+
+      values.push(userId);
+
+      const [result] = await this.pool.execute(
+        `UPDATE users SET ${updates.join(
+          ", "
+        )}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        values
+      );
+
+      if (result.affectedRows === 0) {
+        return null;
+      }
+
+      return await this.getUserById(userId);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      throw error;
+    }
+  }
+
+  async deleteUser(userId) {
+    try {
+      const [result] = await this.pool.execute(
+        "DELETE FROM users WHERE id = ?",
+        [userId]
+      );
+      return result.affectedRows > 0;
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      throw error;
+    }
+  }
+
   // ================== SESSIONS ==================
   async addActiveSession(
     sessionId,
@@ -387,6 +245,19 @@ class Database {
       return result;
     } catch (error) {
       console.error("Error removing session:", error);
+      throw error;
+    }
+  }
+
+  async getActiveSessionsByUserId(userId) {
+    try {
+      const [rows] = await this.pool.execute(
+        "SELECT session_id, ip_address, user_agent, created_at, updated_at FROM user_sessions WHERE user_id = ? AND is_active = 1",
+        [userId]
+      );
+      return rows;
+    } catch (error) {
+      console.error("Error getting user sessions:", error);
       throw error;
     }
   }
@@ -461,6 +332,23 @@ class Database {
     }
   }
 
+  async updateOrder(orderId, { title, description, date }) {
+    try {
+      const [result] = await this.pool.execute(
+        "UPDATE orders SET title = ?, description = ?, date = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        [title, description, date, orderId]
+      );
+
+      if (result.affectedRows === 0) {
+        return null;
+      }
+
+      return await this.getOrderById(orderId);
+    } catch (error) {
+      console.error("Error updating order:", error);
+      throw error;
+    }
+  }
   async createOrder({ title, description, date }) {
     // Убрали user_id из параметров
     try {
@@ -491,7 +379,7 @@ class Database {
     }
   }
 
-  // ================== PRODUCTS ==================
+  // ================== PRODUCTS ================== 
   async getAllProducts() {
     try {
       const [products] = await this.pool.execute(`
@@ -594,6 +482,101 @@ class Database {
     });
   }
 
+  async updateProduct(productId, productData) {
+    return await this.transaction(async (connection) => {
+      // Проверяем существование продукта
+      const [existing] = await connection.execute(
+        "SELECT id FROM products WHERE id = ?",
+        [productId]
+      );
+
+      if (existing.length === 0) {
+        throw new Error(`Product with ID ${productId} not found`);
+      }
+
+      // Если обновляется серийный номер, проверяем уникальность
+      if (productData.serialNumber) {
+        const [duplicate] = await connection.execute(
+          "SELECT id FROM products WHERE serial_number = ? AND id != ?",
+          [productData.serialNumber, productId]
+        );
+
+        if (duplicate.length > 0) {
+          throw new Error(
+            `Product with serial number ${productData.serialNumber} already exists`
+          );
+        }
+      }
+
+      // Обновляем основные данные продукта
+      const updateFields = [];
+      const updateValues = [];
+
+      const allowedFields = {
+        serialNumber: "serial_number",
+        isNew: "is_new",
+        photo: "photo",
+        title: "title",
+        type: "type",
+        specification: "specification",
+        order: "order_id",
+        date: "date",
+      };
+
+      Object.keys(allowedFields).forEach((key) => {
+        if (productData[key] !== undefined) {
+          updateFields.push(`${allowedFields[key]} = ?`);
+          updateValues.push(productData[key]);
+        }
+      });
+
+      if (productData.guarantee) {
+        if (productData.guarantee.start) {
+          updateFields.push("guarantee_start = ?");
+          updateValues.push(productData.guarantee.start);
+        }
+        if (productData.guarantee.end) {
+          updateFields.push("guarantee_end = ?");
+          updateValues.push(productData.guarantee.end);
+        }
+      }
+
+      if (updateFields.length > 0) {
+        updateValues.push(productId);
+        await connection.execute(
+          `UPDATE products SET ${updateFields.join(
+            ", "
+          )}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+          updateValues
+        );
+      }
+
+      // Обновляем цены если переданы
+      if (productData.price && Array.isArray(productData.price)) {
+        // Удаляем старые цены
+        await connection.execute(
+          "DELETE FROM product_prices WHERE product_id = ?",
+          [productId]
+        );
+
+        // Добавляем новые цены
+        for (let priceData of productData.price) {
+          await connection.execute(
+            "INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)",
+            [
+              productId,
+              priceData.value,
+              priceData.symbol,
+              priceData.isDefault || 0,
+            ]
+          );
+        }
+      }
+
+      return await this.getProductById(productId);
+    });
+  }
+
   async deleteProduct(productId) {
     try {
       const [result] = await this.pool.execute(
@@ -665,32 +648,109 @@ class Database {
     }
   }
 
-  // Инициализация БД при запуске
+  // Создать таблицу user_sessions если не существует
+  async createUserSessionsTable() {
+    try {
+      await this.query(`
+        CREATE TABLE IF NOT EXISTS user_sessions (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          user_id INT NULL,
+          session_id VARCHAR(255) NOT NULL UNIQUE,
+          ip_address VARCHAR(45),
+          user_agent TEXT,
+          is_active TINYINT(1) NOT NULL DEFAULT 1,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_session_id (session_id),
+          INDEX idx_user_id (user_id),
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+      `);
+      console.log("✅ user_sessions table created/verified");
+      return true;
+    } catch (error) {
+      console.error("❌ Error creating user_sessions table:", error);
+      return false;
+    }
+  }
+
+  // Создать индексы для оптимизации
+  async createOptimizationIndexes() {
+    try {
+      const indexes = [
+        "CREATE INDEX IF NOT EXISTS idx_products_type ON products(type)",
+        "CREATE INDEX IF NOT EXISTS idx_products_date ON products(date)",
+        "CREATE INDEX IF NOT EXISTS idx_orders_date ON orders(date)",
+        "CREATE INDEX IF NOT EXISTS idx_user_sessions_updated ON user_sessions(updated_at)",
+        "CREATE INDEX IF NOT EXISTS idx_product_prices_default ON product_prices(is_default)",
+      ];
+
+      for (const indexSql of indexes) {
+        await this.query(indexSql);
+      }
+
+      console.log("✅ Optimization indexes created/verified");
+      return true;
+    } catch (error) {
+      console.error("❌ Error creating indexes:", error);
+      return false;
+    }
+  }
+
+  // Инициализация БД при запуске с retry
   async initDatabase() {
-    
     console.log("🔄 Initializing database connection...");
 
-    // Показываем какие переменные доступны
-    //console.log("🔍 Environment variables:");
-    //console.log("  NODE_ENV:", process.env.NODE_ENV);
-    //console.log("  MYSQLHOST:", process.env.MYSQLHOST ? "✅ Found" : "❌ Missing");
-    //console.log("  MYSQLUSER:", process.env.MYSQLUSER ? "✅ Found" : "❌ Missing");
-
-    const isConnected = await this.testConnection(3, 2000);
+    const isConnected = await this.testConnection(15, 3000);
 
     if (isConnected) {
-      console.log("🗄️ Database connected successfully");
-      await this.createTablesIfNotExist();
-      await this.seedInitialData();
+      console.log("🗄️ Database initialized successfully");
+
+      // Создаем таблицу сессий если не существует
+      await this.createUserSessionsTable();
+
+      // Создаем индексы для оптимизации
+      await this.createOptimizationIndexes();
+
+      // Теперь можно безопасно очистить старые сессии
       await this.cleanupOldSessions(30);
-      console.log("✅ Database initialization completed");
     } else {
       console.error("💥 Database initialization failed");
-      // НЕ бросаем ошибку, продолжаем работу
-      console.log("⚠️ App will continue without database...");
     }
 
     return isConnected;
+  }
+
+  // Метод для получения статистики БД
+  async getDatabaseStats() {
+    try {
+      const stats = {};
+
+      const [orderCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM orders"
+      );
+      stats.orders = orderCount[0].count;
+
+      const [productCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM products"
+      );
+      stats.products = productCount[0].count;
+
+      const [userCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM users"
+      );
+      stats.users = userCount[0].count;
+
+      const [sessionCount] = await this.pool.execute(
+        "SELECT COUNT(*) as count FROM user_sessions WHERE is_active = 1"
+      );
+      stats.activeSessions = sessionCount[0].count;
+
+      return stats;
+    } catch (error) {
+      console.error("Error fetching database stats:", error);
+      throw error;
+    }
   }
 }
 
