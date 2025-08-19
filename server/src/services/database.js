@@ -7,6 +7,7 @@ class Database {
     this.isConnected = false;
   }
 
+  // Создание пула с retry логикой
   async createPool() {
     if (this.pool) {
       return this.pool;
@@ -332,6 +333,20 @@ class Database {
     }
   }
 
+  async createOrder({ title, description, date }) {
+    try {
+      const [result] = await this.pool.execute(
+        "INSERT INTO orders (title, description, date) VALUES (?, ?, ?)",
+        [title, description, date]
+      );
+
+      return await this.getOrderById(result.insertId);
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
+  }
+
   async updateOrder(orderId, { title, description, date }) {
     try {
       const [result] = await this.pool.execute(
@@ -349,22 +364,6 @@ class Database {
       throw error;
     }
   }
-  async createOrder({ title, description, date }) {
-    // Убрали user_id из параметров
-    try {
-      const [result] = await this.pool.execute(
-        // Убрали user_id из запроса
-        "INSERT INTO orders (title, description, date) VALUES (?, ?, ?)",
-        // Убрали user_id из массива значений
-        [title, description, date]
-      );
-
-      return await this.getOrderById(result.insertId);
-    } catch (error) {
-      console.error("Error creating order:", error);
-      throw error;
-    }
-  }
 
   async deleteOrder(orderId) {
     try {
@@ -379,7 +378,7 @@ class Database {
     }
   }
 
-  // ================== PRODUCTS ================== 
+  // ================== PRODUCTS ==================
   async getAllProducts() {
     try {
       const [products] = await this.pool.execute(`
@@ -423,7 +422,20 @@ class Database {
   async getProductById(productId) {
     try {
       const [products] = await this.pool.execute(
-        `SELECT id, title, type, specification, order_id FROM products WHERE id = ?`,
+        `SELECT 
+          p.id,
+          p.serial_number as serialNumber,
+          p.is_new as isNew,
+          p.photo,
+          p.title,
+          p.type,
+          p.specification,
+          p.guarantee_start,
+          p.guarantee_end,
+          p.order_id as \`order\`,
+          p.date
+        FROM products p
+        WHERE p.id = ?`,
         [productId]
       );
 
@@ -431,7 +443,17 @@ class Database {
         return null;
       }
 
-      return products[0];
+      const product = products[0];
+      product.guarantee = {
+        start: product.guarantee_start,
+        end: product.guarantee_end,
+      };
+      delete product.guarantee_start;
+      delete product.guarantee_end;
+
+      product.price = await this.getProductPrices(product.id);
+      
+      return product;
     } catch (error) {
       console.error("Error fetching product by ID:", error);
       throw error;
@@ -442,38 +464,46 @@ class Database {
     return await this.transaction(async (connection) => {
       // Проверяем уникальность серийного номера
       const [existing] = await connection.execute(
-        'SELECT id FROM products WHERE serial_number = ?',
+        "SELECT id FROM products WHERE serial_number = ?",
         [productData.serialNumber]
       );
 
       if (existing.length > 0) {
-        throw new Error(`Product with serial number ${productData.serialNumber} already exists`);
+        throw new Error(
+          `Product with serial number ${productData.serialNumber} already exists`
+        );
       }
 
-      const [result] = await connection.execute(`
-        INSERT INTO products 
+      const [result] = await connection.execute(
+        `INSERT INTO products 
         (serial_number, is_new, photo, title, type, specification, guarantee_start, guarantee_end, order_id, date) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [
-        productData.serialNumber,
-        productData.isNew,
-        productData.photo || 'pathToFile.jpg',
-        productData.title,
-        productData.type,
-        productData.specification,
-        productData.guarantee.start,
-        productData.guarantee.end,
-        productData.order,
-        productData.date
-      ]);
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          productData.serialNumber,
+          productData.isNew,
+          productData.photo || "pathToFile.jpg",
+          productData.title,
+          productData.type,
+          productData.specification,
+          productData.guarantee.start,
+          productData.guarantee.end,
+          productData.order,
+          productData.date,
+        ]
+      );
 
       const productId = result.insertId;
 
       if (productData.price && Array.isArray(productData.price)) {
         for (let priceData of productData.price) {
           await connection.execute(
-            'INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)',
-            [productId, priceData.value, priceData.symbol, priceData.isDefault || 0]
+            "INSERT INTO product_prices (product_id, value, symbol, is_default) VALUES (?, ?, ?, ?)",
+            [
+              productId,
+              priceData.value,
+              priceData.symbol,
+              priceData.isDefault || 0,
+            ]
           );
         }
       }
@@ -593,9 +623,38 @@ class Database {
   async getProductsByOrderId(orderId) {
     try {
       const [products] = await this.pool.execute(
-        `SELECT id, title, type, specification FROM products WHERE order_id = ?`,
+        `SELECT 
+          p.id,
+          p.serial_number as serialNumber,
+          p.is_new as isNew,
+          p.photo,
+          p.title,
+          p.type,
+          p.specification,
+          p.guarantee_start,
+          p.guarantee_end,
+          p.order_id as \`order\`,
+          p.date,
+          p.created_at,
+          p.updated_at
+        FROM products p
+        WHERE p.order_id = ?
+        ORDER BY p.created_at DESC`,
         [orderId]
       );
+
+      for (let product of products) {
+        product.guarantee = {
+          start: product.guarantee_start,
+          end: product.guarantee_end,
+        };
+        delete product.guarantee_start;
+        delete product.guarantee_end;
+
+        const prices = await this.getProductPrices(product.id);
+        product.price = prices;
+      }
+
       return products;
     } catch (error) {
       console.error("Error fetching products by order ID:", error);
@@ -606,7 +665,13 @@ class Database {
   async getProductPrices(productId) {
     try {
       const [prices] = await this.pool.execute(
-        `SELECT value, symbol, is_default as isDefault FROM product_prices WHERE product_id = ?`,
+        `SELECT 
+          pp.value,
+          pp.symbol,
+          pp.is_default as isDefault
+        FROM product_prices pp
+        WHERE pp.product_id = ?
+        ORDER BY pp.is_default DESC, pp.symbol`,
         [productId]
       );
       return prices;
