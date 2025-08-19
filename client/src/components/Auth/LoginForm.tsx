@@ -80,7 +80,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       // Редирект на страницу Orders после успешного входа
       router.push('/');
       
-    } catch (error: any) {
+    } catch (error) {
       console.error('Login error:', error);
       
       // Устанавливаем ошибку для конкретного поля или общую ошибку

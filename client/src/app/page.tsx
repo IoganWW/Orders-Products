@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useAppSelector } from '@/store';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAppDispatch } from '@/store';
 import { fetchOrders } from '@/store/slices/ordersSlice';
 import { fetchProducts } from '@/store/slices/productsSlice';
@@ -25,33 +25,53 @@ export default function HomePage() {
     }
   }, [dispatch, isAuthenticated, authLoading]);
 
-  const totalRevenue = orders.reduce((sum, order) => {
-    // Проверяем существование order.products
-    if (!order.products || !Array.isArray(order.products)) {
-      return sum;
+  // Используем useMemo для пересчета статистики при изменении данных или статуса авторизации
+  const statistics = useMemo(() => {
+    // Если пользователь не авторизован, возвращаем нулевые значения
+    if (!isAuthenticated) {
+      return {
+        totalRevenue: 0,
+        averageOrder: 0,
+        newProductsCount: 0,
+        usedProductsCount: 0
+      };
     }
 
-    return sum + order.products.reduce((orderSum, product) => {
-      // Проверяем существование product.price
-      if (!product.price || !Array.isArray(product.price) || product.price.length === 0) {
-        return orderSum;
+    const totalRevenue = orders.reduce((sum, order) => {
+      // Проверяем существование order.products
+      if (!order.products || !Array.isArray(order.products)) {
+        return sum;
       }
 
-      const defaultPrice = product.price.find(p => p.isDefault === 1);
+      return sum + order.products.reduce((orderSum, product) => {
+        // Проверяем существование product.price
+        if (!product.price || !Array.isArray(product.price) || product.price.length === 0) {
+          return orderSum;
+        }
 
-      // Дополнительная проверка на существование defaultPrice
-      if (!defaultPrice || !defaultPrice.value) {
-        return orderSum;
-      }
+        const defaultPrice = product.price.find(p => p.isDefault === 1);
 
-      const priceValue = parseFloat(defaultPrice.value) || 0;
-      return orderSum + priceValue;
+        // Дополнительная проверка на существование defaultPrice
+        if (!defaultPrice || !defaultPrice.value) {
+          return orderSum;
+        }
+
+        const priceValue = Number(defaultPrice.value) || 0;
+        return orderSum + priceValue;
+      }, 0);
     }, 0);
-  }, 0);
 
-  const newProductsCount = products.filter(p => p.isNew === 1).length;
-  const usedProductsCount = products.filter(p => p.isNew === 0).length;
-  const averageOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
+    const newProductsCount = products.filter(p => p.isNew === 1).length;
+    const usedProductsCount = products.filter(p => p.isNew === 0).length;
+    const averageOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
+
+    return {
+      totalRevenue,
+      averageOrder,
+      newProductsCount,
+      usedProductsCount
+    };
+  }, [orders, products, isAuthenticated]);
 
   return (
     <div className="bg-light min-vh-100">
@@ -86,7 +106,10 @@ export default function HomePage() {
               <div className="bg-white rounded px-3 py-2 border">
                 <span className="text-muted small me-2">Продукты:</span>
                 <span className="fw-bold">{isAuthenticated ? products.length : '—'}</span>
-                <span className="text-muted small ms-2">(Новых: {newProductsCount}, Б/у: {usedProductsCount})</span>
+                <span className="text-muted small ms-2">
+                  (Новых: {isAuthenticated ? statistics.newProductsCount : '—'}, 
+                   Б/у: {isAuthenticated ? statistics.usedProductsCount : '—'})
+                </span>
                 <Link href="/products" className="btn btn-sm btn-outline-success ms-2">
                   Каталог
                 </Link>
@@ -94,8 +117,12 @@ export default function HomePage() {
 
               <div className="bg-white rounded px-3 py-2 border">
                 <span className="text-muted small me-2">Стоимость:</span>
-                <span className="fw-bold">{totalRevenue.toLocaleString()} ₴</span>
-                <span className="text-muted small ms-2">(Средний: {Math.round(averageOrder).toLocaleString()} ₴)</span>
+                <span className="fw-bold">
+                  {isAuthenticated ? statistics.totalRevenue.toLocaleString() : '—'} ₴
+                </span>
+                <span className="text-muted small ms-2">
+                  (Средний: {isAuthenticated ? Math.round(statistics.averageOrder).toLocaleString() : '—'} ₴)
+                </span>
               </div>
 
               <div className="bg-white rounded px-3 py-2 border">

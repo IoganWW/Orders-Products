@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 export default function ProductsPage() {
   const { t } = useTranslation(['navigation', 'products']);
   const dispatch = useAppDispatch();
-  const { products, filteredProducts, selectedType, specificationFilter } = useAppSelector(state => state.products);
+  const { products, selectedType, specificationFilter } = useAppSelector(state => state.products);
   const productsCount = products.length;
 
   const productTypes: (ProductType | 'all')[] = ['all', 'monitors', 'laptops', 'keyboards', 'phones', 'tablets'];
