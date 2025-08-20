@@ -20,10 +20,43 @@ export const deleteUser = createAsyncThunk(
   'users/deleteUser',
   async (userId: number, { rejectWithValue }) => {
     try {
-      await api.delete(`/api/users/${userId}`);
+      const response = await api.delete(`/api/users/${userId}`);
+      
+      // Показываем уведомление об успехе
+      const successEvent = new CustomEvent('showNotification', {
+        detail: { 
+          type: 'success', 
+          message: response.data?.message || 'Пользователь успешно удален!',
+          duration: 4000
+        }
+      });
+      window.dispatchEvent(successEvent);
+      
       return userId;
     } catch (error: any) {
+      // Показываем уведомление об ошибке
+      const errorEvent = new CustomEvent('showNotification', {
+        detail: { 
+          type: 'error', 
+          message: error.message || 'Ошибка при удалении пользователя',
+          duration: 5000
+        }
+      });
+      window.dispatchEvent(errorEvent);
+      
       return rejectWithValue(error.message || 'Failed to delete user');
+    }
+  }
+);
+
+export const getUserById = createAsyncThunk(
+  'users/getUserById',
+  async (userId: number, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/api/users/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.message || 'Failed to fetch user');
     }
   }
 );
@@ -56,6 +89,9 @@ const initialState: UsersState = {
   users: [],
   loading: false,
   error: null,
+  deleting: false,
+  deleteError: null,
+  successMessage: null,
 };
 
 const usersSlice = createSlice({
@@ -64,6 +100,10 @@ const usersSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+      state.deleteError = null;
+    },
+    clearSuccessMessage: (state) => {
+      state.successMessage = null;
     },
     setUsers: (state, action: PayloadAction<User[]>) => {
       state.users = action.payload;
@@ -84,19 +124,37 @@ const usersSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // Delete user
+      
+      // Delete user - улучшенная обработка
       .addCase(deleteUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.deleting = true;
+        state.deleteError = null;
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
-        state.loading = false;
+        state.deleting = false;
+        state.deleteError = null;
+        // Удаляем пользователя из списка
         state.users = state.users.filter(user => user.id !== action.payload);
       })
       .addCase(deleteUser.rejected, (state, action) => {
+        state.deleting = false;
+        state.deleteError = action.payload as string;
+      })
+      
+      // Get user by ID
+      .addCase(getUserById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(getUserById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
+      
       // Update user
       .addCase(updateUser.pending, (state) => {
         state.loading = true;
@@ -113,6 +171,7 @@ const usersSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      
       // Create user
       .addCase(createUser.pending, (state) => {
         state.loading = true;
@@ -129,5 +188,5 @@ const usersSlice = createSlice({
   },
 });
 
-export const { clearError, setUsers } = usersSlice.actions;
+export const { clearError, clearSuccessMessage, setUsers } = usersSlice.actions;
 export default usersSlice.reducer;

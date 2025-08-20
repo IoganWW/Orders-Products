@@ -15,6 +15,7 @@ const resources = {
       cancel: 'Cancel',
       delete: 'Delete',
       deleting: 'Deleting',
+      warning: 'Warning',
       edit: 'Edit',
       add: 'Add',
       adding: 'Adding',
@@ -124,7 +125,9 @@ const resources = {
       admin: 'Administrator',
       managers: 'Managers', 
       user: 'User',
-      notFound: 'Users not found'
+      notFound: 'Users not found',
+      confirmDelete: 'Delete user {{name}}?',
+      deleteWarning: 'This action cannot be undone. All user data will be permanently deleted.',
     }
   },
   uk: {
@@ -136,6 +139,7 @@ const resources = {
       save: 'Зберегти',
       cancel: 'Скасувати',
       delete: 'Видалити',
+      warning: 'Увага',
       deleting: 'Видалення',
       edit: 'Редагувати',
       add: 'Додати',
@@ -241,7 +245,9 @@ const resources = {
       admin: 'Адміністратор',
       managers: 'Менеджери',
       user: 'Користувач',
-      notFound: 'Користувачів не знайдено'
+      notFound: 'Користувачів не знайдено',
+      confirmDelete: 'Видалити користувача {{name}}?',
+      deleteWarning: 'Цю дію неможливо скасувати. Всі дані користувача будуть видалені назавжди.',
     }
   },
   ru: {
@@ -254,6 +260,7 @@ const resources = {
       cancel: 'Отменить',
       delete: 'Удалить',
       deleting: 'Удаление',
+      warning: 'Внимание',
       edit: 'Редактировать',
       add: 'Добавить',
       adding: 'Добавление',
@@ -357,7 +364,9 @@ const resources = {
       admin: 'Администратор',
       managers: 'Менеджеры',
       user: 'Пользователь',
-      notFound: 'Пользователи не найдены'
+      notFound: 'Пользователи не найдены',
+      confirmDelete: 'Удалить пользователя {{name}}?',
+      deleteWarning: 'Это действие нельзя отменить. Все данные пользователя будут удалены навсегда.',
     }
   }
 };

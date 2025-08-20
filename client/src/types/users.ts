@@ -8,11 +8,15 @@ export interface User {
   updated_at: string;
 }
 
-// Интерфейс для Redux slice состояния
+// Интерфейс для Redux slice состояния - ОБНОВЛЕН
 export interface UsersState {
   users: User[];
   loading: boolean;
   error: string | null;
+  // Добавляем поля для функциональности удаления
+  deleting: boolean;
+  deleteError: string | null;
+  successMessage: string | null;
 }
 
 // Интерфейс для компонента страницы (если нужен отдельно)

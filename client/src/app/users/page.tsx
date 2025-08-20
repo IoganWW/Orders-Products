@@ -1,8 +1,9 @@
 // client/src/app/users/page.tsx
 'use client';
 
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import AuthWrapper from '@/components/Auth/AuthWrapper';
+import DeleteUserModal from '@/components/Users/DeleteUserModal';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { fetchUsers, deleteUser } from '@/store/slices/usersSlice';
 import {
@@ -143,7 +144,7 @@ const UsersTable: React.FC<{
   onDelete: (userId: number) => void
 }> = React.memo(({ users, onEdit, onSettings, onDelete }) => {
   const { t } = useTranslation(['users', 'common']);
-  
+
   if (users.length === 0) {
     return (
       <div className="bg-white rounded border">
@@ -236,9 +237,11 @@ ErrorMessage.displayName = 'ErrorMessage';
 function UsersPageContent() {
   const { t } = useTranslation(['users']);
   const dispatch = useAppDispatch();
-  
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   // Получаем данные из Redux store
-  const { users, loading, error } = useAppSelector(state => state.users);
+  const { users, loading, error, deleting, deleteError, successMessage } = useAppSelector(state => state.users);
 
   // Мемоизированная статистика
   const statistics = useMemo(() => calculateUserStatistics(users), [users]);
@@ -260,11 +263,25 @@ function UsersPageContent() {
   }, []);
 
   const handleDelete = useCallback((userId: number) => {
-    console.log('Delete user:', userId);
-    if (window.confirm('Вы уверены, что хотите удалить пользователя?')) {
-      dispatch(deleteUser(userId));
+    const user = users.find(u => u.id === userId);
+    if (user) {
+      setUserToDelete(user);
+      setShowDeleteModal(true);
     }
-  }, [dispatch]);
+  }, [users]);
+
+  const handleConfirmDelete = useCallback(async () => {
+    if (userToDelete) {
+      await dispatch(deleteUser(userToDelete.id));
+      setShowDeleteModal(false);
+      setUserToDelete(null);
+    }
+  }, [dispatch, userToDelete]);
+
+  const handleCloseModal = useCallback(() => {
+    setShowDeleteModal(false);
+    setUserToDelete(null);
+  }, []);
 
   // Состояния загрузки и ошибок
   if (loading) return <LoadingSpinner />;
@@ -295,6 +312,16 @@ function UsersPageContent() {
             />
           </div>
         </div>
+
+        {showDeleteModal && userToDelete && (
+          <DeleteUserModal
+            show={showDeleteModal}
+            user={userToDelete}
+            onClose={handleCloseModal}
+            onConfirm={handleConfirmDelete}
+            isDeleting={deleting}
+          />
+        )}
       </div>
     </div>
   );
