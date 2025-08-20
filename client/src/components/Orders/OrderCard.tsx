@@ -121,11 +121,11 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
           <div className="flex-shrink-0">
             <button
               type="button"
-              className={`${styles.orderCard__deleteButton} btn btn-link p-2 text-muted border-0 rounded-circle`}
+              className="deleteButton btn btn-link p-2 text-muted border-0 rounded-circle"
               onClick={handleDeleteClick}
               title={t('common:delete')}
             >
-              <svg className={styles.orderCard__deleteIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg className="deleteButtonIcon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H5C4.45 4 4 4.45 4 5C4 5.55 4.45 6 5 6H19C19.55 6 20 5.55 20 5C20 4.45 19.55 4 19 4Z" />
               </svg>
             </button>

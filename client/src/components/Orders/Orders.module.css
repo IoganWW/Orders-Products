@@ -73,24 +73,6 @@
   color: var(--text-secondary);
 }
 
-.orderCard__deleteButton {
-  transition: background-color 0.2s ease;
-}
-
-.orderCard__deleteButton:hover {
-  background-color: #ffebeb !important;
-}
-
-.orderCard__deleteIcon {
-  width: 20px;
-  height: 20px;
-  transition: color 0.2s ease;
-}
-
-.orderCard__deleteButton:hover .orderCard__deleteIcon {
-  color: #e74c3c !important;
-}
-
 /* Order Details - Общий контейнер */
 .orderDetails {
   height: fit-content;

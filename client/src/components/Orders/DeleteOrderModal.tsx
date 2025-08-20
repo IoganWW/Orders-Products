@@ -35,15 +35,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
           <div className="modal-content animate__animated animate__zoomIn border-0 rounded-3 shadow-lg position-relative">
             <button
               type="button"
-              className="btn-close position-absolute bg-white rounded-circle border shadow-sm"
-              style={{ 
-                top: '0', 
-                right: '0',
-                transform: 'translate(50%, -50%)',
-                width: '35px', 
-                height: '35px',
-                zIndex: 50 
-              }}
+              className="modalCloseBtn btn-close position-absolute rounded-circle border"
               onClick={onClose}
               aria-label="Закрыть"
             />
@@ -93,7 +85,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ show, order, onClose }) => {
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 10000 }}></div>
+      <div className="modal-backdrop fade show" style={{ backgroundColor: 'var(--modal-backdrop)', zIndex: 10000 }}></div>
     </Portal>
   );
 };

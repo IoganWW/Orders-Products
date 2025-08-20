@@ -18,6 +18,10 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --border-radius: 0.5rem;
   --transition: all 0.3s ease;
+  --modal-backdrop: rgba(0,0,0,0.6);
+  --modal-border-radius: 12px;
+  --delete-button-hover: rgba(220, 53, 69, 0.1);
+  --success-bg: #69b838ff;
 }
 
 * {
@@ -49,20 +53,6 @@ body {
   min-height: calc(100vh - 140px);
   margin-left: 180px;
   transition: margin-left 0.3s ease;
-}
-
-/* Utilities */
-.card-shadow {
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  background: white;
-}
-
-.card-shadow:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
-  transition: var(--transition);
 }
 
 .btn-primary-custom {
@@ -233,4 +223,59 @@ body {
   .statistics-blocks .text-muted {
     font-size: 0.75rem;
   }
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.deleteButton:hover {
+  background-color: var(--delete-button-hover);
+  transform: scale(1.1);
+}
+
+.deleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.deleteButtonIcon {
+  width: 18px;
+  height: 18px;
+  transition: all 0.2s ease;
+}
+
+.deleteButton:hover .deleteButtonIcon {
+  transform: scale(1.1);
+  color: #e74c3c;
+}
+
+.modalCloseBtn {
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  width: 30px;
+  height: 30px;
+  background-color: white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  z-index: 50;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modalCloseBtn:hover {
+  background-color: #f0f0f0;
 }

@@ -396,7 +396,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 10000 }}></div>
+      <div className="modal-backdrop fade show" style={{ backgroundColor: 'var(--modal-backdrop)', zIndex: 10000 }}></div>
     </Portal>
   );
 };
