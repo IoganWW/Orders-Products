@@ -75,7 +75,7 @@ export default function HomePage() {
 
   return (
     <div className="bg-light min-vh-100">
-      <div className="container-fluid py-4 px-5">
+      <div className="container-fluid py-4 px-4">
         {/* Header */}
         <div className="row mb-4">
           <div className="col-12">

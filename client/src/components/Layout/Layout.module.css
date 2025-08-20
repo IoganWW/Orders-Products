@@ -210,6 +210,10 @@
     display: none;
   }
   
+  .logo {
+    display: none;
+  }
+  
   .headerRight {
     gap: 0.4rem;
   }
@@ -241,7 +245,7 @@
   .sidebar {
     width: 25px;
   }
-  
+
   .headerLeft {
     margin-left: 10px;
   }

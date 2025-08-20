@@ -2,11 +2,9 @@
 import React, { useState } from 'react';
 import { Order } from '@/types/orders';
 import AddProductForm from '@/components/Products/AddProductForm';
-import styles from './Orders.module.css';
 import OrderProductsList from './OrderProductList';
 import { useTranslation } from 'react-i18next';
 
-// Обновленный интерфейс для OrderDetailsProps
 interface OrderDetailsProps {
   order: Order;
   onClose: () => void;
@@ -27,19 +25,34 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeletePro
 
   return (
     <>
-      <div className={`${styles.orderDetails} animate__animated animate__slideInRight position-relative bg-white rounded shadow-sm`}>
+      <div className="order-details animate__animated animate__slideInRight position-relative bg-white rounded shadow-sm">
         <button
           type="button"
-          className={`${styles.orderDetails__closeButton} position-absolute top-0 end-0 border-0 bg-white p-2 rounded-circle shadow-sm d-flex align-items-center justify-content-center`}
+          className="btn-close position-absolute bg-white border-0 p-2 rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+          style={{ 
+            top: '0', 
+            right: '0',
+            transform: 'translate(50%, -50%)',
+            width: '35px', 
+            height: '35px',
+            zIndex: 50 
+          }}
           onClick={onClose}
           aria-label="Закрыть"
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="currentColor" 
+            className="text-secondary"
+          >
             <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" />
           </svg>
         </button>
+        
         <div className="position-relative d-flex px-4 py-4">
-          <h5>
+          <h5 className="mb-0">
             {order.title}
           </h5>
         </div>
@@ -47,13 +60,10 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeletePro
         <div>
           <div className="d-flex gap-2 mb-3 align-items-center px-4">
             <button
-              className="btn px-0 text-success"
+              className="btn px-0 text-success d-flex align-items-center gap-3 border-0 bg-transparent hover-text-success-emphasis"
               onClick={handleAddProductClick}
             >
-              <i
-                className="fa-sharp fa-solid fa-circle-plus fa-lg me-3"
-                title={t('products:addProduct')}
-              ></i>
+              <i className="fa-sharp fa-solid fa-circle-plus fa-lg" />
               {t('products:addProduct')}
             </button>
           </div>

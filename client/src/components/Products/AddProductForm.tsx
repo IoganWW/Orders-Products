@@ -144,7 +144,6 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
       });
 
       if (response.ok) {
-        // Обновляем и продукты и заказы, чтобы новый продукт появился в деталях заказа
         dispatch(fetchProducts());
         dispatch(fetchOrders());
         
@@ -179,10 +178,10 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
 
   return (
     <Portal>
-      <div className="modal fade show" style={{ display: 'block', zIndex: 10001 }} tabIndex={-1}>
+      <div className="modal fade show d-block" style={{ zIndex: 10001 }} tabIndex={-1}>
         <div className="modal-dialog modal-dialog-centered modal-xl">
-          <div className="modal-content" style={{ borderRadius: '12px', border: 'none' }}>
-            <div className="modal-header bg-info text-white" style={{ borderRadius: '12px 12px 0 0' }}>
+          <div className="modal-content border-0 rounded-3">
+            <div className="modal-header bg-info text-white rounded-top-3">
               <h5 className="modal-title">
                 Добавить новый продукт
               </h5>
@@ -196,7 +195,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
 
             <form onSubmit={handleSubmit}>
               <div className="modal-body p-3">
-                <div className="row">
+                <div className="row g-3">
                   <div className="col-md-8">
                     <FormField
                       label="Название продукта"
@@ -249,7 +248,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                   onBlur={handleBlur}
                 />
 
-                <div className="row">
+                <div className="row g-3">
                   <div className="col-md-4">
                     <FormField
                       label="Серийный номер"
@@ -306,7 +305,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                   </div>
                 </div>
 
-                <div className="row">
+                <div className="row g-3">
                   <div className="col-md-6">
                     <FormField
                       label="Цена USD"
@@ -338,7 +337,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                   </div>
                 </div>
 
-                <div className="row">
+                <div className="row g-3">
                   <div className="col-md-6">
                     <FormField
                       label="Гарантия с"
@@ -369,7 +368,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                 </div>
               </div>
 
-              <div className="modal-footer border-0" style={{ borderRadius: '0 0 12px 12px' }}>
+              <div className="modal-footer border-0 rounded-bottom-3">
                 <button
                   type="button"
                   className="btn btn-outline-secondary"
@@ -389,9 +388,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                       Создание...
                     </>
                   ) : (
-                    <>
-                      Добавить продукт
-                    </>
+                    'Добавить продукт'
                   )}
                 </button>
               </div>

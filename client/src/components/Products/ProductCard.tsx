@@ -3,9 +3,9 @@ import { Product } from '@/types/products';
 import { formatDate, isDateExpired } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/currencyUtils';
 import DeleteProductModal from './DeleteProductModal';
-import styles from './Products.module.css';
 import ProductTypeIcon from './ProductTypeIcon';
 import { useTranslation } from 'react-i18next';
+import styles from '../Products/Products.module.css';
 
 interface ProductCardProps {
   product: Product;
@@ -23,10 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
   const guaranteeEnd = formatDate(product.guarantee.end, i18n.language);
   const isGuaranteeExpired = isDateExpired(product.guarantee.end);
 
-  // Обработчики удаления
-  const handleDeleteClick = () => {
-    setShowDeleteModal(true);
-  };
+  const handleDeleteClick = () => setShowDeleteModal(true);
 
   const handleConfirmDelete = async () => {
     if (!onDeleteProduct) return;
@@ -42,99 +39,100 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
     }
   };
 
-  const handleCancelDelete = () => {
-    setShowDeleteModal(false);
-  };
+  const handleCancelDelete = () => setShowDeleteModal(false);
 
   return (
     <>
-      <div className={`${styles.productCard} product-card animate__animated animate__fadeIn d-flex flex-lg-row flex-md-column flex-sm-column flex-column g-0 g-lg-1`}>
+      <div className={`bg-white border rounded shadow-sm px-3 py-2 animate__animated animate__fadeIn d-flex flex-lg-row flex-column g-0 g-lg-1 ${styles.productCard}`}>
         
-        {/* Столбец 1: Статус + Иконка + Название + Серийник */}
-        <div className={`${styles.productCard__col1} d-flex align-items-center`}>
-          <div className={`${styles.productCard__statusCircle} ${product.isNew === 1 ? styles.statusCircle__new : styles.statusCircle__used}`}></div>
+        {/* Колонка 1: Статус + Иконка + Название + Серийник */}
+        <div className={`d-flex align-items-center gap-4 pb-3 pb-lg-0 ${styles.productCard__col1}`} style={{ width: '600px', minWidth: '600px' }}>
+          <div 
+            className={`rounded-circle ${product.isNew === 1 ? 'bg-warning' : 'bg-dark'}`} 
+            style={{ width: '10px', height: '10px', flexShrink: 0 }}
+          ></div>
           
           <ProductTypeIcon type={product.type} />
           
-          <div className={styles.productCard__titleAndSerial}>
-            <h5 className={styles.productCard__title}>
+          <div className="flex-fill min-w-0">
+            <h5 className="mb-1 fw-semibold text-decoration-underline fs-6 text-nowrap overflow-hidden text-truncate">
               {product.title}
             </h5>
-            <span className={styles.productCard__serialNumber}>SN-{product.serialNumber}</span>
+            <span className="text-muted small">SN-{product.serialNumber}</span>
           </div>
         </div>
 
-        {/* Столбец 2: Статус */}
-        <div className={`${styles.productCard__col2} d-lg-flex d-md-none d-sm-none d-none`}>
-          <span className={`${product.isNew === 1 ? styles.statusAvailable : styles.statusOnRepair}`}>
+        {/* Колонка 2: Статус */}
+        <div className="d-lg-flex d-none align-items-center justify-content-center text-center px-2" style={{ width: '120px', minWidth: '120px' }}>
+          <span className={product.isNew === 1 ? 'text-warning' : 'text-dark'}>
             {product.isNew === 1 ? t('products:free') : t('products:underRepair')}
           </span>
         </div>
         
-        {/* Столбец 3: Гарантия */}
-        <div className={`${styles.productCard__guaranteeDates} d-lg-flex d-md-flex d-sm-none d-none`}>
-          <span>
-            <small className="text-muted">{t('common:from')}:</small> {guaranteeStart.short}
-          </span>
-          <span className={isGuaranteeExpired ? 'text-danger' : 'text-success'}>
-            <small className="text-muted">{t('common:until')}:</small> {guaranteeEnd.short}
-          </span>
-        </div>
-
-        {/* Столбец 4: Новый/Б/У */}
-        <div className={`${styles.productCard__col_newUsed} d-lg-flex d-md-none d-sm-none d-none`}>
-          <span>{product.isNew ? t('products:new') : t('products:used')}</span>
-        </div>
-
-        {/* Столбец 5: Цены */}
-        <div className={`${styles.productCard__col3} d-flex flex-column`}>
+        {/* Колонка 3: Цены */}
+        <div className="d-flex flex-column align-items-start justify-content-center gap-1 px-2 py-2 py-lg-0" style={{ width: '150px', minWidth: '150px' }}>
           {price.secondary.length > 0 && (
-            <div className={styles.productCard__priceSecondary}>
+            <div className="d-flex gap-2 small text-secondary">
               {price.secondary.map((p, index) => (
                 <span key={index}>{p.value} {p.symbol}</span>
               ))}
             </div>
           )}
-          <div className={styles.productCard__priceMain}>
+          <div className="fw-medium">
             {price.default}
           </div>
         </div>
+        
+        {/* Колонка 4: Гарантия */}
+        <div className="d-lg-flex d-md-flex d-none flex-column align-items-center justify-content-center gap-1 px-2" style={{ width: '140px', minWidth: '140px' }}>
+          <span className="small">
+            <small className="text-muted">{t('common:from')}:</small> {guaranteeStart.short}
+          </span>
+          <span className={`small ${isGuaranteeExpired ? 'text-danger' : 'text-success'}`}>
+            <small className="text-muted">{t('common:until')}:</small> {guaranteeEnd.short}
+          </span>
+        </div>
 
-        {/* Столбец 6: Описание */}
-        <div className={`${styles.productCard__col5_description} d-lg-block d-md-none d-sm-none d-none`}>
-          <span className={styles.productCard__descriptionText}>
+        {/* Колонка 5: Новый/Б/У */}
+        <div className="d-lg-flex d-none align-items-center justify-content-center px-2" style={{ width: '100px', minWidth: '100px' }}>
+          <span className="fw-medium">{product.isNew ? t('products:new') : t('products:used')}</span>
+        </div>
+
+        {/* Колонка 6: Описание */}
+        <div className="d-lg-flex d-none align-items-center px-2 overflow-hidden" style={{ width: '300px', minWidth: '300px' }}>
+          <span className="text-truncate d-block">
             {product.specification || 'Длинное предлинное длиннющее название группы'}
           </span>
         </div>
 
-        {/* Столбец 7: User */}
-        <div className={`${styles.productCard__col_user} d-xl-block d-lg-block d-md-block d-sm-block d-block`}>
-          <span>Христорождественский Александр</span>
+        {/* Колонка 7: User */}
+        <div className="d-flex align-items-center px-2 py-2 py-lg-0 overflow-hidden" style={{ width: '250px', minWidth: '250px' }}>
+          <span className="text-truncate d-block">Христорождественский Александр</span>
         </div>
 
-        {/* Столбец 8: Заказ */}
-        <div className={`${styles.productCard__col6_order} d-xl-block d-lg-block d-md-block d-sm-block d-block`}>
-          <span>{orderTitle}</span>
+        {/* Колонка 8: Заказ */}
+        <div className="d-flex align-items-center px-2 py-2 py-lg-0 overflow-hidden" style={{ width: '300px', minWidth: '300px' }}>
+          <span className="text-truncate d-block">{orderTitle}</span>
         </div>
 
-        {/* Столбец 9: Дата */}
-        <div className={`${styles.productCard__col7} d-lg-flex d-md-none d-sm-none d-none`}>
-          <small className={styles.productCard__footerDate}>
+        {/* Колонка 9: Дата */}
+        <div className="d-lg-flex d-none align-items-center justify-content-center px-2" style={{ width: '150px', minWidth: '150px' }}>
+          <small className="text-nowrap">
             {formatDate(product.date, i18n.language).shortMonStr}
           </small>
         </div>
 
-        {/* Столбец 10: Удаление */}
+        {/* Колонка 10: Удаление */}
         {onDeleteProduct && (
-          <div className={`${styles.productCard__deleteCol} d-lg-flex d-md-none d-sm-none d-none`}>
+          <div className="d-lg-flex d-none align-items-center justify-content-center px-2" style={{ width: '60px', minWidth: '60px' }}>
             <button
               type="button"
-              className={styles.productCard__deleteButton}
+              className={`${styles.productCard__deleteButton} justify-self-end`}
               onClick={handleDeleteClick}
               title={t('common:delete')}
               disabled={isDeleting}
             >
-              <svg className={styles.productCard__deleteIcon} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <svg className={styles.productCard__deleteIcon} viewBox="0 0 24 24" fill="currentColor">
                 <path d="M6 19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.61 3.11 14.35 3 14.09 3H9.91C9.65 3 9.39 3.11 9.21 3.29L8.5 4H5C4.45 4 4 4.45 4 5C4 5.55 4.45 6 5 6H19C19.55 6 20 5.55 20 5C20 4.45 19.55 4 19 4Z"/>
               </svg>
             </button>

@@ -1,33 +1,15 @@
-.productItemMini {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  min-width: 0;
-  overflow: hidden;
+/* Hover эффекты для карточек продуктов */
+.productCard {
+  transition: var(--transition);
+  cursor: pointer;
 }
 
-.productCard__infoContainer {
-  flex: 1;
-  text-align: left;
-  min-width: 0;
-  overflow: hidden;
+.productCard:hover {
+  box-shadow: var(--shadow-lg) !important;
+  transform: translateY(-2px);
 }
 
-@media (max-width: 575.98px) {
-  .orderDetails__productItem {
-    flex-wrap: wrap;
-    text-align: center;
-  }
-}
-
-.productsContainer {
-  padding: 1rem;
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: scroll;
-  max-height: 500px;
-}
-
+/* Grid для OrderProductsList */
 .orderProductGrid {
   display: grid;
   grid-template-columns: 1fr 100px 30px;
@@ -59,180 +41,12 @@
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Уменьшаем высоту на планшетах когда фильтры в 2 ряда */
-@media (max-width: 1200px) {
-  .productsContainer {
-    max-height: 400px;
-  }
-}
-
-.productsHeader {
-  background: white;
-  padding: 1.5rem;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 1.5rem;
-  border-left: 4px solid var(--primary-color);
-  flex-shrink: 0;
-}
-
-.productsList {
-  min-height: 200px;
-}
-
-.loading {
-  min-height: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-/* Page Header Filters */
-.filterLabel {
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  min-width: fit-content;
-}
-
-.filterSelect {
-  border-color: var(--border-color);
-  transition: var(--transition);
-  flex: 1;
-}
-
-.filterSelect:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.1);
-}
-
-/* Product Card - Базовые стили */
-.productCard {
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  padding: 1rem;
-}
-
-.productCard:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-/* Элементы карточки */
-.productCard__statusCircle {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.statusCircle__new {
-  background-color: #FFA500;
-}
-
-.statusCircle__used {
-  background-color: var(--text-primary);
-}
-
-
-.productCard__titleAndSerial {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex: 1;
-  min-width: 0;
-}
-
-.productCard__title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  text-decoration: underline;
-  text-decoration-color: currentColor;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-
-.productCard__serialNumber {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
 .statusAvailable {
   color: #FFA500;
 }
 
 .statusOnRepair {
   color: var(--text-primary);
-}
-
-.productCard__col3 {
-  align-items: flex-start;
-  justify-content: center;
-  gap: 3px;
-}
-
-.productCard__priceMain {
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-.productCard__priceSecondary {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.5rem;
-}
-
-.productCard__guaranteeDates {
-  gap: 3px;
-}
-
-.productCard__guaranteeDates span {
-  font-size: 0.85rem;
-}
-
-.productCard__col_newUsed {
-  align-items: center;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.productCard__col5_description {
-  font-size: 0.9rem;
-  color: var(--text-primary);
-}
-
-.productCard__col_user {
-  font-size: 0.9rem;
-  color: var(--text-primary);
-}
-
-.productCard__col6_order {
-  font-size: 0.9rem;
-  color: var(--text-primary);
-}
-
-.productCard__col7 {
-  flex-direction: column;
-  gap: 5px;
-}
-
-.productCard__footerDate {
-  font-size: 0.8rem;
-  color: var(--text-primary);
-}
-
-.productCard__deleteCol {
-  align-items: center;
-  justify-content: flex-end;
 }
 
 .productCard__deleteButton {
@@ -270,181 +84,8 @@
   color: #e74c3c;
 }
 
-/* Адаптивные стили для мобильных */
-.productCard__col1,
-.productCard__col2,
-.productCard__col3,
-.productCard__guaranteeDates,
-.productCard__col_newUsed,
-.productCard__col5_description,
-.productCard__col_user,
-.productCard__col6_order,
-.productCard__col7,
-.productCard__deleteCol {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.productCard__col1 {
-  gap: 20px;
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 0.75rem;
-}
-
-/* Десктопные стили (LG и выше) */
-@media (min-width: 992px) {
-  .productsList {
-    width: 2200px;
-    min-width: 2200px;
-  }
-
-  .productCard {
-    height: 60px;
-    padding: 0 20px;
-    gap: 0;
-    width: 2200px;
-    min-width: 2200px;
-    align-items: center;
-    flex-shrink: 0;
-  }
-  
-  .productCard__col1 {
-    width: 600px;
-    min-width: 600px;
-    max-width: 600px;
-    gap: 30px;
-    padding: 0;
-    border-bottom: none;
-  }
-  
-  .productCard__col2 {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-    padding: 0 10px;
-    text-align: center;
-    border-bottom: none;
-  }
-  
-  .productCard__col3 {
-    width: 150px;
-    min-width: 150px;
-    max-width: 150px;
-    padding: 0 10px;
-    border-bottom: none;
-  }
-  
-  .productCard__guaranteeDates {
-    width: 140px;
-    min-width: 140px;
-    max-width: 140px;
-    padding: 0 10px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-bottom: none;
-  }
-  
-  .productCard__col_newUsed {
-    width: 100px;
-    min-width: 100px;
-    max-width: 100px;
-    padding: 0 10px;
-    justify-content: center;
-    border-bottom: none;
-  }
-  
-  .productCard__col5_description {
-    width: 300px;
-    min-width: 300px;
-    max-width: 300px;
-    padding: 0 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-bottom: none;
-  }
-  
-  .productCard__col_user {
-    width: 250px;
-    min-width: 250px;
-    max-width: 250px;
-    padding: 0 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-bottom: none;
-  }
-  
-  .productCard__col6_order {
-    width: 300px;
-    min-width: 300px;
-    max-width: 300px;
-    padding: 0 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    border-bottom: none;
-  }
-  
-  .productCard__col7 {
-    width: 150px;
-    min-width: 150px;
-    max-width: 150px;
-    padding: 0 10px;
-    align-items: center;
-    justify-content: center;
-    border-bottom: none;
-  }
-  
-  .productCard__deleteCol {
-    width: 60px;
-    min-width: 60px;
-    max-width: 60px;
-    padding: 0 10px;
-    align-items: center;
-    justify-content: center;
-    border-bottom: none;
-  }
-
-  .productCard__title {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-  }
-
-  .productCard__serialNumber {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-  }
-
-  .productCard__priceMain {
-    white-space: nowrap;
-  }
-
-  .productCard__priceSecondary {
-    white-space: nowrap;
-  }
-
-  .productCard__guaranteeDates span {
-    white-space: nowrap;
-  }
-
-  .productCard__footerDate {
-    white-space: nowrap;
-  }
-}
-
-/* Планшеты MD - гарантия в ряд */
-@media (max-width: 991px) {
-  .productCard__guaranteeDates {
-    flex-direction: row;
-    gap: 1rem;
-  }
-}
-
-/* Общие стили для кнопок и элементов */
-.orderDetails__closeButton {
+/* Стили для кнопки закрытия модального окна */
+.modal-close-button {
   position: absolute;
   top: 0;
   right: 0;
@@ -464,12 +105,88 @@
   z-index: 50;
 }
 
-.orderDetails__closeButton:hover {
+.modal-close-button:hover {
   background-color: #f0f0f0;
 }
 
-.orderDetails__closeButton svg {
+.modal-close-button svg {
   width: 24px;
   height: 24px;
   color: var(--text-secondary);
+}
+
+/* Утилитарные классы для ховера (дополнение к Bootstrap) */
+.hover-bg-danger-subtle:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.hover-scale-110:hover {
+  transform: scale(1.1) !important;
+}
+
+.hover-text-danger:hover {
+  color: var(--danger-color) !important;
+}
+
+.hover-text-success-emphasis:hover {
+  color: #146c43 !important;
+}
+
+.transition-all {
+  transition: var(--transition);
+}
+
+/* Специфические стили для продуктов на больших экранах */
+@media (min-width: 992px) {
+  .productCard {
+    height: 60px;
+    padding: 0 20px !important; /* Переопределяем Bootstrap px-3 */
+    width: 2200px;
+    min-width: 2200px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  
+  .productCard > div {
+    border-bottom: none !important;
+    padding: 0 10px;
+  }
+  
+  .productCard__col1 {
+    border-bottom: none !important;
+    padding-left: 0;
+  }
+  
+  .productCard > div:first-child {
+    padding-left: 0;
+  }
+  
+  .productCard > div:last-child {
+    padding-right: 0;
+  }
+}
+
+/* Адаптивные изменения для планшетов */
+@media (max-width: 1200px) {
+  /* Уменьшаем высоту на планшетах когда фильтры в 2 ряда */
+  .products-container {
+    max-height: 400px !important;
+  }
+}
+
+/* Мобильные стили - разделители между секциями */
+@media (max-width: 991.98px) {
+  .productCard > div {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .productCard__col1 {
+    border-bottom: 2px solid var(--border-color) !important;
+    padding-bottom: 0.75rem;
+  }
+  
+  .productCard > div:last-child {
+    border-bottom: none;
+  }
 }

@@ -4,7 +4,6 @@ import React, { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchProducts, deleteProduct } from '@/store/slices/productsSlice';
 import ProductCard from './ProductCard';
-import styles from './Products.module.css';
 import { useTranslation } from 'react-i18next';
 
 const ProductsList: React.FC = () => {
@@ -28,7 +27,7 @@ const ProductsList: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={`${styles.loading} d-flex justify-content-center align-items-center`}>
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">{t('common:loading')}</span>
         </div>
@@ -46,8 +45,8 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className={`${styles.productsContainer} ps-4 pe-1 px-lg-5`}>
-      <div className={`${styles.productsList} products-list`}>
+    <div className="products-container p-3 px-lg-5 w-100 overflow-auto" style={{ maxHeight: '500px' }}>
+      <div className="products-list" style={{ width: '2200px', minWidth: '2200px' }}>
         {filteredProducts.length === 0 ? (
           <div className="alert alert-info text-start">
             <h5>{t('products:noProductsFound')}</h5>
@@ -59,18 +58,17 @@ const ProductsList: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="row g-1">
+          <div className="d-flex flex-column gap-1">
             {filteredProducts.map((product) => {
               const orderTitle = orders.find(order => order.id === product.order)?.title || `Order #${product.order}`;
               
               return (
-                <div key={product.id} className="col-lg-12 col-md-6 col-sm-12 col-12">
-                  <ProductCard 
-                    product={product} 
-                    orderTitle={orderTitle}
-                    onDeleteProduct={handleDeleteProduct}
-                  />
-                </div>
+                <ProductCard 
+                  key={product.id}
+                  product={product} 
+                  orderTitle={orderTitle}
+                  onDeleteProduct={handleDeleteProduct}
+                />
               );
             })}
           </div>
