@@ -1,5 +1,5 @@
 -- server/database/seeds.sql
-USE orders_products_dev;
+USE orders_products;
 
 -- Вставка тестовых заказов (точно как в app.js)
 INSERT IGNORE INTO orders (id, title, description, date) VALUES
