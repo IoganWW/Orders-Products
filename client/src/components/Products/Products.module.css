@@ -9,7 +9,211 @@
   transform: translateY(-2px);
 }
 
-/* Grid для OrderProductsList */
+/* GRID Layout для ProductCard */
+.productCardGrid {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+  transition: var(--transition);
+  cursor: pointer;
+  min-height: 70px;
+  
+  /* Desktop grid - все колонки */
+  grid-template-columns: 
+    auto          /* статус точка */
+    auto          /* иконка */
+    minmax(300px, 1fr)  /* название - минимум 300px, остальное место */
+    100px         /* статус текст */
+    130px         /* цена */
+    130px         /* гарантия */
+    90px          /* новый/бу */
+    280px         /* описание */
+    180px         /* пользователь */
+    280px         /* заказ */
+    130px         /* дата */
+    50px;         /* удаление */
+    
+  grid-template-areas: 
+    "status icon title status-text price warranty condition description user order date delete";
+}
+
+.productCardGrid:hover {
+  box-shadow: var(--shadow-lg) !important;
+  transform: translateY(-2px);
+}
+
+/* Grid areas */
+.gridStatus { grid-area: status; justify-self: center; }
+.gridIcon { grid-area: icon; justify-self: center; }
+.gridTitle { grid-area: title; min-width: 0; } /* min-width: 0 для text-truncate */
+.gridStatusText { grid-area: status-text; }
+.gridPrice { grid-area: price; }
+.gridWarranty { grid-area: warranty; }
+.gridCondition { grid-area: condition; }
+.gridDescription { 
+  grid-area: description; 
+  min-width: 0; 
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.gridUser { 
+  grid-area: user; 
+  min-width: 0; 
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.gridOrder { 
+  grid-area: order; 
+  min-width: 0; 
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.gridDate { grid-area: date; }
+.gridDelete { grid-area: delete; }
+
+/* Mobile layout - вертикальная карточка */
+@media (max-width: 991.98px) {
+  .productCardGrid {
+    display: block; /* Отключаем grid на мобильных */
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+  }
+  
+  /* Заголовочная секция - статус + иконка + название */
+  .gridStatus,
+  .gridIcon,
+  .gridTitle {
+    display: inline-block;
+    vertical-align: top;
+  }
+  
+  .gridStatus {
+    margin-right: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  
+  .gridIcon {
+    margin-right: 0.75rem;
+  }
+  
+  .gridTitle {
+    width: calc(100% - 80px); /* Учитываем место для статуса и иконки */
+    margin-bottom: 1rem;
+  }
+  
+  .gridTitle h5 {
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .gridTitle .text-muted {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* Остальные поля в виде списка */
+  .gridStatusText,
+  .gridCondition,
+  .gridDescription,
+  .gridUser,
+  .gridOrder {
+    display: block;
+    padding: 0.5rem 0;
+    border-top: 1px solid #e9ecef;
+    margin: 0;
+  }
+  
+  /* Цена и гарантия в одну строку */
+  .gridPrice,
+  .gridWarranty {
+    display: inline-block;
+    padding: 0.5rem 0;
+    border-top: 1px solid #e9ecef;
+    margin: 0;
+    width: 48%;
+    vertical-align: top;
+  }
+  
+  .gridPrice {
+    margin-right: 4%;
+  }
+  
+  /* Дата и кнопка удаления в одну строку */
+  .gridDate,
+  .gridDelete {
+    display: inline-block;
+    padding: 0.75rem 0;
+    border-top: 1px solid #e9ecef;
+    margin: 0;
+    width: 48%;
+    vertical-align: top;
+  }
+  
+  .gridDate {
+    margin-right: 4%;
+  }
+  
+  .gridDelete {
+    text-align: right;
+    padding: 0.75rem 0;
+  }
+  
+  /* Добавляем лейблы для мобильных */
+  .gridStatusText::before { content: "Статус: "; font-weight: 600; color: #6c757d; }
+  /*.gridPrice::before { content: "Цена: "; font-weight: 600; color: #6c757d; }
+  .gridWarranty::before { content: "Гарантия: "; font-weight: 600; color: #6c757d; }*/
+  .gridCondition::before { content: "Состояние: "; font-weight: 600; color: #6c757d; }
+  /*.gridDescription::before { content: "Описание: "; font-weight: 600; color: #6c757d; }
+  .gridUser::before { content: "Пользователь: "; font-weight: 600; color: #6c757d; }
+  .gridOrder::before { content: "Заказ: "; font-weight: 600; color: #6c757d; }*/
+  .gridDate::before { content: "Дата: "; font-weight: 600; color: #6c757d; }
+  
+  /* Убираем ограничения по строкам на мобильных */
+  .gridDescription,
+  .gridUser,
+  .gridOrder {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow: visible;
+  }
+  
+  .gridWarranty {
+    text-align: left;
+  }
+  
+  .gridCondition {
+    text-align: left;
+  }
+  
+  .gridDate {
+    text-align: left;
+  }
+  
+  .gridDelete {
+    text-align: right;
+    padding: 0.75rem 0;
+  }
+}
+
+/* Grid для OrderProductsList (существующий код) */
 .orderProductGrid {
   display: grid;
   grid-template-columns: 1fr 100px 30px;
@@ -17,14 +221,12 @@
   gap: 1rem;
 }
 
-/* На больших экранах (xl и выше) - 3 колонки */
 @media (min-width: 1200px) {
   .orderProductGrid {
     grid-template-columns: 1fr 100px 30px;
   }
 }
 
-/* На экранах меньше xl - только 2 колонки (без статуса) */
 @media (max-width: 1199.98px) {
   .orderProductGrid {
     grid-template-columns: 1fr 30px;
@@ -49,26 +251,14 @@
   color: var(--text-primary);
 }
 
-/* Специфические стили для продуктов на больших экранах */
-@media (min-width: 992px) {
-  .productCard {
-    height: 70px;
-    width: 2100px;
-    min-width: 2100px;
-    align-items: center;
-    flex-shrink: 0;
-  }
+/* Контейнер списка */
+.productsList {
+  width: 100%;
+  min-width: auto;
 }
 
-
-/* Мобильные стили - разделители между секциями */
+/* На мобильных убираем фиксированную ширину контейнера */
 @media (max-width: 991.98px) {
-  .productCard {
-    width: 100% !important;
-    min-width: auto !important;
-  }
-  
-  /* Также убираем фиксированную ширину контейнера */
   .productsList {
     width: 100% !important;
     min-width: auto !important;
