@@ -34,7 +34,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ show, onClose }) => {
 
             <div className="modal-body p-0">
               {/* Вкладки */}
-              <div className={`${styles.authTabs} auth-tabs`}>
+              <div className={`${styles.authTabs}`}>
                 <button
                   className={`${styles.authTab} ${activeTab === 'login' ? styles.active : ''}`}
                   onClick={() => setActiveTab('login')}
@@ -50,7 +50,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ show, onClose }) => {
               </div>
 
               {/* Контент вкладок */}
-              <div className={`${styles.authContent} auth-content`}>
+              <div className={`${styles.authContent}`}>
                 {activeTab === 'login' ? (
                   <LoginForm onSuccess={onClose} />
                 ) : (

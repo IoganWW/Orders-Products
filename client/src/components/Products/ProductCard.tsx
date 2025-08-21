@@ -46,7 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
       <div className={`bg-white border rounded shadow-sm px-3 py-2 animate__animated animate__fadeIn d-flex flex-lg-row flex-column g-0 g-lg-1 ${styles.productCard}`}>
         
         {/* Колонка 1: Статус + Иконка + Название + Серийник */}
-        <div className={`d-flex align-items-center gap-4 pb-3 pb-lg-0 ${styles.productCard__col1}`} style={{ width: '600px', minWidth: '600px' }}>
+        <div className="d-flex align-items-center gap-4 pb-3 pb-lg-0" style={{ width: '550px', minWidth: '550px' }}>
           <div 
             className={`rounded-circle ${product.isNew === 1 ? 'bg-warning' : 'bg-dark'}`} 
             style={{ width: '10px', height: '10px', flexShrink: 0 }}
@@ -54,8 +54,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
           
           <ProductTypeIcon type={product.type} />
           
-          <div className="flex-fill min-w-0">
-            <h5 className="mb-1 fw-semibold text-decoration-underline fs-6 text-nowrap overflow-hidden text-truncate">
+          <div className="flex-fill min-w-0 text-nowrap text-truncate">
+            <h5 className="mb-1 fw-semibold text-decoration-underline fs-6 overflow-hidden text-truncate">
               {product.title}
             </h5>
             <span className="text-muted small">SN-{product.serialNumber}</span>
@@ -100,23 +100,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
 
         {/* Колонка 6: Описание */}
         <div className="d-lg-flex d-none align-items-center px-2 overflow-hidden" style={{ width: '300px', minWidth: '300px' }}>
-          <span className="text-truncate d-block">
+          <span className="d-block">
             {product.specification || 'Длинное предлинное длиннющее название группы'}
           </span>
         </div>
 
         {/* Колонка 7: User */}
-        <div className="d-flex align-items-center px-2 py-2 py-lg-0 overflow-hidden" style={{ width: '250px', minWidth: '250px' }}>
-          <span className="text-truncate d-block">Христорождественский Александр</span>
+        <div className="d-flex align-items-center px-2 py-2 py-lg-0 overflow-hidden" style={{ width: '210px', minWidth: '210px' }}>
+          <span className="d-block">Христорождественский Александр</span>
         </div>
 
         {/* Колонка 8: Заказ */}
         <div className="d-flex align-items-center px-2 py-2 py-lg-0 overflow-hidden" style={{ width: '300px', minWidth: '300px' }}>
-          <span className="text-truncate d-block">{orderTitle}</span>
+          <span className="d-block">{orderTitle}</span>
         </div>
 
         {/* Колонка 9: Дата */}
-        <div className="d-lg-flex d-none align-items-center justify-content-center px-2" style={{ width: '150px', minWidth: '150px' }}>
+        <div className="d-lg-flex d-none align-items-center justify-content-center px-2" style={{ width: '140px', minWidth: '140px' }}>
           <small className="text-nowrap">
             {formatDate(product.date, i18n.language).shortMonStr}
           </small>

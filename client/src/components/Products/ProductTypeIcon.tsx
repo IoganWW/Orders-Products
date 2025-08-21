@@ -11,9 +11,8 @@ interface ProductTypeIconProps {
   className?: string;
 }
 
-const ProductTypeIcon: React.FC<ProductTypeIconProps> = ({ type, size = 20, color, className }) => {
-  const IconComponent = PRODUCT_TYPE_ICONS[type] || Monitor; // Выбираем иконку по типу или используем дефолтную
-
+const ProductTypeIcon: React.FC<ProductTypeIconProps> = ({ type, size = 25, color, className }) => {
+  const IconComponent = PRODUCT_TYPE_ICONS[type] || Monitor;
   return <IconComponent size={size} color={color} className={className} />;
 };
 

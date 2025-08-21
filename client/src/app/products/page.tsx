@@ -50,7 +50,7 @@ export default function ProductsPage() {
   return (
     <AuthWrapper>
       <div className="page fade-in">
-        <div className="mt-4 mt-lg-5 mb-2 px-1 px-md-4 px-lg-5">
+        <div className="mt-4 mt-lg-5 mb-3 px-1 px-md-4 px-lg-5">
           <div className="row align-items-center">
             {/* Заголовок с количеством */}
             <div className="col-xl-3 col-lg-12 mb-lg-3 mb-xl-0">

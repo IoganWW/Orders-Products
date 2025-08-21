@@ -49,57 +49,16 @@
   color: var(--text-primary);
 }
 
-/* Утилитарные классы для ховера (дополнение к Bootstrap) */
-.hover-bg-danger-subtle:hover {
-  background-color: rgba(239, 68, 68, 0.1) !important;
-}
-
-.hover-scale-110:hover {
-  transform: scale(1.1) !important;
-}
-
-.hover-text-danger:hover {
-  color: var(--danger-color) !important;
-}
-
-.hover-text-success-emphasis:hover {
-  color: #146c43 !important;
-}
-
-.transition-all {
-  transition: var(--transition);
-}
-
 /* Специфические стили для продуктов на больших экранах */
 @media (min-width: 992px) {
   .productCard {
-    height: 60px;
-    padding: 0 20px !important; /* Переопределяем Bootstrap px-3 */
-    width: 2200px;
-    min-width: 2200px;
+    height: 70px;
+    width: 2100px;
+    min-width: 2100px;
     align-items: center;
     flex-shrink: 0;
   }
-  
-  .productCard > div {
-    border-bottom: none !important;
-    padding: 0 10px;
-  }
-  
-  .productCard__col1 {
-    border-bottom: none !important;
-    padding-left: 0;
-  }
-  
-  .productCard > div:first-child {
-    padding-left: 0;
-  }
-  
-  .productCard > div:last-child {
-    padding-right: 0;
-  }
 }
-
 
 
 /* Мобильные стили - разделители между секциями */
@@ -113,19 +72,5 @@
   .productsList {
     width: 100% !important;
     min-width: auto !important;
-  }
-
-  .productCard > div {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .productCard__col1 {
-    border-bottom: 2px solid var(--border-color) !important;
-    padding-bottom: 0.75rem;
-  }
-  
-  .productCard > div:last-child {
-    border-bottom: none;
   }
 }

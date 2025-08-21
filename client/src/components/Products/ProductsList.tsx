@@ -46,8 +46,8 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className="py-3 px-md-4 px-lg-5 w-100 overflow-auto" style={{ maxHeight: '65vh' }}>
-      <div className={`${styles.productsList}`} style={{ width: '2200px', minWidth: '2200px' }}>
+    <div className="py-3 px-md-4 px-lg-5 w-100 overflow-auto" style={{ maxHeight: '60vh' }}>
+      <div className={`${styles.productsList}`} style={{ width: '2100px', minWidth: '2100px' }}>
         {filteredProducts.length === 0 ? (
           <div className="alert alert-info text-start">
             <h5>{t('products:noProductsFound')}</h5>
