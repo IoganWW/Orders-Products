@@ -15,15 +15,15 @@ export default function OrdersPage() {
   return (
     <AuthWrapper>
       <div className="page fade-in">
-        <div className="mt-4 px-1 px-md-4 py-2 py-md-4">
-          <h1 className="px-3 d-flex align-items-center">
+        <div className="mt-4 px-1 px-md-3 px-lg-5 py-2 py-md-4">
+          <h1 className="d-flex align-items-center">
             <i
               className="fa-sharp fa-solid fa-circle-plus fa-sm text-success me-2"
               style={{ cursor: "pointer" }}
               onClick={() => setShowAddForm(true)}
               title={t('orders:addOrder')}
             ></i>
-            <span className="p-2">{t('navigation:orders')} / {ordersCount}</span>
+            <span className="p-2 fs-3">{t('navigation:orders')} / {ordersCount}</span>
           </h1>
         </div>
 

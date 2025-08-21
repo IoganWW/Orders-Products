@@ -100,16 +100,21 @@
   }
 }
 
-/* Адаптивные изменения для планшетов */
-@media (max-width: 1200px) {
-  /* Уменьшаем высоту на планшетах когда фильтры в 2 ряда */
-  .products-container {
-    max-height: 400px !important;
-  }
-}
+
 
 /* Мобильные стили - разделители между секциями */
 @media (max-width: 991.98px) {
+  .productCard {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+  
+  /* Также убираем фиксированную ширину контейнера */
+  .productsList {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+
   .productCard > div {
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--border-color);

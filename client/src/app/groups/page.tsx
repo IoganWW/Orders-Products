@@ -54,7 +54,7 @@ const ProductGroupCard: React.FC<{ group: ProductGroup }> = React.memo(({ group 
               border: '2px solid #e9ecef'
             }}
           >
-            <ProductTypeIcon type={group.type}/>
+            <ProductTypeIcon type={group.type} />
           </div>
           <div>
             <h6 className="fw-bold mb-0">{group.type}</h6>
@@ -146,28 +146,30 @@ function GroupsPageContent() {
   if (error) return <ErrorMessage error={error} />;
 
   return (
-    <div className="bg-light min-vh-100">
-      <div className="container-fluid py-4 px-5">
-        {/* Header */}
-        <div className="row mb-4">
-          <div className="col-12">
-            <h1 className="h3 fw-bold text-dark mb-1">Группы товаров</h1>
-            <p className="text-muted mb-0 small">Категории и группировка продуктов</p>
+    <div className="page fade-in">
+      <div className="bg-light min-vh-100">
+        <div className="container-fluid py-5 px-3 px-lg-5">
+          {/* Header */}
+          <div className="row mb-4">
+            <div className="col-12">
+              <h1 className="h3 fw-bold text-dark mb-1">Группы товаров</h1>
+              <p className="text-muted mb-0 small">Категории и группировка продуктов</p>
+            </div>
           </div>
-        </div>
 
-        {/* Statistics */}
-        <GroupsStatistics groups={groups} totalProducts={products.length} />
+          {/* Statistics */}
+          <GroupsStatistics groups={groups} totalProducts={products.length} />
 
-        {/* Groups Grid */}
-        <div className="row g-3">
-          {groups.length === 0 ? (
-            <EmptyGroupsState />
-          ) : (
-            groups.map((group) => (
-              <ProductGroupCard key={group.type} group={group} />
-            ))
-          )}
+          {/* Groups Grid */}
+          <div className="row g-3">
+            {groups.length === 0 ? (
+              <EmptyGroupsState />
+            ) : (
+              groups.map((group) => (
+                <ProductGroupCard key={group.type} group={group} />
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>

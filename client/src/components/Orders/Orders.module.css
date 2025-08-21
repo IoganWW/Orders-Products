@@ -57,7 +57,7 @@
 
 /* Новый элемент: контейнер для стрелки */
 .orderCard__arrowContainer {
-  width: 50px;
+  width: 40px;
   background-color: #f0f0f0;
   transition: all 0.2s ease-in-out;
 }
@@ -78,13 +78,4 @@
   height: fit-content;
   max-height: calc(100vh - 80px);
   z-index: 1;
-}
-
-.orderDetails__closeButton {
-  width: 35px;
-  height: 35px;
-  transform: translate(50%, -50%); 
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  z-index: 50;
 }

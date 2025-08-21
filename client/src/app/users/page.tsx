@@ -288,40 +288,42 @@ function UsersPageContent() {
   if (error) return <ErrorMessage error={error} />;
 
   return (
-    <div className="bg-light min-vh-100">
-      <div className="container-fluid py-4 px-5">
-        {/* Header */}
-        <div className="row mb-4">
-          <div className="col-12">
-            <h1 className="h3 fw-bold text-dark mb-1">{t('users:title')}</h1>
-            <p className="text-muted mb-0 small">{t('users:subtitle')}</p>
+    <div className="page fade-in">
+      <div className="bg-light min-vh-100">
+        <div className="container-fluid py-5 px-3 px-lg-5">
+          {/* Header */}
+          <div className="row mb-4">
+            <div className="col-12">
+              <h1 className="h3 fw-bold text-dark mb-1">{t('users:title')}</h1>
+              <p className="text-muted mb-0 small">{t('users:subtitle')}</p>
+            </div>
           </div>
-        </div>
 
-        {/* Statistics */}
-        <UsersStatistics statistics={statistics} />
+          {/* Statistics */}
+          <UsersStatistics statistics={statistics} />
 
-        {/* Users Table */}
-        <div className="row">
-          <div className="col-12">
-            <UsersTable
-              users={users}
-              onEdit={handleEdit}
-              onSettings={handleSettings}
-              onDelete={handleDelete}
+          {/* Users Table */}
+          <div className="row">
+            <div className="col-12">
+              <UsersTable
+                users={users}
+                onEdit={handleEdit}
+                onSettings={handleSettings}
+                onDelete={handleDelete}
+              />
+            </div>
+          </div>
+
+          {showDeleteModal && userToDelete && (
+            <DeleteUserModal
+              show={showDeleteModal}
+              user={userToDelete}
+              onClose={handleCloseModal}
+              onConfirm={handleConfirmDelete}
+              isDeleting={deleting}
             />
-          </div>
+          )}
         </div>
-
-        {showDeleteModal && userToDelete && (
-          <DeleteUserModal
-            show={showDeleteModal}
-            user={userToDelete}
-            onClose={handleCloseModal}
-            onConfirm={handleConfirmDelete}
-            isDeleting={deleting}
-          />
-        )}
       </div>
     </div>
   );

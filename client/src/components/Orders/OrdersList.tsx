@@ -135,7 +135,7 @@ const OrdersList: React.FC = () => {
             {orders.length === 0 ? (
               <EmptyOrdersState onAddOrder={handleAddOrder} />
             ) : (
-              <div className="d-flex flex-column gap-2 py-3 px-2 px-md-3 px-lg-5">
+              <div className="d-flex flex-column gap-2 py-3 px-2 px-md-3 ps-lg-5 pe-lg-3">
                 {orders.map((order) => (
                   <div key={order.id} className="w-100">
                     <OrderCard

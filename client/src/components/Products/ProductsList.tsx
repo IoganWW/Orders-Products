@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchProducts, deleteProduct } from '@/store/slices/productsSlice';
 import ProductCard from './ProductCard';
 import { useTranslation } from 'react-i18next';
+import styles from './Products.module.css';
 
 const ProductsList: React.FC = () => {
   const { t } = useTranslation(['common', 'products']);
@@ -45,8 +46,8 @@ const ProductsList: React.FC = () => {
   }
 
   return (
-    <div className="products-container p-3 px-lg-5 w-100 overflow-auto" style={{ maxHeight: '500px' }}>
-      <div className="products-list" style={{ width: '2200px', minWidth: '2200px' }}>
+    <div className="py-3 px-md-4 px-lg-5 w-100 overflow-auto" style={{ maxHeight: '65vh' }}>
+      <div className={`${styles.productsList}`} style={{ width: '2200px', minWidth: '2200px' }}>
         {filteredProducts.length === 0 ? (
           <div className="alert alert-info text-start">
             <h5>{t('products:noProductsFound')}</h5>
