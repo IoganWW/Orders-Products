@@ -122,7 +122,7 @@ const Sidebar: React.FC = () => {
                 className={`${authStyles.loginBtn} login-btn btn btn-success`}
                 onClick={() => setShowAuthModal(true)}
               >
-                <i className="fas fa-sign-in-alt ms-0 me-2"></i>
+                <i className="fas fa-sign-in-alt me-2"></i>
                 <span className="d-none d-md-inline">{t('common:login')}</span>
               </button>
             </div>

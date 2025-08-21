@@ -152,33 +152,40 @@
   }
 
   .loginBtn {
-    width: auto;
-      padding: 0.5rem;
+    width: 70%;
+    padding: 15px;
   }
+
   .userAvatarWrapper {
     width: 45px;
     height: 45px;
   }
+
   .userAvatar {
     font-size: 1rem;
     border-width: 2px;
   }
+
   .settingsBtn, .logoutBtn {
     width: 24px;
     height: 24px;
     font-size: 0.6rem;
   }
+
   .settingsBtn {
     bottom: -2px;
     right: -2px;
   }
+
   .logoutBtn {
     bottom: -2px;
     right: -2px;
   }
+
   .logoutBtn.show {
     transform: scale(1) translateX(-30px) rotate(0deg);
   }
+
 }
 
 @media (max-width: 400px) {
@@ -198,7 +205,8 @@
   }
 
   .loginBtn {
-    width: 20px;
+    width: 70%;
+    padding: 0;
   }
 }
 
