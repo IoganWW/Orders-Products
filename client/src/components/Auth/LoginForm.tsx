@@ -100,9 +100,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className={`${styles.authForm} auth-form`}>
+    <div className={`${styles.authForm}`}>
       <div className="text-center mb-4">
-        <i className="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
         <h6 className="text-muted">Войдите в свой аккаунт</h6>
       </div>
 
@@ -146,7 +145,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             </>
           ) : (
             <>
-              <i className="fas fa-sign-in-alt me-2"></i>
               Войти
             </>
           )}

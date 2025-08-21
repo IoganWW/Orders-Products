@@ -124,9 +124,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className={`${styles.authForm} auth-form`}>
+    <div className={`${styles.authForm}`}>
       <div className="text-center mb-4">
-        <i className="fas fa-user-plus fa-3x text-success mb-3"></i>
         <h6 className="text-muted">Создайте новый аккаунт</h6>
       </div>
 
@@ -201,7 +200,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
             </>
           ) : (
             <>
-              <i className="fas fa-user-plus me-2"></i>
               Зарегистрироваться
             </>
           )}

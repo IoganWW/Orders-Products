@@ -23,7 +23,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ show, onClose }) => {
           <div className="modal-content" style={{ borderRadius: '12px', border: 'none' }}>
             <div className="modal-header border-0" style={{ borderRadius: '12px 12px 0 0', background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)', color: 'white' }}>
               <h5 className="modal-title">
-                <i className="fas fa-user-circle me-2"></i>
                 {activeTab === 'login' ? 'Вход в систему' : 'Регистрация'}
               </h5>
               <button
@@ -40,14 +39,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ show, onClose }) => {
                   className={`${styles.authTab} ${activeTab === 'login' ? styles.active : ''}`}
                   onClick={() => setActiveTab('login')}
                 >
-                  <i className="fas fa-sign-in-alt me-2"></i>
                   Авторизация
                 </button>
                 <button
                   className={`${styles.authTab} ${activeTab === 'register' ? styles.active : ''}`}
                   onClick={() => setActiveTab('register')}
                 >
-                  <i className="fas fa-user-plus me-2"></i>
                   Регистрация
                 </button>
               </div>
