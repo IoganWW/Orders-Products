@@ -45,7 +45,7 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      <div className={`${styles.headerRight} header-right me-2 me-lg-5`}>
+      <div className={`${styles.headerRight} header-right me-0 me-lg-5`}>
         <div className={`${styles.sessionCounter} session-counter`}>
           <span className="badge bg-secondary me-2">
             <i className="fas fa-users me-1"></i>
@@ -55,9 +55,9 @@ const Header: React.FC = () => {
 
         <LanguageSwitcher />
 
-        <div className={`${styles.dateTime} date-time`}>
-          <div className={`${styles.dateLabel} date-label`}>{weekly}</div>
-          <div className={`${styles.dateValue} date-value`}>
+        <div className={`${styles.dateTime}`}>
+          <div className={`${styles.dateLabel}`}>{weekly}</div>
+          <div className={`${styles.dateValue}`}>
             {today}
             <i className="fas fa-clock ms-2 me-1" style={{ color: " #34cb3e" }}></i>
             {time}

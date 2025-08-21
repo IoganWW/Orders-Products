@@ -67,7 +67,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
         </div>
 
         {/* Иконка + количество продуктов - всегда видна */}
-        <div className="d-flex align-items-center gap-3 flex-shrink-0">
+        <div className="d-flex align-items-center gap-1 flex-shrink-0">
           <div className={`${styles.orderCard__iconWrapper} d-flex align-items-center justify-content-center`}>
             <i className="fa-solid fa-list"></i>
           </div>
@@ -80,7 +80,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
         </div>
 
         {/* Название и дата на мобильных */}
-        <div className="d-lg-none flex-grow-1 ms-5">
+        <div className="d-lg-none flex-grow-1 ms-4">
           <div className="fw-medium text-dark text-truncate">
             <span className={`${styles.orderCard__mobileOrderId} d-none`}>{t('orders:order')} #{order.id}</span>
           </div>
@@ -98,7 +98,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, isSelected, onSelect, isDe
 
         {/* Колонка 3: Суммы */}
         {!isDetailPanelOpen && (
-          <div className="d-none d-md-flex flex-grow-1 align-items-start">
+          <div className="d-none d-sm-flex flex-grow-1 align-items-start">
             <div className="d-flex flex-fill justify-content-start">
               <div className="d-flex flex-column text-start">
                 {totals[1] && (

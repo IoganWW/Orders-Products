@@ -27,7 +27,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children, fallback }) => {
 
   if (!isAuthenticated) {
     return fallback || (
-      <div className="d-flex justify-content-center align-items-center h-100">
+      <div className="d-flex justify-content-center align-items-center h-100 p-4">
         <div className="text-center">
           <i className="fas fa-lock fa-4x text-muted mb-4"></i>
           <h4 className="text-muted mb-3">Требуется авторизация</h4>

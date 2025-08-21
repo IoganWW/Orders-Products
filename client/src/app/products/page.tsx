@@ -50,11 +50,11 @@ export default function ProductsPage() {
   return (
     <AuthWrapper>
       <div className="page fade-in">
-        <div className="page__header px-5">
+        <div className="mt-4 px-1 px-md-4">
           <div className="row align-items-center">
             {/* Заголовок с количеством */}
             <div className="col-xl-3 col-lg-12 mb-lg-3 mb-xl-0">
-              <h1 className="page__title mb-2 px-3">
+              <h1 className="px-0 px-md-3 mb-2 px-0 px-md-3">
                 <span>{t('navigation:products')} / {productsCount}</span>
               </h1>
             </div>

@@ -77,17 +77,17 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      <aside className={`${styles.sidebar} sidebar`}>
+      <aside className={`${styles.sidebar}`}>
         {/* Updated Authorization Block */}
-        <div className={`${styles.sidebarAuth} sidebar-auth px-0 px-lg-2 mt-3`}>
+        <div className={`${styles.sidebarAuth} px-0 px-lg-2 mt-3`}>
           {loading ? (
             <div className="d-flex justify-content-center align-items-center h-100">
               <span className="spinner-border spinner-border-sm" />
             </div>
           ) : isAuthenticated && user ? (
-            <div className={`${authStyles.userProfile} user-profile position-relative`}>
+            <div className={`${authStyles.userProfile} position-relative`}>
               <div className={`${authStyles.userAvatarWrapper}`}>
-                <div className={`${authStyles.userAvatar} user-avatar shadow-sm`}>
+                <div className={`${authStyles.userAvatar} shadow-sm`}>
                   {/* user.avatarUrl ? <img src={user.avatarUrl} alt={user.name} /> : <span>{getInitials(user.name)}</span> */}
                   <span>{getInitials(user.name)}</span>
                 </div>
@@ -110,8 +110,8 @@ const Sidebar: React.FC = () => {
                   <i className="fas fa-sign-out-alt"></i>
                 </button>
               </div>
-              <div className="text-center mt-2 d-none d-md-block">
-                <p className={`${authStyles.userName} user-name mb-0`}>
+              <div className="text-center mt-2">
+                <p className={`${authStyles.userName} mb-0`}>
                   {user.name}
                 </p>
               </div>
@@ -122,7 +122,7 @@ const Sidebar: React.FC = () => {
                 className={`${authStyles.loginBtn} login-btn btn btn-success`}
                 onClick={() => setShowAuthModal(true)}
               >
-                <i className="fas fa-sign-in-alt me-2"></i>
+                <i className="fas fa-sign-in-alt ms-0 me-2"></i>
                 <span className="d-none d-md-inline">{t('common:login')}</span>
               </button>
             </div>
@@ -130,10 +130,10 @@ const Sidebar: React.FC = () => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className={`${styles.sidebarNav} sidebar-nav`}>
-          <ul className={`${styles.navList} nav-list`}>
+        <nav className={`${styles.sidebarNav}`}>
+          <ul className={`${styles.navList}`}>
             {menuItems.map((item) => (
-              <li key={item.href} className={`${styles.navItem} nav-item`}>
+              <li key={item.href} className={`${styles.navItem}`}>
                 <Link
                   href={item.href}
                   className={`
@@ -143,7 +143,7 @@ const Sidebar: React.FC = () => {
                   `}
                 >
                   <i className={`${item.icon} ${styles.navIcon}`}></i>
-                  <span className={`${styles.navLabel} nav-label`}>
+                  <span className={`${styles.navLabel}`}>
                     {item.label}
                   </span>
                 </Link>

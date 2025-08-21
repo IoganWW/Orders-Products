@@ -15,8 +15,8 @@ export default function OrdersPage() {
   return (
     <AuthWrapper>
       <div className="page fade-in">
-        <div className="page__header px-5">
-          <h1 className="page__title px-3 d-flex align-items-center">
+        <div className="mt-4 px-1 px-md-4 py-2 py-md-4">
+          <h1 className="px-3 d-flex align-items-center">
             <i
               className="fa-sharp fa-solid fa-circle-plus fa-sm text-success me-2"
               style={{ cursor: "pointer" }}
