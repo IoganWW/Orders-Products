@@ -2,7 +2,7 @@
 import React from 'react';
 import { ProductType } from '@/types/products';
 import { PRODUCT_TYPE_ICONS } from '@/types/products';
-import { Monitor } from 'lucide-react'; // Используем Monitor в качестве дефолтной иконки
+import { Monitor } from 'lucide-react';
 
 interface ProductTypeIconProps {
   type: ProductType;
@@ -12,7 +12,9 @@ interface ProductTypeIconProps {
 }
 
 const ProductTypeIcon: React.FC<ProductTypeIconProps> = ({ type, size = 25, color, className }) => {
-  const IconComponent = PRODUCT_TYPE_ICONS[type] || Monitor;
+  // Приводим тип к нижнему регистру для поиска иконки
+  const normalizedType = type.toLowerCase() as ProductType;
+  const IconComponent = PRODUCT_TYPE_ICONS[normalizedType] || Monitor;
   return <IconComponent size={size} color={color} className={className} />;
 };
 
