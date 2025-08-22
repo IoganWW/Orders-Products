@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import {
   AreaChart,
   Area,
@@ -10,48 +10,57 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
-import { useAppSelector } from '@/store';
+import { useAppSelector, useAppDispatch } from '@/store';
+import { addSessionHistoryPoint } from '@/store/slices/appSlice';
 
 interface SessionsChartProps {
   className?: string;
 }
 
 const SessionsChart: React.FC<SessionsChartProps> = ({ className }) => {
-  const { activeSessions } = useAppSelector(state => state.app);
-  const [sessionHistory, setSessionHistory] = useState<Array<{ time: string, sessions: number }>>([]);
+  const dispatch = useAppDispatch();
+  const { activeSessions, sessionHistory } = useAppSelector(state => state.app);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Обновляем историю сразу при изменении activeSessions
-  useEffect(() => {
+  // Функция для добавления точки в историю (useCallback для стабильной ссылки)
+  const addHistoryPoint = useCallback((sessions: number) => {
     const now = new Date();
     const timeString = now.toLocaleTimeString('ru-RU', { 
       hour: '2-digit', 
       minute: '2-digit'
     });
 
-    setSessionHistory(prev => {
-      const newHistory = [...prev, { time: timeString, sessions: activeSessions }];
-      return newHistory.slice(-15);
-    });
-  }, [activeSessions]);
+    dispatch(addSessionHistoryPoint({ time: timeString, sessions }));
+  }, [dispatch]);
+
+  // При монтировании компонента - сразу добавляем текущую точку
+  useEffect(() => {
+    // Если история пустая, добавляем первую точку сразу
+    if (sessionHistory.length === 0) {
+      addHistoryPoint(activeSessions);
+    }
+  }, [sessionHistory.length, activeSessions, addHistoryPoint]);
+
+  // Обновляем историю при изменении activeSessions (только если компонент уже смонтирован)
+  useEffect(() => {
+    if (sessionHistory.length > 0) { // Только если уже есть история
+      addHistoryPoint(activeSessions);
+    }
+  }, [activeSessions, sessionHistory.length, addHistoryPoint]);
 
   // Периодическое обновление (каждые 30 секунд)
   useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      const timeString = now.toLocaleTimeString('ru-RU', { 
-        hour: '2-digit', 
-        minute: '2-digit'
-      });
-
-      setSessionHistory(prev => {
-        const lastSessions = prev.length ? prev[prev.length - 1].sessions : activeSessions;
-        const newHistory = [...prev, { time: timeString, sessions: lastSessions }];
-        return newHistory.slice(-15);
-      });
+    intervalRef.current = setInterval(() => {
+      addHistoryPoint(activeSessions);
     }, 30000);
 
-    return () => clearInterval(interval);
-  }, [activeSessions]);
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [activeSessions, addHistoryPoint]);
 
   return (
     <div className={`${className} card border-0`}>
@@ -72,7 +81,7 @@ const SessionsChart: React.FC<SessionsChartProps> = ({ className }) => {
           </div>
         </div>
 
-        {sessionHistory.length > 1 ? (
+        {sessionHistory.length > 0 ? (
           <ResponsiveContainer width="100%" height={200}>
             <AreaChart data={sessionHistory} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f8f9fa" />

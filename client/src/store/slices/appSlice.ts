@@ -8,6 +8,7 @@ const initialState: AppState = {
   isConnected: false,
   theme: 'light',
   locale: 'en',
+  sessionHistory: [],
 };
 
 const appSlice = createSlice({
@@ -29,6 +30,13 @@ const appSlice = createSlice({
     setLocale: (state, action: PayloadAction<string>) => {
       state.locale = action.payload;
     },
+    // Новые actions для работы с историей сессий
+    addSessionHistoryPoint: (state, action: PayloadAction<{ time: string, sessions: number }>) => {
+      state.sessionHistory = [...state.sessionHistory, action.payload].slice(-15);
+    },
+    clearSessionHistory: (state) => {
+      state.sessionHistory = [];
+    },
   },
 });
 
@@ -38,6 +46,8 @@ export const {
   setConnectionStatus,
   toggleTheme,
   setLocale,
+  addSessionHistoryPoint,
+  clearSessionHistory,
 } = appSlice.actions;
 
 export default appSlice.reducer;
