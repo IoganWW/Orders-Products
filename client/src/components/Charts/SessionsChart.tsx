@@ -20,8 +20,23 @@ const SessionsChart: React.FC<SessionsChartProps> = ({ className }) => {
   const { activeSessions } = useAppSelector(state => state.app);
   const [sessionHistory, setSessionHistory] = useState<Array<{ time: string, sessions: number }>>([]);
 
+  // Обновляем историю сразу при изменении activeSessions
   useEffect(() => {
-    const updateHistory = () => {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('ru-RU', { 
+      hour: '2-digit', 
+      minute: '2-digit'
+    });
+
+    setSessionHistory(prev => {
+      const newHistory = [...prev, { time: timeString, sessions: activeSessions }];
+      return newHistory.slice(-15);
+    });
+  }, [activeSessions]);
+
+  // Периодическое обновление (каждые 30 секунд)
+  useEffect(() => {
+    const interval = setInterval(() => {
       const now = new Date();
       const timeString = now.toLocaleTimeString('ru-RU', { 
         hour: '2-digit', 
@@ -29,13 +44,11 @@ const SessionsChart: React.FC<SessionsChartProps> = ({ className }) => {
       });
 
       setSessionHistory(prev => {
-        const newHistory = [...prev, { time: timeString, sessions: activeSessions }];
+        const lastSessions = prev.length ? prev[prev.length - 1].sessions : activeSessions;
+        const newHistory = [...prev, { time: timeString, sessions: lastSessions }];
         return newHistory.slice(-15);
       });
-    };
-
-    updateHistory();
-    const interval = setInterval(updateHistory, 30000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [activeSessions]);
