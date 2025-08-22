@@ -257,3 +257,36 @@
     font-size: 0.7rem;
   }
 }
+
+/* Для горизонтальной ориентации мобильных устройств */
+@media (max-width: 768px) and (orientation: landscape) {
+  .sidebarAuth {
+    padding: 0.5rem 0.5rem;
+    min-height: 100px;
+  }
+
+  .sidebar {
+    width: 120px !important; /* Увеличиваем ширину */
+    overflow-y: auto; /* Добавляем прокрутку если нужно */
+  }
+  
+  .navLink {
+    padding: 0.5rem 0.5rem; /* Корректируем отступы */
+  }
+  
+  .navLabel {
+    display: block !important; /* Показываем текст пунктов меню */
+    font-size: 0.75rem; /* Уменьшаем размер шрифта */
+  }
+
+  .navIcon {
+    display: none !important;
+  }
+}
+
+/* Также корректируем отступ для main контента */
+@media (max-width: 768px) and (orientation: landscape) {
+  .headerLeft {
+    margin-left: 120px; /* Соответствует ширине sidebar */
+  }
+}

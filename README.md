@@ -218,7 +218,7 @@ orders-products-app/
 ```bash
 NODE_ENV=development
 PORT=3001
-DB_HOST=mysql # localhost для локальной разработки
+DB_HOST=localhost
 DB_USER=dev_user
 DB_PASSWORD=dev_password
 DB_NAME=orders_products_dev
@@ -228,15 +228,16 @@ JWT_EXPIRES_IN=24h
 SESSION_TIMEOUT_MINUTES=30
 SESSION_CLEANUP_INTERVAL=5
 BCRYPT_SALT_ROUNDS=12
+
+DB_CONNECTION_LIMIT=10
+DB_CHARSET=utf8mb4
+AUTO_SEED_DATA=false
+ENABLE_DB_DIAGNOSTICS=false
 ```
 
 ### Client Environment (.env.local)
 ```bash
 NEXT_PUBLIC_SERVER_URL=http://localhost:3001
-NEXT_PUBLIC_WS_URL=ws://localhost:3001
-NODE_ENV=development
-NEXT_PUBLIC_DEFAULT_LOCALE=ru
-NEXT_PUBLIC_LOCALES=ru,en,uk
 ```
 
 ## 📊 API Endpoints
@@ -270,12 +271,16 @@ DELETE /api/products/:id   # Удалить продукт
 GET    /api/products/stats # Статистика продуктов для графиков
 ```
 
+### Users (Пользователи)
+GET    /api/users       # Получить всех пользователей
+DELETE /api/users/:id   # Удалить пользователя
+```
+
 ### System
 ```http
 GET /api/health           # Статус системы
 GET /api/product-types    # Типы продуктов
 GET /api/currencies       # Валюты
-GET /api/locales         # Поддерживаемые языки
 ```
 
 ## 🗄️ База данных
@@ -320,14 +325,6 @@ npm run prod            # Запуск production сервера
 - ✅ **Ручное тестирование** - все API endpoints функционируют корректно
 - ✅ **Интеграционное тестирование** - проверено с фронтендом
 
-### TypeScript проверки
-```bash
-cd client
-npm run type-check      # Проверка типов фронтенда
-
-cd server
-npm run type-check      # Проверка типов бэкенда (если есть TS)
-```
 
 ## 🌍 Интернационализация
 
