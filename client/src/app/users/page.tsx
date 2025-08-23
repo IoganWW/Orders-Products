@@ -241,7 +241,7 @@ function UsersPageContent() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Получаем данные из Redux store
-  const { users, loading, error, deleting, deleteError, successMessage } = useAppSelector(state => state.users);
+  const { users, loading, error, deleting } = useAppSelector(state => state.users);
 
   // Мемоизированная статистика
   const statistics = useMemo(() => calculateUserStatistics(users), [users]);
