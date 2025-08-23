@@ -5,7 +5,7 @@ import AuthWrapper from '@/components/Auth/AuthWrapper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import PageSkeleton from '@/components/UI/PageSkeleton';
 
-const GroupsPageContent = lazy(() => import('@/app/groups/page'));
+const GroupsPageContent = lazy(() => import('@/components/Pages/GroupsPageContent'));
 
 export default function GroupsPage() {
   return (

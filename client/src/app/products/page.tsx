@@ -5,7 +5,7 @@ import AuthWrapper from '@/components/Auth/AuthWrapper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import PageSkeleton from '@/components/UI/PageSkeleton';
 
-const ProductsPageContent = lazy(() => import('@/app/products/page'));
+const ProductsPageContent = lazy(() => import('@/components/Pages/ProductsPageContent'));
 
 export default function ProductsPage() {
   return (

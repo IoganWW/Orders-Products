@@ -5,14 +5,14 @@ import AuthWrapper from '@/components/Auth/AuthWrapper';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import PageSkeleton from '@/components/UI/PageSkeleton';
 
-const SettingsPageContent = lazy(() => import('@/app/users/page'));
+const UsersPageContent = lazy(() => import('@/components/Pages/UsersPageContent'));
 
 export default function SettingsPage() {
   return (
     <AuthWrapper>
       <ErrorBoundary>
         <Suspense fallback={<PageSkeleton />}>
-          <SettingsPageContent />
+          <UsersPageContent />
         </Suspense>
       </ErrorBoundary>
     </AuthWrapper>
