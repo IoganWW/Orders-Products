@@ -1,5 +1,6 @@
 .formField {
   margin-bottom: 1rem;
+  position: relative;
 }
 
 .formLabel {
@@ -7,6 +8,11 @@
   color: #333;
   margin-bottom: 0.5rem;
   display: block;
+  font-size: 0.9rem;
+}
+
+.formLabel .text-danger {
+  font-weight: 600;
 }
 
 .formControl {
@@ -17,6 +23,7 @@
 .formControl.error .form-select {
   border-color: #dc3545;
   box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+  background-color: #fff5f5;
 }
 
 .formError {
@@ -24,11 +31,22 @@
   font-size: 0.85rem;
   margin-top: 0.25rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  line-height: 1.4;
+  animation: errorSlideIn 0.3s ease-out;
 }
 
 .formError i {
   font-size: 0.8rem;
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+.formHelp {
+  color: #6c757d;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  opacity: 0.8;
 }
 
 /* Form input overrides */
@@ -39,17 +57,33 @@
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
   transition: all 0.2s ease;
+  background-color: #fff;
 }
 
 .formField .form-control:focus,
 .formField .form-select:focus {
   border-color: #28a745;
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+  background-color: #fff;
+}
+
+.formField .form-control:hover:not(:focus):not(:disabled),
+.formField .form-select:hover:not(:focus):not(:disabled) {
+  border-color: #c8d1da;
+}
+
+.formField .form-control:disabled,
+.formField .form-select:disabled {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
 }
 
 .formField textarea.form-control {
   min-height: 100px;
   resize: vertical;
+  line-height: 1.5;
 }
 
 /* Success state */
@@ -57,5 +91,132 @@
 .formControl.success .form-select {
   border-color: #28a745;
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.15);
+  background-color: #f8fff8;
 }
 
+/* Validation states with icons */
+.formField .form-control.is-valid,
+.formField .form-select.is-valid {
+  border-color: #28a745;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.4.4 3.3-3.3-.4-.4L3.4 5.6 1.5 3.7z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.formField .form-control.is-invalid,
+.formField .form-select.is-invalid {
+  border-color: #dc3545;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 5.8 2.4 2.4M8.2 5.8l-2.4 2.4'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* Textarea validation icons positioning */
+.formField textarea.form-control.is-valid,
+.formField textarea.form-control.is-invalid {
+  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem);
+}
+
+/* Password input specific styling */
+.formField input[type="password"] {
+  font-family: text-security-disc, -webkit-text-security, monospace;
+}
+
+/* Number input styling */
+.formField input[type="number"] {
+  text-align: right;
+}
+
+/* Date input styling */
+.formField input[type="date"],
+.formField input[type="datetime-local"] {
+  position: relative;
+}
+
+/* Focus within styling for better UX */
+.formField:focus-within .formLabel {
+  color: #28a745;
+}
+
+/* Animations */
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading state */
+.formField.loading .form-control,
+.formField.loading .form-select {
+  position: relative;
+  pointer-events: none;
+}
+
+.formField.loading .form-control::after,
+.formField.loading .form-select::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid #28a745;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Responsive improvements */
+@media (max-width: 576px) {
+  .formField .form-control,
+  .formField .form-select {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  
+  .formLabel {
+    font-size: 0.85rem;
+  }
+  
+  .formError {
+    font-size: 0.8rem;
+  }
+}
+
+/* Dark theme support (если потребуется) */
+@media (prefers-color-scheme: dark) {
+  .formLabel {
+    color: #e9ecef;
+  }
+  
+  .formField .form-control,
+  .formField .form-select {
+    background-color: #343a40;
+    border-color: #495057;
+    color: #e9ecef;
+  }
+  
+  .formField .form-control:focus,
+  .formField .form-select:focus {
+    background-color: #343a40;
+    border-color: #28a745;
+    color: #e9ecef;
+  }
+  
+  .formField .form-control::placeholder {
+    color: #adb5bd;
+  }
+}

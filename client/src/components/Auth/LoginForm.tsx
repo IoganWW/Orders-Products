@@ -13,12 +13,17 @@ interface LoginFormProps {
   onSuccess: () => void;
 }
 
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initialValues = {
+  const initialValues: LoginFormData = {
     email: '',
     password: '',
   };
@@ -26,9 +31,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const validationConfig: FieldConfig = {
     email: {
       required: true,
-      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      custom: (value) => {
-        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      email: true,
+      custom: (value: string) => {
+        if (!value?.trim()) {
+          return 'Email обязателен для заполнения';
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
           return 'Введите корректный email адрес';
         }
         return null;
@@ -36,16 +45,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     },
     password: {
       required: true,
-      minLength: 6,
-      custom: (value) => {
-        if (value && value.length < 6) {
-          return 'Пароль должен содержать минимум 6 символов';
+      minLength: 1,
+      custom: (value: string) => {
+        if (!value) {
+          return 'Пароль обязателен для заполнения';
         }
         return null;
       }
     }
   };
 
+  // ✅ ТОЛЬКО НУЖНЫЕ ФУНКЦИИ
   const {
     values,
     errors,
@@ -54,13 +64,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     handleBlur,
     validateForm,
     resetForm,
-    setFieldError
-  } = useFormValidation(initialValues, validationConfig);
+    setFieldValue // Для очистки пароля после ошибки
+  } = useFormValidation<LoginFormData>(initialValues, validationConfig);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    const isFormValid = await validateForm();
+    if (!isFormValid) {
       return;
     }
 
@@ -76,24 +87,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       
       resetForm();
       onSuccess();
-      
-      // Редирект на страницу Orders после успешного входа
       router.push('/');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
       
-      // Устанавливаем ошибку для конкретного поля или общую ошибку
-      if (error.includes('email')) {
-        setFieldError('email', 'Пользователь с таким email не найден');
-      } else if (error.includes('password')) {
-        setFieldError('password', 'Неверный пароль');
-      } else {
-        const errorEvent = new CustomEvent('showNotification', {
-          detail: { type: 'error', message: error || 'Ошибка при входе в систему' }
-        });
-        window.dispatchEvent(errorEvent);
-      }
+      // 🔒 БЕЗОПАСНОЕ СООБЩЕНИЕ
+      const errorEvent = new CustomEvent('showNotification', {
+        detail: { 
+          type: 'error', 
+          message: 'Неверный email или пароль. Попробуйте еще раз.' 
+        }
+      });
+      window.dispatchEvent(errorEvent);
+      
+      // Очищаем пароль для безопасности
+      setFieldValue('password', '');
     } finally {
       setIsSubmitting(false);
     }
@@ -105,7 +114,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         <h6 className="text-muted">Войдите в свой аккаунт</h6>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
         <FormField
           label="Email"
           name="email"
@@ -115,6 +124,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           touched={touched.email}
           placeholder="example@company.com"
           required
+          autoComplete="email"
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -128,6 +138,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           touched={touched.password}
           placeholder="Введите пароль"
           required
+          autoComplete="current-password"
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -135,7 +146,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         <button
           type="submit"
           className="btn btn-primary w-100 py-2 mt-3"
-          disabled={isSubmitting}
+          disabled={isSubmitting} // ← Можно добавить || !isValid если нужно
           style={{ borderRadius: '8px', fontWeight: '500' }}
         >
           {isSubmitting ? (
@@ -144,11 +155,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
               Вход...
             </>
           ) : (
-            <>
-              Войти
-            </>
+            'Войти'
           )}
         </button>
+
+        <div className="text-center mt-3">
+          <small className="text-muted">
+            Используйте ваш email и пароль для входа
+          </small>
+        </div>
       </form>
     </div>
   );

@@ -12,35 +12,9 @@ import styles from './Orders.module.css';
 import { Order } from '@/types/orders';
 import { useTranslation } from 'react-i18next';
 
-// Компонент загрузки
-const LoadingSpinner: React.FC = React.memo(() => {
-  const { t } = useTranslation(['common', 'products']);
-  return (
-    <div className="d-flex justify-content-center align-items-center p-5">
-      <div className="spinner-border text-success" role="status">
-        <span className="visually-hidden">{t('common:loading')}</span>
-      </div>
-    </div>
-  )
-});
+import LoadingSpinner from '@/app/LoadingSpinner';
+import ErrorMessage from '@/app/ErrorMessage';
 
-LoadingSpinner.displayName = 'LoadingSpinner';
-
-// Компонент ошибки
-const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => {
-  const { t } = useTranslation(['common']);
-  return (
-    <div className="alert alert-danger m-3" role="alert">
-      <h4 className="alert-heading">
-        <i className="fas fa-exclamation-triangle me-2"></i>
-        {t('common:error')}
-      </h4>
-      <p className="mb-0">{error}</p>
-    </div>
-  )
-});
-
-ErrorMessage.displayName = 'ErrorMessage';
 
 // Компонент пустого состояния
 const EmptyOrdersState: React.FC<{ onAddOrder: () => void }> = React.memo(({ onAddOrder }) => {

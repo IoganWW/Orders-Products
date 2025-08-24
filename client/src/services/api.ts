@@ -1,8 +1,22 @@
 // client/src/services/api.ts
-import axios from 'axios';
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { store } from '@/store';
+import { ApiResponse, ApiError, createApiError  } from '@/types/api';
+import { User } from '@/types/users';
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
+
+// Типизированный интерфейс для store
+interface StoreType {
+  getState: () => {
+    auth: {
+      token: string | null;
+      user: User | null;
+      isAuthenticated: boolean;
+    };
+  };
+}
+
 
 // Создаем экземпляр axios
 const api = axios.create({
@@ -14,56 +28,73 @@ let isLogoutInProgress = false;
 
 // Request interceptor для автоматического добавления токена
 api.interceptors.request.use(
-  (config) => {
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     // Получаем токен из localStorage или Redux store
-    let token = null;
+    let token: string | null = null;
     
-    // Пытаемся получить из Redux store
-    const state = store.getState();
-    if (state.auth.token) {
-      token = state.auth.token;
-    } 
-    // Если нет в store, пытаемся получить из localStorage
-    else if (typeof window !== 'undefined') {
-      token = localStorage.getItem('token');
+    try {
+      // Сначала пытаемся получить токен из Redux store
+      if (store && typeof store.getState === 'function') {
+        const state = (store as StoreType).getState();
+        if (state?.auth?.token) {
+          token = state.auth.token;
+        }
+      }
+  
+      // Fallback к localStorage, если токена нет в store
+      if (!token && typeof window !== 'undefined') {
+        token = localStorage.getItem('token');
+      }
+    } catch (error) {
+      console.warn('Error accessing store:', error);
+  
+      // Если произошла ошибка со store, все равно пытаемся получить из localStorage
+      if (typeof window !== 'undefined') {
+        token = localStorage.getItem('token');
+      }
     }
 
-    // Добавляем токен в заголовки если он есть
-    if (token) {
+    // Добавляем токен в заголовки
+    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   },
-  (error) => {
+  (error: any) => {
     return Promise.reject(error);
   }
 );
 
 // Response interceptor для автоматической обработки ответов
 api.interceptors.response.use(
-  (response) => {
-    // Если ответ имеет структуру {success, data}, извлекаем data
-    if (response.data && typeof response.data === 'object' && 'success' in response.data) {
-      if (response.data.success) {
-        // Заменяем response.data на response.data.data
+  <T = any>(response: AxiosResponse<ApiResponse<T> | T>): AxiosResponse<T> => {
+    // Если ответ имеет структуру ApiResponse {success, data}, извлекаем data
+    if (response.data && 
+        typeof response.data === 'object' && 
+        'success' in response.data) {
+      
+      const apiResponse = response.data as ApiResponse<T>;
+      
+      if (apiResponse.success) {
+        // Возвращаем только data для успешных ответов
         return {
           ...response,
-          data: response.data.data
-        };
+          data: apiResponse.data
+        } as AxiosResponse<T>;
       } else {
-        // Если success: false, бросаем ошибку
-        const error = new Error(response.data.error || 'API request failed');
-        error.status = response.status;
-        throw error;
+        throw createApiError(
+          apiResponse.error || apiResponse.message || 'API request failed',
+    response.status
+        );
       }
     }
     
     // Если старый формат, возвращаем как есть
-    return response;
+    return response as AxiosResponse<T>;
   },
   (error) => {
-    // Обработка 401/403 ошибок авторизации
+    // Типизированная обработка 401/403 ошибок авторизации
     if (error.response && 
         (error.response.status === 401 || error.response.status === 403) &&
         !isLogoutInProgress) {
@@ -83,11 +114,12 @@ api.interceptors.response.use(
       }
       
       // Уведомляем пользователя ТОЛЬКО если у него был токен (т.е. он был авторизован)
-      if (hadToken) {
+      if (hadToken && typeof window !== 'undefined') {
         const errorEvent = new CustomEvent('showNotification', {
           detail: { 
             type: 'error', 
-            message: 'Сессия истекла. Войдите в систему заново.' 
+            message: 'Сессия истекла. Войдите в систему заново.' ,
+            duration: 5000
           }
         });
         window.dispatchEvent(errorEvent);
@@ -97,23 +129,31 @@ api.interceptors.response.use(
       setTimeout(() => {
         isLogoutInProgress = false;
       }, 2000);
-
-      // Обновляем состояние Redux только если пользователь был авторизован
-      if (hadToken) {
-        // Можно также отправить action для обновления состояния Redux
-        // store.dispatch(logoutUser());
-      }
     }
     
-    // Обработка ошибок с новым форматом
+    // Создаем типизированную ошибку
     if (error.response?.data?.error) {
-      const apiError = new Error(error.response.data.error);
-      apiError.status = error.response.status;
-      throw apiError;
+      throw createApiError(
+    error.response.data.error,
+    error.response.status
+      );
     }
-    
-    throw error;
+
+    // Общая обработка ошибок с типизацией
+    throw createApiError(
+  error.message || 'Network error occurred',
+  error.response?.status
+    );
   }
 );
 
-export default api;
+// Типизированные методы API
+interface TypedAxiosInstance {
+  get<T = any>(url: string, config?: InternalAxiosRequestConfig): Promise<AxiosResponse<T>>;
+  delete<T = any>(url: string, config?: InternalAxiosRequestConfig): Promise<AxiosResponse<T>>;
+  post<T = any>(url: string, data?: any, config?: InternalAxiosRequestConfig): Promise<AxiosResponse<T>>;
+  put<T = any>(url: string, data?: any, config?: InternalAxiosRequestConfig): Promise<AxiosResponse<T>>;
+  patch<T = any>(url: string, data?: any, config?: InternalAxiosRequestConfig): Promise<AxiosResponse<T>>;
+}
+
+export default api as TypedAxiosInstance;

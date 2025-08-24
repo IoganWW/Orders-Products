@@ -2,91 +2,202 @@
 import React from 'react';
 import styles from './Forms.module.css';
 
-interface FormFieldProps {
+// 🎯 Строгая типизация пропсов
+export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'textarea' | 'select' | 'date' | 'datetime-local';
+
+export interface FormFieldProps<T = any> {
   label: string;
   name: string;
-  type?: string;
-  value: any;
+  type?: InputType;
+  value: T;
   error?: string;
   touched?: boolean;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
-  onChange: (name: string, value: any) => void;
+  readonly?: boolean;
+  autoComplete?: string;
+  onChange: (name: string, value: T) => void;
   onBlur: (name: string) => void;
   children?: React.ReactNode;
+  // Дополнительные пропсы для textarea
+  rows?: number;
+  // Дополнительные пропсы для input
+  min?: number;
+  max?: number;
+  step?: number | string;
+  // CSS classes
+  className?: string;
+  inputClassName?: string;
+  labelClassName?: string;
+  errorClassName?: string;
+  // Дополнительные атрибуты
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  // Accessibility
+  'aria-label'?: string;
+  'aria-describedby'?: string;
 }
 
-const FormField: React.FC<FormFieldProps> = ({
+// 🎯 Типизированный компонент с дженериками
+const FormField = <T extends string>({
   label,
   name,
   type = 'text',
   value,
   error,
-  touched,
+  touched = false,
   placeholder,
   required = false,
   disabled = false,
+  readonly = false,
+  autoComplete,
   onChange,
   onBlur,
-  children
-}) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const newValue = type === 'number' ? Number(e.target.value) : e.target.value;
+  children,
+  rows = 4,
+  min,
+  max,
+  step,
+  maxLength,
+  minLength,
+  pattern,
+  className = '',
+  inputClassName = '',
+  labelClassName = '',
+  errorClassName = '',
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy
+}: FormFieldProps<T>): React.ReactElement => {
+  
+  // 🎯 Типизированные обработчики событий
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ): void => {
+    let newValue: T;
+    
+    if (type === 'number') {
+      newValue = (e.target.value === '' ? '' : Number(e.target.value)) as T;
+    } else {
+      newValue = e.target.value as T;
+    }
+    
     onChange(name, newValue);
   };
 
-  const handleInputBlur = () => {
+  const handleInputBlur = (): void => {
     onBlur(name);
   };
 
   const inputId = `field-${name}`;
-  const hasError = touched && error;
+  const errorId = `${inputId}-error`;
+  const helpId = `${inputId}-help`;
+  const hasError = touched && !!error;
+
+  // 🎯 Типизированные общие пропсы для input элементов
+  const commonInputProps = {
+    id: inputId,
+    name,
+    value: value || '',
+    placeholder,
+    disabled,
+    readOnly: readonly,
+    autoComplete,
+    maxLength,
+    minLength,
+    pattern,
+    onChange: handleInputChange,
+    onBlur: handleInputBlur,
+    'aria-invalid': hasError,
+    'aria-describedby': [
+      hasError ? errorId : undefined,
+      ariaDescribedBy,
+    ].filter(Boolean).join(' ') || undefined,
+    'aria-label': ariaLabel,
+    'aria-required': required,
+  } as const;
+
+  const getInputClassName = () => `form-control ${hasError ? 'is-invalid' : ''} ${inputClassName}`.trim();
+
+  const renderInput = () => {
+    if (children) {
+      // Custom input (select, etc.)
+      return (
+        <div className={`${styles.formControl} ${hasError ? styles.error : ''}`}>
+          {React.cloneElement(children as React.ReactElement<any>, {
+            ...commonInputProps,
+            className: getInputClassName()
+          })}
+        </div>
+      );
+    }
+    
+    if (type === 'textarea') {
+      // Textarea
+      return (
+        <textarea
+          {...commonInputProps}
+          className={getInputClassName()}
+          rows={rows}
+        />
+      );
+    }
+    
+    // Regular input
+    return (
+      <input
+        {...commonInputProps}
+        className={getInputClassName()}
+        type={type}
+        min={type === 'number' || type === 'date' || type === 'datetime-local' ? min : undefined}
+        max={type === 'number' || type === 'date' || type === 'datetime-local' ? max : undefined}
+        step={type === 'number' ? step : undefined}
+      />
+    );
+  };
 
   return (
-    <div className={`${styles.formField} form-field mb-3`}>
-      <label htmlFor={inputId} className={`${styles.formLabel} form-label`}>
+    <div className={`${styles.formField} form-field mb-3 ${className}`.trim()}>
+      <label 
+        htmlFor={inputId} 
+        className={`${styles.formLabel} form-label ${labelClassName}`.trim()}
+      >
         {label}
-        {required && <span className="text-danger ms-1">*</span>}
+        {required && (
+          <span 
+            className="text-danger ms-1" 
+            aria-label="обязательное поле"
+            title="Обязательное поле"
+          >
+            *
+          </span>
+        )}
       </label>
       
-      {children ? (
-        // Custom input (select, etc.)
-        <div className={`${styles.formControl} ${hasError ? styles.error : ''}`}>
-          {children}
-        </div>
-      ) : type === 'textarea' ? (
-        // Textarea
-        <textarea
-          id={inputId}
-          name={name}
-          value={value || ''}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={`form-control ${hasError ? 'is-invalid' : ''}`}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-          rows={4}
-        />
-      ) : (
-        // Regular input
-        <input
-          id={inputId}
-          name={name}
-          type={type}
-          value={value || ''}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={`form-control ${hasError ? 'is-invalid' : ''}`}
-          onChange={handleInputChange}
-          onBlur={handleInputBlur}
-        />
-      )}
+      {renderInput()}
 
       {hasError && (
-        <div className={`${styles.formError} invalid-feedback d-block`}>
-          <i className="fas fa-exclamation-circle me-1"></i>
+        <div 
+          id={errorId}
+          className={`${styles.formError} invalid-feedback d-block ${errorClassName}`.trim()}
+          role="alert"
+          aria-live="polite"
+        >
+          <i className="fas fa-exclamation-circle me-1" aria-hidden="true"></i>
           {error}
+        </div>
+      )}
+      
+      {/* Опциональная подсказка для поля */}
+      {!hasError && (type === 'password' || type === 'email') && (
+        <div 
+          id={helpId}
+          className={`${styles.formHelp} form-text text-muted`}
+          aria-live="polite"
+        >
+          {type === 'password' && 'Минимум 6 символов, включая буквы и цифры'}
+          {type === 'email' && 'Введите корректный email адрес'}
         </div>
       )}
     </div>

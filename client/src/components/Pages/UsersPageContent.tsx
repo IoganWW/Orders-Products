@@ -21,7 +21,12 @@ export default function UsersPageContent() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Получаем данные из Redux store
-  const { users, loading, error, deleting } = useAppSelector(state => state.users);
+  const {
+    users,
+    loading,
+    error,
+    operations: { deleting },
+  } = useAppSelector(state => state.users);
 
   // Мемоизированная статистика
   const statistics = useMemo(() => calculateUserStatistics(users), [users]);
@@ -52,9 +57,14 @@ export default function UsersPageContent() {
 
   const handleConfirmDelete = useCallback(async () => {
     if (userToDelete) {
-      await dispatch(deleteUser(userToDelete.id));
-      setShowDeleteModal(false);
-      setUserToDelete(null);
+      try {
+        await dispatch(deleteUser(userToDelete.id)).unwrap();
+        setShowDeleteModal(false);
+        setUserToDelete(null);
+      } catch (error) {
+        // Ошибка уже показана в thunk, но модал остается открытым
+        console.error('Delete failed:', error);
+      }
     }
   }, [dispatch, userToDelete]);
 

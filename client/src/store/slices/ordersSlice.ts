@@ -1,6 +1,8 @@
 // client/src/store/slices/ordersSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { OrdersState, Order } from '@/types/orders';
+import { showNotification } from '@/components/UI/Notifications';
+import { ApiError } from '@/types/api';
 import api from '@/services/api';
 
 // Async thunks - используем api вместо axios
@@ -11,8 +13,9 @@ export const fetchOrders = createAsyncThunk(
    try {
      const response = await api.get('/api/orders');
      return response.data; // interceptor уже обработал {success, data}
-   } catch (error: any) {
-     return rejectWithValue(error.message || 'Failed to fetch orders');
+   } catch (error: unknown) {
+      const apiError = error as ApiError;
+     return rejectWithValue(apiError.message || 'Failed to fetch orders');
    }
  }
 );
@@ -21,12 +24,30 @@ export const deleteOrder = createAsyncThunk(
  'orders/deleteOrder',
  async (orderId: number, { rejectWithValue }) => {
    try {
-     await api.delete(`/api/orders/${orderId}`);
-     return orderId; // Просто возвращаем ID
-   } catch (error: any) {
-     return rejectWithValue(error.message || 'Failed to delete order');
+      const response = await api.delete(`/api/orders/${orderId}`);
+
+      // Показываем уведомление об успехе
+      showNotification({
+        type: 'success',
+        message: response.data?.message || 'Приход успешно удален!',
+        duration: 4000
+      });
+
+     return orderId;
+   } catch (error: unknown) {
+      const apiError = error as ApiError;
+      const errorMessage = apiError.message || 'Ошибка при удалении прихода';
+            
+      // Показываем уведомление об ошибке
+      showNotification({
+        type: 'error',
+        message: errorMessage,
+        duration: 5000
+      });
+
+     return rejectWithValue(errorMessage);
    }
- }
+ } 
 );
 
 const initialState: OrdersState = {

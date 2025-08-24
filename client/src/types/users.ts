@@ -3,23 +3,63 @@ export interface User {
   id: number;
   name: string;
   email: string;
-  role: string;
+  role: UserRole;
   created_at: string;
   updated_at: string;
 }
 
-// Интерфейс для Redux slice состояния - ОБНОВЛЕН
+// Интерфейс для Redux slice состояния
 export interface UsersState {
   users: User[];
   loading: boolean;
   error: string | null;
-  // Добавляем поля для функциональности удаления
-  deleting: boolean;
-  deleteError: string | null;
+  operations: {
+    creating: boolean;
+    updating: boolean;
+    deleting: boolean;
+    fetching: boolean;
+  };
+  // Ошибки по операциям
+  errors: {
+    createError: string | null;
+    updateError: string | null;
+    deleteError: string | null;
+    fetchError: string | null;
+  };
+  // Дополнительные поля
+  selectedUserId: number | null;
   successMessage: string | null;
 }
 
-// Интерфейс для компонента страницы (если нужен отдельно)
+
+// Фильтры и поиск
+export interface UserFilters {
+  role: UserRole | 'all';
+  searchQuery: string;
+  sortBy: keyof User;
+  sortOrder: 'asc' | 'desc';
+}
+
+// Pагинация
+export interface UsersPagination {
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+// Селекторы (типы для возвращаемых значений)
+export interface UsersListProps {
+  users: User[];
+  loading: boolean;
+  error: string | null;
+  onUserSelect: (user: User) => void;
+  onUserDelete: (userId: number) => Promise<void>;
+  onUserEdit: (user: User) => void;
+  currentUserId?: number;
+}
+
+// Интерфейс для компонента страницы
 export interface UsersPageState {
   users: User[];
   loading: boolean;
@@ -31,6 +71,40 @@ export interface UserStatistics {
   adminUsers: number;
   managerUsers: number;
   regularUsers: number;
+}
+
+// Типы для форм и API запросов
+export interface CreateUserRequest {
+  name: string;
+  email: string;
+  role: UserRole;
+  password: string;
+}
+
+export interface UpdateUserRequest {
+  name?: string;
+  email?: string;
+  role?: UserRole;
+  // password не включаем в update, для этого отдельный endpoint
+}
+
+export interface ChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+// Типы для валидации форм
+export interface UserFormErrors {
+  name?: string;
+  email?: string;
+  role?: string;
+  password?: string;
+  confirmPassword?: string;
+}
+
+export interface UserFormData extends CreateUserRequest {
+  confirmPassword: string;
 }
 
 // Константы для ролей

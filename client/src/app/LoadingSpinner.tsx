@@ -19,4 +19,4 @@ const LoadingSpinner: React.FC = React.memo(() => {
 });
 
 LoadingSpinner.displayName = 'LoadingSpinner';
-export default LoadingSpinner;
+export default LoadingSpinner; 
