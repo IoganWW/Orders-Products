@@ -1,6 +1,8 @@
 // client/src/store/slices/productsSlice.ts
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ProductsState, ProductType } from '@/types/products';
+import { showNotification } from '@/components/UI/Notifications';
+import { ApiError } from '@/types/api';
 import api from '@/services/api'; // Используем api вместо axios
 
 const normalizeProductType = (type: string): ProductType => {
@@ -20,8 +22,9 @@ export const fetchProducts = createAsyncThunk(
        type: normalizeProductType(product.type)
      }));
      return normalizedProducts;
-   } catch (error: any) {
-     return rejectWithValue(error.message || 'Failed to fetch products');
+   } catch (error: unknown) {
+    const apiError = error as ApiError;
+    return rejectWithValue(apiError.message || 'Failed to fetch products');
    }
  }
 );
@@ -30,10 +33,28 @@ export const deleteProduct = createAsyncThunk(
  'products/deleteProduct',
  async (productId: number, { rejectWithValue }) => {
    try {
-     await api.delete(`/api/products/${productId}`);
+     const response = await api.delete(`/api/products/${productId}`);
+
+     // Показываем уведомление об успехе
+      showNotification({
+        type: 'success',
+        message: response.data?.message || 'Продукт успешно удален!',
+        duration: 4000
+      });
+
      return productId; // Просто возвращаем ID - interceptor обработал success
-   } catch (error: any) {
-     return rejectWithValue(error.message || 'Failed to delete product');
+   } catch (error: unknown) {
+    const apiError = error as ApiError;
+      const errorMessage = apiError.message || 'Ошибка при удалении продукта';
+            
+      // Показываем уведомление об ошибке
+      showNotification({
+        type: 'error',
+        message: errorMessage,
+        duration: 5000
+      });
+
+     return rejectWithValue(errorMessage);
    }
  }
 );

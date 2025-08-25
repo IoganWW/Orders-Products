@@ -6,7 +6,6 @@ import { ApiError } from '@/types/api';
 import api from '@/services/api';
 
 // Async thunks - используем api вместо axios
-// ordersSlice.ts - упрощенная версия
 export const fetchOrders = createAsyncThunk(
  'orders/fetchOrders',
  async (_, { rejectWithValue }) => {
@@ -14,7 +13,7 @@ export const fetchOrders = createAsyncThunk(
      const response = await api.get('/api/orders');
      return response.data; // interceptor уже обработал {success, data}
    } catch (error: unknown) {
-      const apiError = error as ApiError;
+     const apiError = error as ApiError;
      return rejectWithValue(apiError.message || 'Failed to fetch orders');
    }
  }

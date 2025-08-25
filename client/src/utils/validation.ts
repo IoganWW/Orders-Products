@@ -562,6 +562,10 @@ export const ORDER_VALIDATION_CONFIG = {
   }
 } as const;
 
+export const normalizeInput = (input: string): string => {
+  return input?.trim().replace(/\s+/g, ' ') || '';
+};
+
 // 🎯 Экспорт всех валидационных функций для удобства
 export const validators = {
   email: validateEmail,
