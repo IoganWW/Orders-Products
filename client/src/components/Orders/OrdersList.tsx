@@ -39,7 +39,6 @@ EmptyOrdersState.displayName = 'EmptyOrdersState';
 
 // Основной компонент
 const OrdersList: React.FC = () => {
-  const { t } = useTranslation(['products']);
   const dispatch = useAppDispatch();
   const { orders, selectedOrder, loading, error } = useAppSelector(state => state.orders);
 
@@ -74,22 +73,10 @@ const OrdersList: React.FC = () => {
           dispatch(setSelectedOrder(updatedSelectedOrder));
         }
       }
-
-      // Показываем уведомление об успехе
-      const successEvent = new CustomEvent('showNotification', {
-        detail: { type: 'success', message: `${t('products:productDeletedSuccess')}` }
-      });
-      window.dispatchEvent(successEvent);
-
     } catch (error) {
       console.error('Error deleting product:', error);
-
-      const errorEvent = new CustomEvent('showNotification', {
-        detail: { type: 'error', message: `${t('products:productDeleteError')}` }
-      });
-      window.dispatchEvent(errorEvent);
     }
-  }, [dispatch, selectedOrder, t]);
+  }, [dispatch, selectedOrder]);
 
   const handleAddOrder = useCallback(() => {
     const event = new CustomEvent('showAddOrderForm');

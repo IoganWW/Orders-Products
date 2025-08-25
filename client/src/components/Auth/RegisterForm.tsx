@@ -39,7 +39,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         if (value.trim().split(' ').length < 2) {
           return 'Введите имя и фамилию';
         }
-        if (!/^[a-zA-Zа-яА-Я\s]+$/.test(value)) {
+        if (!/^[a-zA-Zа-яА-ЯіІїЇєЄґҐ\s]+$/.test(value)) {
           return 'Имя должно содержать только буквы';
         }
         return null;

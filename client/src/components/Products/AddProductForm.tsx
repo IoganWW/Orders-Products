@@ -21,11 +21,11 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
   const { orders } = useAppSelector(state => state.orders);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const productTypes: ProductType[] = ['Monitors', 'Laptops', 'Keyboards', 'Phones', 'Tablets'];
+  const productTypes: ProductType[] = ['monitors', 'laptops', 'keyboards', 'phones', 'tablets'];
 
   const initialValues = {
     title: '',
-    type: 'Monitors' as ProductType,
+    type: 'monitors' as ProductType,
     specification: '',
     serialNumber: '',
     isNew: 1,
@@ -49,50 +49,32 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
     },
     serialNumber: {
       required: true,
-      pattern: /^[A-Za-z0-9-]+$/,
+      pattern: /^\d+$/, // только цифры для числа
       custom: (value) => {
         if (value && value.length < 4) {
-          return 'Серийный номер должен содержать минимум 4 символа';
+          return 'Серийный номер должен содержать минимум 4 цифры';
         }
         return null;
       }
     },
     priceUSD: {
-      required: true,
-      custom: (value) => {
-        const num = parseFloat(value);
-        if (isNaN(num) || num <= 0) {
-          return 'Цена должна быть положительным числом';
-        }
-        if (num > 999999) {
-          return 'Цена слишком большая';
-        }
-        return null;
-      }
+      required: true
     },
     priceUAH: {
-      required: true,
-      custom: (value) => {
-        const num = parseFloat(value);
-        if (isNaN(num) || num <= 0) {
-          return 'Цена должна быть положительным числом';
-        }
-        if (num > 999999) {
-          return 'Цена слишком большая';
-        }
-        return null;
-      }
+      required: true
     },
     guaranteeStart: {
       required: true
     },
     guaranteeEnd: {
       required: true,
-      custom: (value) => {
-        const startDate = new Date(values.guaranteeStart);
-        const endDate = new Date(value);
-        if (endDate <= startDate) {
-          return 'Дата окончания гарантии должна быть позже даты начала';
+      custom: (value, allValues) => {
+        if (allValues && allValues.guaranteeStart) {
+          const startDate = new Date(allValues.guaranteeStart);
+          const endDate = new Date(value);
+          if (endDate <= startDate) {
+            return 'Дата окончания гарантии должна быть позже даты начала';
+          }
         }
         return null;
       }
@@ -111,13 +93,14 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
+
+    const isFormValid = await validateForm();
+    if (!isFormValid) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const productData = {
         ...values,
@@ -146,10 +129,10 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
       if (response.ok) {
         dispatch(fetchProducts());
         dispatch(fetchOrders());
-        
+
         resetForm();
         onClose();
-        
+
         const successEvent = new CustomEvent('showNotification', {
           detail: { type: 'success', message: 'Продукт успешно добавлен!' }
         });
@@ -159,7 +142,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
       }
     } catch (error) {
       console.error('Error creating product:', error);
-      
+
       const errorEvent = new CustomEvent('showNotification', {
         detail: { type: 'error', message: 'Ошибка при создании продукта' }
       });
@@ -209,7 +192,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                       onBlur={handleBlur}
                     />
                   </div>
-                  
+
                   <div className="col-md-4">
                     <FormField
                       label="Тип продукта"
@@ -256,13 +239,13 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                       value={values.serialNumber}
                       error={errors.serialNumber}
                       touched={touched.serialNumber}
-                      placeholder="Например: ABC123-456"
+                      placeholder="Например: 123456789"
                       required
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
                   </div>
-                  
+
                   <div className="col-md-4">
                     <FormField
                       label="Состояние"
@@ -320,7 +303,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                       onBlur={handleBlur}
                     />
                   </div>
-                  
+
                   <div className="col-md-6">
                     <FormField
                       label="Цена UAH"
@@ -351,7 +334,7 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
                       onBlur={handleBlur}
                     />
                   </div>
-                  
+
                   <div className="col-md-6">
                     <FormField
                       label="Гарантия до"
