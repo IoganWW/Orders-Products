@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logoutUser } from '@/store/slices/authSlice';
 import { useTranslation } from 'react-i18next';
+import { showNotification } from '@/components/UI/Notifications';
 import AuthModal from '@/components/Auth/AuthModal';
 import styles from './Layout.module.css';
 import authStyles from '@/components/Auth/Auth.module.css';
@@ -57,10 +58,11 @@ const Sidebar: React.FC = () => {
     try {
       await dispatch(logoutUser()).unwrap();
       router.push('/');
-      const successEvent = new CustomEvent('showNotification', {
-        detail: { type: 'success', message: `${t('common:successLogout')}` }
+      showNotification({
+        type: 'success',
+        message: `${t('common:successLogout')}`,
+        duration: 4000
       });
-      window.dispatchEvent(successEvent);
     } catch (error) {
       console.error('Logout error:', error);
     }

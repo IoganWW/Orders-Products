@@ -7,6 +7,7 @@ import { fetchProducts } from '@/store/slices/productsSlice';
 import { fetchOrders } from '@/store/slices/ordersSlice';
 import FormField from '@/components/UI/FormField';
 import Portal from '@/components/UI/Portal';
+import { showNotification } from '@/components/UI/Notifications';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
 import { ProductType } from '@/types/products';
 
@@ -133,20 +134,22 @@ const AddProductForm: React.FC<AddProductFormProps> = ({ show, orderId, onClose 
         resetForm();
         onClose();
 
-        const successEvent = new CustomEvent('showNotification', {
-          detail: { type: 'success', message: 'Продукт успешно добавлен!' }
+        showNotification({
+          type: 'success',
+          message: 'Продукт успешно добавлен!',
+          duration: 4000
         });
-        window.dispatchEvent(successEvent);
       } else {
         throw new Error('Failed to create product');
       }
     } catch (error) {
       console.error('Error creating product:', error);
 
-      const errorEvent = new CustomEvent('showNotification', {
-        detail: { type: 'error', message: 'Ошибка при создании продукта' }
+      showNotification({
+        type: 'error',
+        message: 'Ошибка при создании продукта',
+        duration: 4000
       });
-      window.dispatchEvent(errorEvent);
     } finally {
       setIsSubmitting(false);
     }

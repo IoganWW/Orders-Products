@@ -6,6 +6,7 @@ import { useAppDispatch } from '@/store';
 import { fetchOrders } from '@/store/slices/ordersSlice';
 import FormField from '@/components/UI/FormField';
 import Portal from '@/components/UI/Portal';
+import { showNotification } from '@/components/UI/Notifications';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
 import { useTranslation } from 'react-i18next';
 
@@ -61,14 +62,14 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const isFormValid = await validateForm();
     if (!isFormValid) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders`, {
         method: 'POST',
@@ -80,25 +81,26 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
       });
 
       if (response.ok) {
-        dispatch(fetchOrders()); // Обновляем список
+        dispatch(fetchOrders());
         resetForm();
         onClose();
-        
-        // Показываем уведомление об успехе
-        const successEvent = new CustomEvent('showNotification', {
-          detail: { type: 'success', message: t('orders:incomeCreatedSuccess') }
+
+        showNotification({
+          type: 'success',
+          message: t('orders:incomeCreatedSuccess'),
+          duration: 4000
         });
-        window.dispatchEvent(successEvent);
       } else {
         throw new Error('Failed to create order');
       }
     } catch (error) {
       console.error('Error creating order:', error);
-      
-      const errorEvent = new CustomEvent('showNotification', {
-        detail: { type: 'error', message: t('orders:incomeCreateError') }
+
+      showNotification({
+        type: 'error',
+        message: t('orders:incomeCreateError'),
+        duration: 4000
       });
-      window.dispatchEvent(errorEvent);
     } finally {
       setIsSubmitting(false);
     }
@@ -144,7 +146,7 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
                       onBlur={handleBlur}
                     />
                   </div>
-                  
+
                   <div className="col-md-6">
                     <FormField
                       label={t('orders:incomeDate')}
@@ -195,7 +197,7 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
                     </>
                   ) : (
                     <>
-                     {t('common:add')}
+                      {t('common:add')}
                     </>
                   )}
                 </button>

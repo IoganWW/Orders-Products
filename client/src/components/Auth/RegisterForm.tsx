@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import FormField from '@/components/UI/FormField';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
+import { showNotification } from '@/components/UI/Notifications';
 import styles from './Auth.module.css';
 
 interface RegisterFormProps {
@@ -104,14 +105,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const isFormValid = await validateForm();
     if (!isFormValid) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/auth/register`, {
         method: 'POST',
@@ -126,34 +127,37 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
       });
 
       if (response.ok) {
-        const successEvent = new CustomEvent('showNotification', {
-          detail: { type: 'success', message: 'Регистрация успешна! Теперь войдите в систему.' }
+        showNotification({
+          type: 'success',
+          message: 'Регистрация успешна! Теперь войдите в систему.',
+          duration: 4000
         });
-        window.dispatchEvent(successEvent);
-        
+
         resetForm();
         onSuccess();
       } else {
         const errorData = await response.json();
-        
+
         // Обработка специфических ошибок от сервера
         if (errorData.error?.includes('email')) {
-          const errorEvent = new CustomEvent('showNotification', {
-            detail: { type: 'error', message: 'Пользователь с таким email уже существует' }
+          showNotification({
+            type: 'error',
+            message: 'Пользователь с таким email уже существует',
+            duration: 4000
           });
-          window.dispatchEvent(errorEvent);
         } else {
           throw new Error(errorData.error || 'Ошибка регистрации');
         }
       }
-      
-    } catch (error: any) {
+
+    } catch (error: unknown) {
       console.error('Registration error:', error);
-      
-      const errorEvent = new CustomEvent('showNotification', {
-        detail: { type: 'error', message: error.message || 'Ошибка при регистрации' }
+
+      showNotification({
+        type: 'error',
+        message: 'Ошибка при регистрации',
+        duration: 4000
       });
-      window.dispatchEvent(errorEvent);
     } finally {
       setIsSubmitting(false);
     }
@@ -206,7 +210,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
               onBlur={handleBlur}
             />
           </div>
-          
+
           <div className="col-md-6">
             <FormField
               label="Подтвердите пароль"
@@ -242,8 +246,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         <div className="alert alert-info mt-3">
           <i className="fas fa-info-circle me-2"></i>
           <small>
-            • Пароль должен содержать буквы и цифры<br/>
-            • Имя и фамилия обязательны<br/>
+            • Пароль должен содержать буквы и цифры<br />
+            • Имя и фамилия обязательны<br />
             • Email должен быть корректным
           </small>
         </div>

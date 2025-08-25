@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store';
 import { loginUser } from '@/store/slices/authSlice';
 import FormField from '@/components/UI/FormField';
+import { showNotification } from '@/components/UI/Notifications';
 import { useFormValidation, FieldConfig } from '@/hooks/useFormValidation';
 import styles from './Auth.module.css';
 
@@ -55,7 +56,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     }
   };
 
-  // ✅ ТОЛЬКО НУЖНЫЕ ФУНКЦИИ
   const {
     values,
     errors,
@@ -69,38 +69,36 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const isFormValid = await validateForm();
     if (!isFormValid) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       await dispatch(loginUser(values)).unwrap();
-      
-      const successEvent = new CustomEvent('showNotification', {
-        detail: { type: 'success', message: 'Добро пожаловать в систему!' }
+
+      showNotification({
+        type: 'success',
+        message: 'Добро пожаловать в систему!',
+        duration: 4000
       });
-      window.dispatchEvent(successEvent);
-      
+
       resetForm();
       onSuccess();
       router.push('/');
-      
-    } catch (error: any) {
+
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      
-      // 🔒 БЕЗОПАСНОЕ СООБЩЕНИЕ
-      const errorEvent = new CustomEvent('showNotification', {
-        detail: { 
-          type: 'error', 
-          message: 'Неверный email или пароль. Попробуйте еще раз.' 
-        }
+
+      showNotification({
+        type: 'error',
+        message: 'Неверный email или пароль. Попробуйте еще раз.',
+        duration: 4000
       });
-      window.dispatchEvent(errorEvent);
-      
+
       // Очищаем пароль для безопасности
       setFieldValue('password', '');
     } finally {

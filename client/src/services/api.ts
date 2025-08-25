@@ -1,7 +1,8 @@
 // client/src/services/api.ts
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { store } from '@/store';
-import { ApiResponse, ApiError, createApiError  } from '@/types/api';
+import { ApiResponse, createApiError  } from '@/types/api';
+import { showNotification } from '@/components/UI/Notifications';
 import { User } from '@/types/users';
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001';
@@ -95,9 +96,7 @@ api.interceptors.response.use(
   },
   (error) => {
     // Типизированная обработка 401/403 ошибок авторизации
-    if (error.response && 
-        (error.response.status === 401 || error.response.status === 403) &&
-        !isLogoutInProgress) {
+    if (error.response && (error.response.status === 401 || error.response.status === 403) && !isLogoutInProgress) {
       
       // Устанавливаем флаг, что logout в процессе
       isLogoutInProgress = true;
@@ -124,22 +123,19 @@ api.interceptors.response.use(
 
       // Уведомляем пользователя ТОЛЬКО если у него был токен (т.е. он был авторизован)
       if (hadToken && typeof window !== 'undefined') {
-        const errorEvent = new CustomEvent('showNotification', {
-          detail: { 
-            type: 'error', 
-            message: 'Сессия истекла. Войдите в систему заново.' ,
-            duration: 5000
-          }
+        showNotification({
+          type: 'error',
+          message: 'Сессия истекла. Войдите в систему заново.',
+          duration: 4000
         });
-        window.dispatchEvent(errorEvent);
       }
 
-        // Принудительное перенаправление на страницу входа
-        setTimeout(() => {
-          if (typeof window !== 'undefined') {
-            window.location.href = '/';
-          }
-        }, 1000);
+      // Принудительное перенаправление на страницу входа
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+           window.location.href = '/';
+        }
+      }, 1000);
       
       // Сбрасываем флаг через небольшой тайм-аут, чтобы избежать спама
       setTimeout(() => {
