@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ProductsState, ProductType } from '@/types/products';
 import { showNotification } from '@/components/UI/Notifications';
+import { logoutUser } from './authSlice';
 import { ApiError } from '@/types/api';
 import api from '@/services/api'; // Используем api вместо axios
 
@@ -124,6 +125,9 @@ const productsSlice = createSlice({
       .addCase(deleteProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string || action.error.message || 'Failed to delete product';
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.products = [];
       });
   },
 });
