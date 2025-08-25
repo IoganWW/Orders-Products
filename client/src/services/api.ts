@@ -113,6 +113,15 @@ api.interceptors.response.use(
         localStorage.removeItem('user');
       }
       
+      // Очищаем Redux store для безопасности
+      try {
+        if (store && typeof store.dispatch === 'function') {
+          store.dispatch({ type: 'auth/logoutUser/fulfilled' });
+        }
+      } catch (storeError) {
+        console.warn('Error clearing store:', storeError);
+      }
+
       // Уведомляем пользователя ТОЛЬКО если у него был токен (т.е. он был авторизован)
       if (hadToken && typeof window !== 'undefined') {
         const errorEvent = new CustomEvent('showNotification', {
@@ -124,6 +133,13 @@ api.interceptors.response.use(
         });
         window.dispatchEvent(errorEvent);
       }
+
+        // Принудительное перенаправление на страницу входа
+        setTimeout(() => {
+          if (typeof window !== 'undefined') {
+            window.location.href = '/';
+          }
+        }, 1000);
       
       // Сбрасываем флаг через небольшой тайм-аут, чтобы избежать спама
       setTimeout(() => {

@@ -62,7 +62,8 @@ const AddOrderForm: React.FC<AddOrderFormProps> = ({ show, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    const isFormValid = await validateForm();
+    if (!isFormValid) {
       return;
     }
 
