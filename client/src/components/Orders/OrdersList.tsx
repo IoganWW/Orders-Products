@@ -12,7 +12,7 @@ import styles from './Orders.module.css';
 import { Order } from '@/types/orders';
 import { useTranslation } from 'react-i18next';
 
-import LoadingSpinner from '@/app/LoadingSpinner';
+import { LoadingSpinner } from '@/app/LoadingSpinner';
 import ErrorMessage from '@/app/ErrorMessage';
 
 

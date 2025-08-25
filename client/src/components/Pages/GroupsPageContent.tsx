@@ -5,11 +5,10 @@ import { useAppSelector, useAppDispatch } from '@/store';
 import { fetchProducts } from '@/store/slices/productsSlice';
 import { createProductGroups } from '@/types/products';
 
-
 import GroupsStatistics from '@/components/Pages/groups/GroupsStatistics';
 import ProductGroupCard from '@/components/Pages/groups/ProductGroupCard';
 import EmptyGroupsState from '@/components/Pages/groups/EmptyGroupsState';
-import LoadingSpinner from '@/app/LoadingSpinner';
+import { LoadingSpinner } from '@/app/LoadingSpinner';
 import ErrorMessage from '@/app/ErrorMessage';
 
 // Основной компонент

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 import UsersStatistics from '@/components/Pages/users/UsersStatistics';
 import UsersTable from '@/components/Pages/users/UsersTable';
-import LoadingSpinner from '@/app/LoadingSpinner';
+import { LoadingSpinner } from '@/app/LoadingSpinner';
 import ErrorMessage from '@/app/ErrorMessage';
 
 

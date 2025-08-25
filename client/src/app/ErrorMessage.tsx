@@ -2,8 +2,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+interface ErrorMessageProps {
+  error: string;
+  retry?: () => void;
+  showDetails?: boolean;
+}
+
 // Компонент ошибки
-const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => {
+const ErrorMessageComponent: React.FC<ErrorMessageProps> = ({ error }) => {
   const { t } = useTranslation(['common']);
   return (
     <div className="bg-light min-vh-100">
@@ -15,7 +21,8 @@ const ErrorMessage: React.FC<{ error: string }> = React.memo(({ error }) => {
       </div>
     </div>
   )
-});
+};
 
+const ErrorMessage = React.memo(ErrorMessageComponent);
 ErrorMessage.displayName = 'ErrorMessage';
 export default ErrorMessage;
