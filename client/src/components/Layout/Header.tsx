@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, memo } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setCurrentTime } from '@/store/slices/appSlice';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import styles from './Layout.module.css';
 import Link from 'next/link';
 
-const Header: React.FC = () => {
+const Header: React.FC = memo(() => {
   const { t } = useTranslation('common');
   const dispatch = useAppDispatch();
   const { currentTime, activeSessions, isConnected } = useAppSelector((state) => state.app);
@@ -21,7 +21,17 @@ const Header: React.FC = () => {
     return () => clearInterval(timer);
   }, [dispatch]);
 
-  const { today, time, weekly } = formatHeaderDate(currentTime);
+  // Мемоизируем форматированную дату для оптимизации
+  const formattedDate = useMemo(() => {
+    return formatHeaderDate(currentTime);
+  }, [currentTime]);
+
+  const { today, time, weekly } = formattedDate;
+
+  // Мемоизируем счетчик сессий
+  const sessionsDisplay = useMemo(() => {
+    return isConnected ? activeSessions : 0;
+  }, [isConnected, activeSessions]);
 
   return (
     <header className={`${styles.header} header`}>
@@ -49,7 +59,7 @@ const Header: React.FC = () => {
         <div className={`${styles.sessionCounter} session-counter`}>
           <span className="badge bg-secondary me-2">
             <i className="fas fa-users me-1"></i>
-            {isConnected ? activeSessions : 0}
+            {sessionsDisplay}
           </span>
         </div>
 
@@ -66,6 +76,8 @@ const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

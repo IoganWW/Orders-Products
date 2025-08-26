@@ -1,18 +1,20 @@
 // client/src/components/Layout/Sidebar.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logoutUser } from '@/store/slices/authSlice';
 import { useTranslation } from 'react-i18next';
 import { showNotification } from '@/components/UI/Notifications';
+import { NAVIGATION_ITEMS } from '@/constants/navigation';
 import AuthModal from '@/components/Auth/AuthModal';
 import styles from './Layout.module.css';
 import authStyles from '@/components/Auth/Auth.module.css';
 
-const Sidebar: React.FC = () => {
+
+const Sidebar: React.FC = memo(() => {
   const { t } = useTranslation(['navigation', 'common']);
   const pathname = usePathname();
   const router = useRouter();
@@ -21,38 +23,15 @@ const Sidebar: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
 
-  const menuItems = [
-    {
-      href: '/orders',
-      label: t('navigation:orders').toLocaleUpperCase(),
-      icon: 'fas fa-arrow-down',
-      isActive: pathname === '/orders'
-    },
-    {
-      href: '/groups',
-      label: t('navigation:groups').toLocaleUpperCase(),
-      icon: 'fas fa-layer-group',
-      isActive: pathname === '/groups'
-    },
-    {
-      href: '/products',
-      label: t('navigation:products').toLocaleUpperCase(),
-      icon: 'fas fa-box',
-      isActive: pathname === '/products'
-    },
-    {
-      href: '/users',
-      label: t('navigation:users').toLocaleUpperCase(),
-      icon: 'fas fa-users',
-      isActive: pathname === '/users'
-    },
-    {
-      href: '/settings',
-      label: t('navigation:settings').toLocaleUpperCase(),
-      icon: 'fas fa-cog',
-      isActive: pathname === '/settings'
-    }
-  ];
+  // Мемоизируем создание пунктов меню из импортированных констант
+  const menuItems = useMemo(() => {
+    return NAVIGATION_ITEMS.map(item => ({
+      href: item.href,
+      label: t(item.labelKey).toLocaleUpperCase(),
+      icon: item.icon,
+      isActive: pathname === item.href
+    }));
+  }, [t, pathname]);
 
   const handleLogout = async () => {
     try {
@@ -77,10 +56,15 @@ const Sidebar: React.FC = () => {
       .slice(0, 2);
   };
 
+  // Мемоизируем обработчики модального окна
+  const handleShowAuth = useCallback(() => setShowAuthModal(true), []);
+  const handleCloseAuth = useCallback(() => setShowAuthModal(false), []);
+  const handleToggleProfile = useCallback(() => setProfileMenuOpen(!isProfileMenuOpen), [isProfileMenuOpen]);
+
   return (
     <>
       <aside className={`${styles.sidebar}`}>
-        {/* Updated Authorization Block */}
+        {/* Authorization Block */}
         <div className={`${styles.sidebarAuth} px-0 px-lg-2 mt-3`}>
           {loading ? (
             <div className="d-flex justify-content-center align-items-center h-100">
@@ -95,7 +79,7 @@ const Sidebar: React.FC = () => {
                 </div>
                 <button
                   className={`${authStyles.settingsBtn} settings-btn btn btn-light btn-sm rounded-circle shadow-sm`}
-                  onClick={() => setProfileMenuOpen(!isProfileMenuOpen)}
+                  onClick={handleToggleProfile}
                   title={t('common:profileSettings')}
                 >
                   <i className="fas fa-cog"></i>
@@ -122,7 +106,7 @@ const Sidebar: React.FC = () => {
             <div className="d-flex justify-content-center align-items-center h-100">
               <button
                 className={`${authStyles.loginBtn} login-btn btn btn-success`}
-                onClick={() => setShowAuthModal(true)}
+                onClick={handleShowAuth}
               >
                 <i className="fas fa-sign-in-alt me-2"></i>
                 <span className="d-none d-md-inline">{t('common:login')}</span>
@@ -143,6 +127,7 @@ const Sidebar: React.FC = () => {
                     nav-link
                     ${item.isActive ? styles.active : ''}
                   `}
+                  aria-label={item.label}
                 >
                   <i className={`${item.icon} ${styles.navIcon}`}></i>
                   <span className={`${styles.navLabel}`}>
@@ -158,10 +143,12 @@ const Sidebar: React.FC = () => {
       {/* Auth Modal */}
       <AuthModal
         show={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
+        onClose={handleCloseAuth}
       />
     </>
   );
-};
+});
+
+Sidebar.displayName = 'Sidebar';
 
 export default Sidebar;

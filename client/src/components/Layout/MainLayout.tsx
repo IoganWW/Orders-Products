@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, memo } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Notifications, { showNotification } from '@/components/UI/Notifications';
@@ -13,7 +13,7 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+const MainLayout: React.FC<MainLayoutProps> = memo(({ children }) => {
   const dispatch = useAppDispatch();
   const { isAuthenticated, token } = useAppSelector(state => state.auth);
 
@@ -24,8 +24,32 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     dispatch(initializeAuth());
   }, [dispatch]);
 
+  // Мемоизируем функции для стабильности ссылок в useEffect
+  const handleLogout = useCallback(() => {
+    dispatch(logoutUser());
+    showNotification({
+      type: 'warning',
+      message: 'Сессия была завершена принудительно',
+      duration: 4000
+    });
+  }, [dispatch]);
+
+  const handleLogoutFromAnotherTab = useCallback(() => {
+    dispatch(logoutUser());
+    showNotification({
+      type: 'warning',
+      message: 'Сессия завершена в другой вкладке',
+      duration: 4000
+    });
+  }, [dispatch]);
+
   // useEffect для проверки синхронизации токена
   useEffect(() => {
+    // Ранний выход, если пользователь не авторизован
+    if (!isAuthenticated || !token) {
+      return;
+    }
+
     let interval: NodeJS.Timeout;
     let storageListener: ((e: StorageEvent) => void) | null = null;
 
@@ -37,14 +61,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       if (isAuthenticated && token && !storageToken) {
         console.warn('🚨 Token manually removed from localStorage - forcing logout');
         
-        dispatch(logoutUser());
-        
-        // Показываем предупреждение
-        showNotification({
-          type: 'warning',
-          message: 'Сессия была завершена принудительно',
-          duration: 4000
-        });
+        handleLogout();
       }
       
       // Если в localStorage есть токен, но Redux показывает неавторизованность
@@ -61,13 +78,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         console.warn('🚨 Token removed from localStorage in another tab');
         
         if (isAuthenticated) {
-          dispatch(logoutUser());
-          
-          showNotification({
-            type: 'warning',
-            message: 'Сессия завершена в другой вкладке',
-            duration: 4000
-          });
+          handleLogoutFromAnotherTab();
         }
       }
     };
@@ -100,7 +111,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       }
       window.removeEventListener('focus', handleWindowFocus);
     };
-  }, [isAuthenticated, token, dispatch]); // Зависимости
+  }, [isAuthenticated, token, handleLogout, handleLogoutFromAnotherTab]);
 
   return (
     <div className={`${styles.layout} layout`}>
@@ -114,6 +125,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <Notifications />
     </div>
   );
-};
+});
+
+MainLayout.displayName = 'MainLayout';
 
 export default MainLayout;
