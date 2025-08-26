@@ -25,7 +25,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ order, onClose, onDeletePro
 
   return (
     <>
-      <div className="order-details animate__animated animate__slideInRight position-relative bg-white rounded shadow-sm">
+      <div className="animate__animated animate__slideInRight position-relative bg-white rounded shadow-sm">
         <button
           type="button"
           className="modalCloseBtn btn-close position-absolute rounded-circle border"

@@ -46,15 +46,6 @@ body {
   flex-direction: column;
 }
 
-.main-content {
-  flex: 1;
-  padding: 2rem 0;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  min-height: calc(100vh - 140px);
-  margin-left: 180px;
-  transition: margin-left 0.3s ease;
-}
-
 .btn-primary-custom {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   border: none;
@@ -71,14 +62,6 @@ body {
 
 .fade-in {
   animation: fadeIn 0.5s ease-in;
-}
-
-.slide-in-right {
-  animation: slideInRight 0.5s ease-out;
-}
-
-.slide-in-left {
-  animation: slideInLeft 0.5s ease-out;
 }
 
 @keyframes fadeIn {
@@ -116,36 +99,15 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .main-content {
-    padding: 1rem 0;
-    min-height: calc(100vh - 180px);
-    margin-left: 60px; /* Учитываем ширину sidebar 60px на планшетах */
-  }
-}
 
 @media (max-width: 576px) {
-  .main-content {
-    margin-left: 30px; /* Учитываем ширину sidebar 30px на мобильных */
-    padding: 0.5rem 0;
-  }
-  
   .page {
     padding: 0.5rem 1rem; /* Уменьшаем внутренние отступы на мобильных */
-  }
-  
-  .page__header {
-    margin-top: 0.5rem;
-    padding: 1rem;
   }
 }
 
 /* Дополнительные стили для очень маленьких экранов */
-@media (max-width: 400px) {
-  .main-content {
-    margin-left: 25px;
-  }
-  
+@media (max-width: 400px) { 
   .page {
     padding: 0.25rem 0.5rem;
   }

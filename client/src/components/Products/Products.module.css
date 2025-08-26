@@ -1,14 +1,3 @@
-/* Hover эффекты для карточек продуктов */
-.productCard {
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.productCard:hover {
-  box-shadow: var(--shadow-lg) !important;
-  transform: translateY(-2px);
-}
-
 /* GRID Layout для ProductCard */
 .productCardGrid {
   display: grid;

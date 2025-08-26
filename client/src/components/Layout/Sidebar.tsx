@@ -116,17 +116,13 @@ const Sidebar: React.FC = memo(() => {
         </div>
 
         {/* Navigation Menu */}
-        <nav className={`${styles.sidebarNav}`}>
-          <ul className={`${styles.navList}`}>
+        <nav className="py-3">
+          <ul className="list-unstyled m-0 p-0">
             {menuItems.map((item) => (
-              <li key={item.href} className={`${styles.navItem}`}>
+              <li key={item.href} className="position-relative mb-2 ms-1">
                 <Link
                   href={item.href}
-                  className={`
-                    ${styles.navLink} 
-                    nav-link
-                    ${item.isActive ? styles.active : ''}
-                  `}
+                  className={`${styles.navLink} ${item.isActive ? styles.active : ''}`}
                   aria-label={item.label}
                 >
                   <i className={`${item.icon} ${styles.navIcon}`}></i>
@@ -139,7 +135,7 @@ const Sidebar: React.FC = memo(() => {
           </ul>
         </nav>
       </aside>
-
+ 
       {/* Auth Modal */}
       <AuthModal
         show={showAuthModal}

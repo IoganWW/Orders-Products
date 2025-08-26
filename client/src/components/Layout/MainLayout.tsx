@@ -114,11 +114,11 @@ const MainLayout: React.FC<MainLayoutProps> = memo(({ children }) => {
   }, [isAuthenticated, token, handleLogout, handleLogoutFromAnotherTab]);
 
   return (
-    <div className={`${styles.layout} layout`}>
+    <div className={styles.layout}>
       <Header />
-      <div className={`${styles.layoutBody} layout-body`}>
+      <div className={styles.layoutBody}>
         <Sidebar />
-        <main className={`${styles.layoutMain} layout-main`}>
+        <main className={styles.layoutMain}>
           {children}
         </main>
       </div>

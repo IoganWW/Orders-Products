@@ -128,22 +128,6 @@
   align-items: center;
   justify-content: center;
 }
-
-.sidebarNav {
-  padding: 1rem 0;
-}
- 
-.navList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
- 
-.navItem {
-  position: relative;
-  margin-bottom: 0.5rem;
-  margin-left: 0.25rem;
-}
  
 .navLink {
   display: flex;
@@ -152,6 +136,7 @@
   width: 100%;
   padding: 10px 20px;
   text-decoration: none;
+  color: inherit;
   font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -176,7 +161,7 @@
   text-align: center;
   font-size: 1rem;
 }
- 
+
 .navLabel {
   font-size: 0.85rem;
   letter-spacing: 0.5px;
@@ -220,8 +205,8 @@
   .sidebar {
     width: 60px;
   }
-  
-  .navLabel {
+
+    .navLabel {
     display: none;
   }
   

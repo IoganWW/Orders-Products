@@ -21,28 +21,15 @@
 }
 
 /* Переключение между названием и Order ID на мобильных */
-.ordersList.ordersList--detail-open .orderCard .d-lg-none .orderCard__mobileTitle {
-  display: none !important;
-}
-
 .ordersList.ordersList--detail-open .orderCard .d-lg-none .orderCard__mobileOrderId {
   display: inline !important;
 }
 
 /* На экранах менее lg всегда показывать Order ID вместо названия */
 @media (max-width: 991.98px) {
-  .orderCard__mobileTitle {
-    display: none !important;
-  }
-  
   .orderCard__mobileOrderId {
     display: inline !important;
   }
-}
-
-/* При открытой панели деталей средняя секция займет всю доступную ширину */
-.ordersList.ordersList--detail-open .orderCard__middleSection {
-  flex-grow: 1 !important;
 }
 
 /* Обёртка для иконки */
@@ -55,7 +42,7 @@
   border: solid 2px #b9bcc3;
 }
 
-/* Новый элемент: контейнер для стрелки */
+/* Контейнер для стрелки */
 .orderCard__arrowContainer {
   width: 40px;
   background-color: #f0f0f0;
@@ -71,11 +58,4 @@
   width: 24px;
   height: 24px;
   color: var(--text-secondary);
-}
-
-/* Order Details - Общий контейнер */
-.orderDetails {
-  height: fit-content;
-  max-height: calc(100vh - 80px);
-  z-index: 1;
 }
