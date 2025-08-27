@@ -1,0 +1,19 @@
+{
+  "title": "Orders Management",
+  "addOrder": "Add new Order",
+  "orderDetails": "Order Details",
+  "products": "Products",
+  "deleteConfirm": "Are you sure you want to delete this order?",
+  "noOrders": "No orders",
+  "firstOrder": "Create first order",
+  "noProducts": "No products in this order",
+  "order": "Order",
+  "product": "Products",
+  "incomeTitle": "Income Title",
+  "enterIncomeTitle": "Enter income title",
+  "incomeDate": "Income Date",
+  "incomeDescription": "Income Description",
+  "enterIncomeDescription": "Enter a detailed description of the income",
+  "incomeCreatedSuccess": "Order successfully created!",
+  "incomeCreateError": "Error creating order"
+}

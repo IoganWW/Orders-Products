@@ -1,0 +1,15 @@
+{
+  "title": "System Users",
+  "subtitle": "Manage users and their access rights",
+  "addUser": "Add User",
+  "registration": "Registration",
+  "lastUpdate": "Last Update",
+  "totalUsers": "Total users",
+  "admins": "Administrators",
+  "admin": "Administrator",
+  "managers": "Managers",
+  "user": "User",
+  "notFound": "Users not found",
+  "confirmDelete": "Delete user {{name}}?",
+  "deleteWarning": "This action cannot be undone. All user data will be permanently deleted."
+}

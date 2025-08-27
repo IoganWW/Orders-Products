@@ -1,0 +1,29 @@
+{
+  "title": "Products Catalog",
+  "subtitle": "Browse and filter products by category",
+  "addProduct": "Add Product",
+  "category": "Category",
+  "condition": "Condition",
+  "price": "Price",
+  "guarantee": "Guarantee",
+  "all": "All",
+  "new": "New",
+  "used": "Used",
+  "noProductsFound": "No products found",
+  "free": "Free",
+  "underRepair": "Under repair",
+
+  "productDeletedSuccess": "Product successfully deleted!",
+  "productDeleteError": "Error deleting product",
+  "noProductsToDisplay": "There are no products to display",
+  "noProductsInCategory": "No products found in this category",
+  "confirmDeleteProduct": "Are you sure you want to delete this product?",
+
+  "type": "Type",
+  "specifications": "Specifications",
+  "monitors": "Monitors",
+  "laptops": "Laptops",
+  "keyboards": "Keyboards",
+  "phones": "Phones",
+  "tablets": "Tablets"
+}

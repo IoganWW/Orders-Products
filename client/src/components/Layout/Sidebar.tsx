@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { logoutUser } from '@/store/slices/authSlice';
-import { useTranslation } from 'react-i18next';
+import { useTypedTranslation } from '@/hooks/useTypedTranslation';
 import { showNotification } from '@/components/UI/Notifications';
 import { NAVIGATION_ITEMS } from '@/constants/navigation';
 import AuthModal from '@/components/Auth/AuthModal';
@@ -15,7 +15,7 @@ import authStyles from '@/components/Auth/Auth.module.css';
 
 
 const Sidebar: React.FC = memo(() => {
-  const { t } = useTranslation(['navigation', 'common']);
+  const { t } = useTypedTranslation(['navigation', 'common']);
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -27,7 +27,7 @@ const Sidebar: React.FC = memo(() => {
   const menuItems = useMemo(() => {
     return NAVIGATION_ITEMS.map(item => ({
       href: item.href,
-      label: t(item.labelKey).toLocaleUpperCase(),
+      label: t(`navigation:${item.labelKey}`).toLocaleUpperCase(),
       icon: item.icon,
       isActive: pathname === item.href
     }));
@@ -39,7 +39,7 @@ const Sidebar: React.FC = memo(() => {
       router.push('/');
       showNotification({
         type: 'success',
-        message: `${t('common:successLogout')}`,
+        message: t('common:successLogout'),
         duration: 4000
       });
     } catch (error) {

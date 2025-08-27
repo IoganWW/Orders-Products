@@ -1,0 +1,18 @@
+{
+  "title": "Управління приходами",
+  "addOrder": "Додати новий прихід",
+  "orderDetails": "Деталі приходу",
+  "deleteConfirm": "Ви впевнені, що хочете видалити цей приход?",
+  "noOrders": "Не має приходів",
+  "firstOrder": "Створити перший прихід",
+  "noProducts": "Не має продуктів у цьому приході",
+  "order": "Прихід",
+  "product": "Продуктів",
+  "incomeTitle": "Назва приходу",
+  "enterIncomeTitle": "Введіть назву приходу",
+  "incomeDate": "Дата приходу",
+  "incomeDescription": "Опис приходу",
+  "enterIncomeDescription": "Введіть докладний опис приходу",
+  "incomeCreatedSuccess": "Прихід успішно створено!",
+  "incomeCreateError": "Помилка при створенні приходу"
+}

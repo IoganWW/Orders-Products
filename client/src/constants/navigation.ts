@@ -1,27 +1,27 @@
 export const NAVIGATION_ITEMS = [
   {
     href: '/orders',
-    labelKey: 'navigation:orders',
+    labelKey: 'orders',
     icon: 'fas fa-arrow-down'
   },
   {
     href: '/groups', 
-    labelKey: 'navigation:groups',
+    labelKey: 'groups',
     icon: 'fas fa-layer-group'
   },
   {
     href: '/products',
-    labelKey: 'navigation:products', 
+    labelKey: 'products', 
     icon: 'fas fa-box'
   },
   {
     href: '/users',
-    labelKey: 'navigation:users',
+    labelKey: 'users',
     icon: 'fas fa-users'
   },
   {
     href: '/settings',
-    labelKey: 'navigation:settings',
+    labelKey: 'settings',
     icon: 'fas fa-cog'
   }
 ] as const;

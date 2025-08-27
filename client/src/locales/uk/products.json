@@ -1,0 +1,29 @@
+{
+  "title": "Каталог продуктів",
+  "subtitle": "Перегляд та фільтрація продуктів за категоріями",
+  "addProduct": "Додати продукт",
+  "category": "Категорія",
+  "condition": "Стан",
+  "price": "Ціна",
+  "guarantee": "Гарантія",
+  "all": "Всі",
+  "new": "Новий",
+  "used": "Вживаний",
+  "noProductsFound": "Товарів не знайдено",
+  "free": "Вільний",
+  "underRepair": "У ремонті",
+
+  "productDeletedSuccess": "Продукт успішно видалено!",
+  "productDeleteError": "Помилка при видаленні продукту",
+  "noProductsToDisplay": "Немає товарів для відображення",
+  "noProductsInCategory": "Товари в цій категорії не знайдено",
+  "confirmDeleteProduct": "Ви впевнені, що хочете видалити цей продукт?",
+
+  "type": "Тип",
+  "specifications": "Характеристики",
+  "monitors": "Монітори",
+  "laptops": "Ноутбуки",
+  "keyboards": "Клавіатури",
+  "phones": "Телефони",
+  "tablets": "Планшети"
+}

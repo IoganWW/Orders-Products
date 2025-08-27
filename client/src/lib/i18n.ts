@@ -1,388 +1,51 @@
-// client/src/lib/i18n.ts
+// lib/i18n.ts
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import resources from '../locales';
 
-// Переводы по namespace'ам
-const resources = {
-  en: {
-    // Общие переводы
-    common: {
-      loading: 'Loading...',
-      error: 'Error!',
-      login: 'Login',
-      logout: 'Logout',
-      save: 'Save',
-      cancel: 'Cancel',
-      delete: 'Delete',
-      deleting: 'Deleting',
-      warning: 'Warning',
-      edit: 'Edit',
-      add: 'Add',
-      adding: 'Adding',
-      search: 'Search',
-      total: 'Total',
-      actions: 'Actions',
-      status: 'Status',
-      created: 'Created',
-      updated: 'Updated',
-      name: 'Name',
-      email: 'Email',
-      role: 'Role',
-
-      successLogout: 'You have successfully logged out',
-      profileSettings: 'Profile Settings',
-      from: 'from',
-      until: 'until',
-      // Дни недели
-      monday: 'Monday',
-      tuesday: 'Tuesday', 
-      wednesday: 'Wednesday',
-      thursday: 'Thursday',
-      friday: 'Friday',
-      saturday: 'Saturday',
-      sunday: 'Sunday',
-      // Месяцы (сокращенные)
-      jan: 'Jan',
-      feb: 'Feb',
-      mar: 'Mar',
-      apr: 'Apr',
-      may: 'May',
-      jun: 'Jun',
-      jul: 'Jul',
-      aug: 'Aug',
-      sep: 'Sep',
-      oct: 'Oct',
-      nov: 'Nov',
-      dec: 'Dec'
-    },
-    // Навигация
-    navigation: {
-      orders: 'Orders',
-      groups: 'Groups',
-      products: 'Products',
-      users: 'Users',
-      settings: 'Settings'
-    },
-    // Приходы
-    orders: {
-      title: 'Orders Management',
-      addOrder: 'Add new Order',
-      orderDetails: 'Order Details',
-      products: 'Products',
-      deleteConfirm: 'Are you sure you want to delete this order?',
-      noOrders: 'No orders',
-      firstOrder: 'Create first order',
-      noProducts: 'No products in this order',
-      order: 'Order',
-      product: 'Products',
-      incomeTitle: 'Income Title',
-      enterIncomeTitle: 'Enter income title',
-      incomeDate: 'Income Date',
-      incomeDescription: 'Income Description',
-      enterIncomeDescription: 'Enter a detailed description of the income',
-      incomeCreatedSuccess: 'Order successfully created!',
-      incomeCreateError: 'Error creating order'
-    },
-    // Продукты  
-    products: {
-      title: 'Products Catalog',
-      subtitle: 'Browse and filter products by category',
-      addProduct: 'Add Product',
-      category: 'Category',
-      condition: 'Condition',
-      price: 'Price',
-      guarantee: 'Guarantee',
-      all: 'All',
-      new: 'New',
-      used: 'Used',
-      noProductsFound: 'No products found',
-      free: 'Free',
-      underRepair: 'Under repair',
-
-      productDeletedSuccess: 'Product successfully deleted!',
-      productDeleteError: 'Error deleting product',
-      noProductsToDisplay: 'There are no products to display',
-      noProductsInCategory: 'No products found in this category',
-      confirmDeleteProduct: 'Are you sure you want to delete this product?',
-      
-      type: 'Type',
-      specifications: 'Specifications',
-      monitors: 'Monitors',
-      laptops: 'Laptops',
-      keyboards: 'Keyboards',
-      phones: 'Phones',
-      tablets: 'Tablets'
-    },
-    // Пользователи
-    users: {
-      title: 'System Users',
-      subtitle: 'Manage users and their access rights',
-      addUser: 'Add User',
-      registration: 'Registration',
-      lastUpdate: 'Last Update',
-      totalUsers: 'Total users',
-      admins: 'Administrators',
-      admin: 'Administrator',
-      managers: 'Managers', 
-      user: 'User',
-      notFound: 'Users not found',
-      confirmDelete: 'Delete user {{name}}?',
-      deleteWarning: 'This action cannot be undone. All user data will be permanently deleted.',
-    }
-  },
-  uk: {
-    common: {
-      loading: 'Завантаження...',
-      error: 'Помилка!',
-      login: 'Увійти',
-      logout: 'Вийти',
-      save: 'Зберегти',
-      cancel: 'Скасувати',
-      delete: 'Видалити',
-      warning: 'Увага',
-      deleting: 'Видалення',
-      edit: 'Редагувати',
-      add: 'Додати',
-      adding: 'Додавання',
-      search: 'Пошук',
-      total: 'Всього',
-      actions: 'Дії',
-      status: 'Статус',
-      created: 'Створено',
-      updated: 'Оновлено',
-      name: "Ім'я",
-      email: 'Email',
-      role: 'Роль',
-      from: 'з',
-      until: 'до',
-
-      successLogout: 'Ви успішно вийшли з системи',
-      profileSettings: 'Налаштування профілю',
-      // Дні тижня
-      monday: 'Понеділок',
-      tuesday: 'Вівторок',
-      wednesday: 'Середа',
-      thursday: 'Четвер',
-      friday: "П'ятниця",
-      saturday: 'Субота',
-      sunday: 'Неділя',
-      // Місяці (скорочені)
-      jan: 'Січ',
-      feb: 'Лют',
-      mar: 'Бер',
-      apr: 'Кві',
-      may: 'Тра',
-      jun: 'Чер',
-      jul: 'Лип',
-      aug: 'Сер',
-      sep: 'Вер',
-      oct: 'Жов',
-      nov: 'Лис',
-      dec: 'Гру'
-    },
-    navigation: {
-      orders: 'Приходи',
-      groups: 'Групи',
-      products: 'Продукти', 
-      users: 'Користувачі',
-      settings: 'Налаштування'
-    },
-    orders: {
-      title: 'Управління приходами',
-      addOrder: 'Додати новий прихід',
-      orderDetails: 'Деталі приходу',
-      deleteConfirm: 'Ви впевнені, що хочете видалити цей приход?',
-      noOrders: 'Не має приходів',
-      firstOrder: 'Створити перший прихід',
-      noProducts: 'Не має продуктів у цьому приході',
-      order: 'Прихід',
-      product: 'Продуктів',
-      incomeTitle: 'Назва приходу',
-      enterIncomeTitle: 'Введіть назву приходу',
-      incomeDate: 'Дата приходу',
-      incomeDescription: 'Опис приходу',
-      enterIncomeDescription: 'Введіть докладний опис приходу',
-      incomeCreatedSuccess: 'Прихід успішно створено!',
-      incomeCreateError: 'Помилка при створенні приходу'
-    },
-    products: {
-      title: 'Каталог продуктів',
-      subtitle: 'Перегляд та фільтрація продуктів за категоріями',
-      addProduct: 'Додати продукт',
-      category: 'Категорія',
-      condition: 'Стан',
-      price: 'Ціна',
-      guarantee: 'Гарантія',
-      all: 'Всі',
-      new: 'Новий',
-      used: 'Вживаний',
-      noProductsFound: 'Товарів не знайдено',
-      free: 'Вільний',
-      underRepair: 'У ремонті',
-
-      productDeletedSuccess: 'Продукт успішно видалено!',
-      productDeleteError: 'Помилка при видаленні продукту',
-      noProductsToDisplay: 'Немає товарів для відображення',
-      noProductsInCategory: 'Товари в цій категорії не знайдено',
-      confirmDeleteProduct: 'Ви впевнені, що хочете видалити цей продукт?',
-
-      type: 'Тип',
-      specifications: 'Характеристики',
-      monitors: 'Монітори',
-      laptops: 'Ноутбуки',
-      keyboards: 'Клавіатури',
-      phones: 'Телефони',
-      tablets: 'Планшети'
-    },
-    users: {
-      title: 'Користувачі системи',
-      subtitle: 'Управління користувачами та їх правами доступу',
-      addUser: 'Додати користувача',
-      registration: 'Реєстрація',
-      lastUpdate: 'Останнє оновлення',
-      totalUsers: 'Всього користувачів',
-      admins: 'Адміністратори',
-      admin: 'Адміністратор',
-      managers: 'Менеджери',
-      user: 'Користувач',
-      notFound: 'Користувачів не знайдено',
-      confirmDelete: 'Видалити користувача {{name}}?',
-      deleteWarning: 'Цю дію неможливо скасувати. Всі дані користувача будуть видалені назавжди.',
-    }
-  },
-  ru: {
-    common: {
-      loading: 'Загрузка...',
-      error: 'Ошибка!',
-      login: 'Войти',
-      logout: 'Выйти',
-      save: 'Сохранить',
-      cancel: 'Отменить',
-      delete: 'Удалить',
-      deleting: 'Удаление',
-      warning: 'Внимание',
-      edit: 'Редактировать',
-      add: 'Добавить',
-      adding: 'Добавление',
-      search: 'Поиск',
-      total: 'Всего',
-      actions: 'Действия',
-      status: 'Статус',
-      created: 'Создано',
-      updated: 'Обновлено',
-      name: 'Имя',
-      email: 'Email',
-      role: 'Роль',
-      from: 'с',
-      until: 'по',
-
-      successLogout: 'Вы успешно вышли из системы',
-      profileSettings: 'Настройки профиля',
-      // Дни недели
-      monday: 'Понедельник',
-      tuesday: 'Вторник',
-      wednesday: 'Среда',
-      thursday: 'Четверг',
-      friday: 'Пятница',
-      saturday: 'Суббота',
-      sunday: 'Воскресенье',
-      // Месяцы (сокращенные)
-      jan: 'Янв',
-      feb: 'Фев',
-      mar: 'Мар',
-      apr: 'Апр',
-      may: 'Май',
-      jun: 'Июн',
-      jul: 'Июл',
-      aug: 'Авг',
-      sep: 'Сен',
-      oct: 'Окт',
-      nov: 'Ноя',
-      dec: 'Дек'
-    },
-    navigation: {
-      orders: 'Приходы',
-      groups: 'Группы',
-      products: 'Продукты',
-      users: 'Пользователи',
-      settings: 'Настройки'
-    },
-    orders: {
-      title: 'Управление приходами',
-      addOrder: 'Добавить новый приход',
-      orderDetails: 'Детали прихода',
-      deleteConfirm: 'Вы уверены, что хотите удалить этот приход?',
-      noOrders: 'Нет приходов',
-      firstOrder: 'Создать первый приход',
-      noProducts: 'Нет продуктов в этом приходе',
-      order: 'Приход',
-      product: 'Продукта',
-      incomeTitle: 'Название прихода',
-      enterIncomeTitle: 'Введите название прихода',
-      incomeDate: 'Дата прихода',
-      incomeDescription: 'Описание прихода',
-      enterIncomeDescription: 'Введите подробное описание прихода',
-      incomeCreatedSuccess: 'Приход успешно создан!',
-      incomeCreateError: 'Ошибка при создании прихода'
-    },
-    products: {
-      title: 'Каталог продуктов',
-      subtitle: 'Просмотр и фильтрация продуктов по категориям',
-      addProduct: 'Добавить продукт',
-      category: 'Категория',
-      condition: 'Состояние',
-      price: 'Цена',
-      guarantee: 'Гарантия',
-      free: 'Свободен',
-      underRepair: 'На ремонте',
-      all: 'Все',
-      new: 'Новый',
-      used: 'Б/у',
-
-      noProductsFound: 'Товары не найдены',
-      productDeletedSuccess: 'Продукт успешно удален!',
-      productDeleteError: 'Ошибка при удалении продукта',
-      noProductsToDisplay: 'Нет товаров для отображения',
-      noProductsInCategory: 'Товары в данной категории не найдены',
-      confirmDeleteProduct: 'Вы уверены, что хотите удалить этот продукт?',
-      type: 'Тип',
-      specifications: 'Характеристики',
-      monitors: 'Мониторы',
-      laptops: 'Ноутбуки',
-      keyboards: 'Клавиатуры',
-      phones: 'Телефоны',
-      tablets: 'Планшеты'
-    },
-    users: {
-      title: 'Пользователи системы',
-      subtitle: 'Управление пользователями и их правами доступа',
-      addUser: 'Добавить пользователя',
-      registration: 'Регистрация',
-      lastUpdate: 'Последнее обновление',
-      totalUsers: 'Всего пользователей',
-      admins: 'Администраторы',
-      admin: 'Администратор',
-      managers: 'Менеджеры',
-      user: 'Пользователь',
-      notFound: 'Пользователи не найдены',
-      confirmDelete: 'Удалить пользователя {{name}}?',
-      deleteWarning: 'Это действие нельзя отменить. Все данные пользователя будут удалены навсегда.',
+const getInitialLanguage = (): string => {
+  if (typeof window === 'undefined') return 'uk';
+  
+  // 1️⃣ Проверяем localStorage
+  const savedLanguage = localStorage.getItem('language');
+  if (savedLanguage && resources[savedLanguage as keyof typeof resources]) {
+    return savedLanguage;
+  }
+  
+  // 2️⃣ Проверяем язык браузера  
+  if (navigator.language) {
+    const browserLang = navigator.language.split('-')[0];
+    if (resources[browserLang as keyof typeof resources]) {
+      return browserLang;
     }
   }
+  
+  // 3️⃣ Дефолт
+  return 'uk';
 };
 
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'uk', // Украинский по умолчанию
+    lng: getInitialLanguage(),
     fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false,
-    },
-    // Определяем namespace'ы
+    
+    // Настройки namespace
     ns: ['common', 'navigation', 'orders', 'products', 'users'],
-    defaultNS: 'common', // По умолчанию используем 'common'
+    defaultNS: 'common',
+    
+    interpolation: {
+      escapeValue: false, // React уже экранирует
+    },
+    
+    // Дополнительные настройки
+    react: {
+      useSuspense: false, // Отключаем suspense для SSR
+    },
+    
+    // Для отладки (убрать в продакшене)
+    debug: process.env.NODE_ENV === 'development',
   });
 
 export default i18n;

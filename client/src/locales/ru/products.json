@@ -1,0 +1,28 @@
+{
+  "title": "Каталог продуктов",
+  "subtitle": "Просмотр и фильтрация продуктов по категориям",
+  "addProduct": "Добавить продукт",
+  "category": "Категория",
+  "condition": "Состояние",
+  "price": "Цена",
+  "guarantee": "Гарантия",
+  "free": "Свободен",
+  "underRepair": "На ремонте",
+  "all": "Все",
+  "new": "Новый",
+  "used": "Б/у",
+
+  "noProductsFound": "Товары не найдены",
+  "productDeletedSuccess": "Продукт успешно удален!",
+  "productDeleteError": "Ошибка при удалении продукта",
+  "noProductsToDisplay": "Нет товаров для отображения",
+  "noProductsInCategory": "Товары в данной категории не найдены",
+  "confirmDeleteProduct": "Вы уверены, что хотите удалить этот продукт?",
+  "type": "Тип",
+  "specifications": "Характеристики",
+  "monitors": "Мониторы",
+  "laptops": "Ноутбуки",
+  "keyboards": "Клавиатуры",
+  "phones": "Телефоны",
+  "tablets": "Планшеты"
+}
