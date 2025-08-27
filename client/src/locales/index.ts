@@ -5,7 +5,7 @@ const namespaces = ['common', 'navigation', 'orders', 'products', 'users'] as co
 export type Language = (typeof languages)[number];
 export type Namespace = (typeof namespaces)[number];
 
-// 📦 Статические импорты для всех файлов (работает везде!)
+// Статические импорты для всех файлов (работает везде!)
 import enCommon from './en/common.json';
 import enNavigation from './en/navigation.json';
 import enOrders from './en/orders.json';
@@ -60,7 +60,7 @@ export const debugTranslations = () => {
   languages.forEach(lang => {
     namespaces.forEach(ns => {
       const keys = Object.keys(resources[lang][ns] || {});
-      console.log(`📝 ${lang}/${ns}: ${keys.length} keys`);
+      console.log(`${lang}/${ns}: ${keys.length} keys`);
     });
   });
 };

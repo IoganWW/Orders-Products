@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, memo } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setCurrentTime } from '@/store/slices/appSlice';
-import { useTranslation } from 'react-i18next';
+import { useTypedTranslation } from '@/hooks/useTypedTranslation';
 import { formatHeaderDate } from '@/utils/dateUtils';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import styles from './Layout.module.css';
 import Link from 'next/link';
 
 const Header: React.FC = memo(() => {
-  const { t } = useTranslation('common');
+  const { t } = useTypedTranslation('common');
   const dispatch = useAppDispatch();
   const { currentTime, activeSessions, isConnected } = useAppSelector((state) => state.app);
 
@@ -34,18 +34,18 @@ const Header: React.FC = memo(() => {
   }, [isConnected, activeSessions]);
 
   return (
-    <header className={`${styles.header} header`}>
-      <div className={`${styles.headerLeft} header-left`}>
+    <header className={`${styles.header}`}>
+      <div className={`${styles.headerLeft}`}>
         <Link href="/">
           <i className="fa-solid fa-shield fa-2xl me-2" style={{ color: "#28a745" }}></i>
         </Link>
-        <div className={`${styles.logo} logo`}>
+        <div className={`${styles.logo}`}>
           <span className="fw-bold">INVENTORY</span>
         </div>
       </div>
 
-      <div className={`${styles.headerCenter} header-center`}>
-        <div className={`${styles.searchBox} search-box`}>
+      <div className={`${styles.headerCenter}`}>
+        <div className={`${styles.searchBox}`}>
           <i className="fas fa-search"></i>
           <input
             type="text"
@@ -55,8 +55,8 @@ const Header: React.FC = memo(() => {
         </div>
       </div>
 
-      <div className={`${styles.headerRight} header-right me-0 me-lg-5`}>
-        <div className={`${styles.sessionCounter} session-counter`}>
+      <div className={`${styles.headerRight} me-0 me-lg-5`}>
+        <div className={`${styles.sessionCounter}`}>
           <span className="badge bg-secondary me-2">
             <i className="fas fa-users me-1"></i>
             {sessionsDisplay}

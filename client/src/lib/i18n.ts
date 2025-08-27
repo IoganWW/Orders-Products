@@ -6,13 +6,13 @@ import resources from '../locales';
 const getInitialLanguage = (): string => {
   if (typeof window === 'undefined') return 'uk';
   
-  // 1️⃣ Проверяем localStorage
+  // Проверяем localStorage
   const savedLanguage = localStorage.getItem('language');
   if (savedLanguage && resources[savedLanguage as keyof typeof resources]) {
     return savedLanguage;
   }
   
-  // 2️⃣ Проверяем язык браузера  
+  // Проверяем язык браузера  
   if (navigator.language) {
     const browserLang = navigator.language.split('-')[0];
     if (resources[browserLang as keyof typeof resources]) {
@@ -20,7 +20,7 @@ const getInitialLanguage = (): string => {
     }
   }
   
-  // 3️⃣ Дефолт
+  // Дефолт
   return 'uk';
 };
 
@@ -31,7 +31,6 @@ i18n
     lng: getInitialLanguage(),
     fallbackLng: 'en',
     
-    // Настройки namespace
     ns: ['common', 'navigation', 'orders', 'products', 'users'],
     defaultNS: 'common',
     
@@ -39,13 +38,9 @@ i18n
       escapeValue: false, // React уже экранирует
     },
     
-    // Дополнительные настройки
     react: {
       useSuspense: false, // Отключаем suspense для SSR
     },
-    
-    // Для отладки (убрать в продакшене)
-    debug: process.env.NODE_ENV === 'development',
   });
 
 export default i18n;

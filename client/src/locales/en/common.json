@@ -21,11 +21,13 @@
   "name": "Name",
   "email": "Email",
   "role": "Role",
+  "from": "from",
+  "until": "until",
 
   "successLogout": "You have successfully logged out",
   "profileSettings": "Profile Settings",
-  "from": "from",
-  "until": "until",
+  "sessionTerminatedForced": "Session has been terminated forcibly",
+  "sessionTerminatedElsewhere": "Session ended in another tab",
 
   "monday": "Monday",
   "tuesday": "Tuesday",

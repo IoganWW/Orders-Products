@@ -26,6 +26,8 @@
 
   "successLogout": "Ви успішно вийшли з системи",
   "profileSettings": "Налаштування профілю",
+  "sessionTerminatedForced": "Сесію було примусово завершено",
+  "sessionTerminatedElsewhere": "Сесію завершено в іншій вкладці",
 
   "monday": "Понеділок",
   "tuesday": "Вівторок",

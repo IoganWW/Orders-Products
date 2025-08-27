@@ -4,6 +4,7 @@ import React, { useEffect, useCallback, memo } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Notifications, { showNotification } from '@/components/UI/Notifications';
+import { useTypedTranslation } from '@/hooks/useTypedTranslation';
 import { useSocket } from '@/hooks/useSocket';
 import { useAppDispatch, useAppSelector  } from '@/store';
 import { initializeAuth, logoutUser  } from '@/store/slices/authSlice';
@@ -14,6 +15,7 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = memo(({ children }) => {
+  const { t } = useTypedTranslation('common');
   const dispatch = useAppDispatch();
   const { isAuthenticated, token } = useAppSelector(state => state.auth);
 
@@ -29,19 +31,19 @@ const MainLayout: React.FC<MainLayoutProps> = memo(({ children }) => {
     dispatch(logoutUser());
     showNotification({
       type: 'warning',
-      message: 'Сессия была завершена принудительно',
+      message: t('sessionTerminatedForced'),
       duration: 4000
     });
-  }, [dispatch]);
+  }, [dispatch, t]);
 
   const handleLogoutFromAnotherTab = useCallback(() => {
     dispatch(logoutUser());
     showNotification({
       type: 'warning',
-      message: 'Сессия завершена в другой вкладке',
+      message: t('sessionTerminatedElsewhere'),
       duration: 4000
     });
-  }, [dispatch]);
+  }, [dispatch, t]);
 
   // useEffect для проверки синхронизации токена
   useEffect(() => {
@@ -59,14 +61,14 @@ const MainLayout: React.FC<MainLayoutProps> = memo(({ children }) => {
       
       // Если в Redux есть авторизация, но токена в localStorage нет
       if (isAuthenticated && token && !storageToken) {
-        console.warn('🚨 Token manually removed from localStorage - forcing logout');
+        console.warn('Token manually removed from localStorage - forcing logout');
         
         handleLogout();
       }
       
       // Если в localStorage есть токен, но Redux показывает неавторизованность
       if (!isAuthenticated && storageToken) {
-        console.warn('🚨 Inconsistent state detected - clearing localStorage');
+        console.warn('Inconsistent state detected - clearing localStorage');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       }
@@ -75,7 +77,7 @@ const MainLayout: React.FC<MainLayoutProps> = memo(({ children }) => {
     // Слушатель изменений localStorage (работает между вкладками)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'token' && e.oldValue && !e.newValue) {
-        console.warn('🚨 Token removed from localStorage in another tab');
+        console.warn('Token removed from localStorage in another tab');
         
         if (isAuthenticated) {
           handleLogoutFromAnotherTab();
