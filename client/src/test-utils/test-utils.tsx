@@ -2,7 +2,7 @@
 import React, { ReactElement } from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { Provider } from 'react-redux'
-import { configureStore, PreloadedState, createSlice } from '@reduxjs/toolkit'
+import { configureStore, createSlice, combineReducers } from '@reduxjs/toolkit'
 
 // Импортируем реальные типы
 import type { OrdersState, Order } from '@/types/orders'
@@ -17,6 +17,9 @@ type MockRootState = {
   app: AppState
   auth: AuthState
 }
+
+// Определяем свой тип PreloadedState вместо импорта из @reduxjs/toolkit
+type PreloadedState<T> = Partial<T>
 
 // Mock orders slice с реальными типами
 const mockOrdersInitialState: OrdersState = {
@@ -96,7 +99,7 @@ const mockAppInitialState: AppState = {
   currentTime: new Date(),
   isConnected: false,
   theme: 'light',
-  locale: 'uk'
+  sessionHistory: [],
 }
 
 const mockAppSlice = createSlice({
@@ -115,9 +118,12 @@ const mockAppSlice = createSlice({
     toggleTheme: (state) => {
       state.theme = state.theme === 'light' ? 'dark' : 'light'
     },
-    setLocale: (state, action) => {
-      state.locale = action.payload
-    }
+    addSessionHistoryPoint: (state, action) => {
+      state.sessionHistory = [...state.sessionHistory, action.payload].slice(-15)
+    },
+    clearSessionHistory: (state) => {
+      state.sessionHistory = []
+    },
   }
 })
 
@@ -149,18 +155,20 @@ const mockAuthSlice = createSlice({
 // Экспорт действий для тестов
 export const { setSelectedOrder, clearError } = mockOrdersSlice.actions
 export const { setProductFilter, setSpecificationFilter, clearError: clearProductsError, setProducts } = mockProductsSlice.actions
-export const { setActiveSessions, setCurrentTime, setConnectionStatus, toggleTheme, setLocale } = mockAppSlice.actions
+export const { setActiveSessions, setCurrentTime, setConnectionStatus, toggleTheme, addSessionHistoryPoint, clearSessionHistory } = mockAppSlice.actions
 export const { clearError: clearAuthError, setAuthFromStorage } = mockAuthSlice.actions
 
 // Настройка store для тестов
 export function setupStore(preloadedState?: PreloadedState<MockRootState>) {
+  const rootReducer = combineReducers({
+    orders: mockOrdersSlice.reducer,
+    products: mockProductsSlice.reducer,
+    app: mockAppSlice.reducer,
+    auth: mockAuthSlice.reducer,
+  })
+
   return configureStore({
-    reducer: {
-      orders: mockOrdersSlice.reducer,
-      products: mockProductsSlice.reducer,
-      app: mockAppSlice.reducer,
-      auth: mockAuthSlice.reducer,
-    },
+    reducer: rootReducer,
     preloadedState,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({

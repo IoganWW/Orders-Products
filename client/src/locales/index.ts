@@ -1,4 +1,4 @@
-// locales/index.ts - Решение для Next.js/Webpack
+// client/src/locales/index.ts - Решение для Next.js/Webpack
 const languages = ['en', 'uk', 'ru'] as const;
 const namespaces = ['common', 'navigation', 'orders', 'products', 'users'] as const;
 

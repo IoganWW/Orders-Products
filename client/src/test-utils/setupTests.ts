@@ -97,7 +97,7 @@ jest.mock('@/store', () => ({
         currentTime: new Date(),
         isConnected: false,
         theme: 'light',
-        locale: 'uk'
+        sessionHistory: [],
       }
     })),
     dispatch: jest.fn(),

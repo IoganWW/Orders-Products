@@ -1,4 +1,4 @@
-// hooks/useTypedTranslation.ts - Расширенная версия
+// client/src/hooks/useTypedTranslation.ts - Расширенная версия
 import { useTranslation } from 'react-i18next';
 import { useCallback, useEffect } from 'react';
 import type { Language, Namespace, ResourceKey } from '../locales';

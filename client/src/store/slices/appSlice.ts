@@ -7,7 +7,6 @@ const initialState: AppState = {
   currentTime: new Date(),
   isConnected: false,
   theme: 'light',
-  locale: 'en',
   sessionHistory: [],
 };
 
@@ -27,9 +26,6 @@ const appSlice = createSlice({
     toggleTheme: (state) => {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
     },
-    setLocale: (state, action: PayloadAction<string>) => {
-      state.locale = action.payload;
-    },
     // Новые actions для работы с историей сессий
     addSessionHistoryPoint: (state, action: PayloadAction<{ time: string, sessions: number }>) => {
       state.sessionHistory = [...state.sessionHistory, action.payload].slice(-15);
@@ -45,7 +41,6 @@ export const {
   setCurrentTime,
   setConnectionStatus,
   toggleTheme,
-  setLocale,
   addSessionHistoryPoint,
   clearSessionHistory,
 } = appSlice.actions;

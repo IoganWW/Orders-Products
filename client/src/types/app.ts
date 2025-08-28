@@ -4,6 +4,5 @@ export interface AppState {
   currentTime: Date;
   isConnected: boolean;
   theme: 'light' | 'dark';
-  locale: string;
   sessionHistory: Array<{ time: string, sessions: number }>;
 }
