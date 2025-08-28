@@ -1,5 +1,12 @@
 {
   "selectLanguage": "Обрати мову",
+  "switchLanguage": "Переключити мову",
+  "languageOptions": "Варіанти мови",
+
+  "notSpecified": "Не вказано",
+  "invalidDate": "Невірна дата",
+  "dateError": "Помилка дати",
+  
   "loading": "Завантаження...",
   "error": "Помилка!",
   "login": "Увійти",
@@ -35,18 +42,5 @@
   "thursday": "Четвер",
   "friday": "П'ятниця",
   "saturday": "Субота",
-  "sunday": "Неділя",
-
-  "jan": "Січ",
-  "feb": "Лют",
-  "mar": "Бер",
-  "apr": "Кві",
-  "may": "Тра",
-  "jun": "Чер",
-  "jul": "Лип",
-  "aug": "Сер",
-  "sep": "Вер",
-  "oct": "Жов",
-  "nov": "Лис",
-  "dec": "Гру"
+  "sunday": "Неділя"
 }

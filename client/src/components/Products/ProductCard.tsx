@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Product } from '@/types/products';
-import { formatDate, isDateExpired } from '@/utils/dateUtils';
+import { isDateExpired, useSafeDateFormat, useDateFormatter } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/currencyUtils';
 import DeleteProductModal from './DeleteProductModal';
 import ProductTypeIcon from './ProductTypeIcon';
@@ -14,14 +14,22 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDeleteProduct }) => {
-  const { t, i18n } = useTranslation(['products', 'common']);
+  const { t } = useTranslation(['products', 'common']);
+  const safeDateFormat = useSafeDateFormat();
+  const { formatCustomDate } = useDateFormatter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const price = formatPrice(product.price);
-  const guaranteeStart = formatDate(product.guarantee.start, i18n.language);
-  const guaranteeEnd = formatDate(product.guarantee.end, i18n.language);
+  // Простое использование с автоматическими переводами! 🎉
+  const guaranteeStart = safeDateFormat(product.guarantee.start);
+  const guaranteeEnd = safeDateFormat(product.guarantee.end);
   const isGuaranteeExpired = isDateExpired(product.guarantee.end);
+  
+  const price = formatPrice(product.price);
+
+  const productDateCustom = product.date ? 
+  formatCustomDate(new Date(product.date)) : 
+  t('common:notSpecified');
 
   const handleDeleteClick = () => setShowDeleteModal(true);
 
@@ -90,10 +98,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         {/* Гарантия */}
         <div className={`${styles.gridWarranty} text-center`}>
           <div className="small mb-1">
-            <small className="text-muted">{t('common:from')}:</small> {guaranteeStart.short}
+            <small className="text-muted">{t('common:from')}:</small> {guaranteeStart}
           </div>
           <div className={`small ${isGuaranteeExpired ? 'text-danger' : 'text-success'}`}>
-            <small className="text-muted">{t('common:until')}:</small> {guaranteeEnd.short}
+            <small className="text-muted">{t('common:until')}:</small> {guaranteeEnd}
           </div>
         </div>
 
@@ -122,7 +130,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, orderTitle, onDelete
         {/* Дата */}
         <div className={`${styles.gridDate} text-center`}>
           <small className="text-nowrap">
-            {formatDate(product.date, i18n.language).shortMonStr}
+            {productDateCustom}
           </small>
         </div>
 

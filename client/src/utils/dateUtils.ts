@@ -1,73 +1,56 @@
 // client/src/utils/dateUtils.ts
-import i18n from '@/lib/i18n';
+import { useTypedTranslation } from '@/hooks/useTypedTranslation';
 
-export const formatDate = (dateString: string, lang: string) => {
-  // Проверяем, что входная строка валидна
-  if (!dateString || dateString.trim() === '') {
-    const fallbackDate = new Date();
-    return {
-      short: 'N/A',
-      long: 'Invalid Date',
-      full: 'N/A',
-      iso: fallbackDate.toISOString().slice(0, 16),
-      shortMonStr: 'N/A'
-    };
-  }
-
-  const date = new Date(dateString);
-  
-  // Проверяем, что дата валидна
-  if (isNaN(date.getTime())) {
-    console.warn('Invalid date string:', dateString);
+// Базовые утилиты
+export const formatDate = (dateString: string, locale: string = 'uk') => {
+  if (!dateString?.trim()) {
     return {
       short: 'N/A',
       long: 'Invalid Date',
       full: 'N/A',
       iso: new Date().toISOString().slice(0, 16),
-      shortMonStr: 'N/A'
+    };
+  }
+
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return {
+      short: 'N/A',
+      long: 'Invalid Date', 
+      full: 'N/A',
+      iso: new Date().toISOString().slice(0, 16),
     };
   }
   
   try {
     return {
-      // Формат: 29.06.2017
-      short: date.toLocaleDateString(lang, {
+      short: date.toLocaleDateString(locale, {
         day: '2-digit',
-        month: '2-digit',
+        month: '2-digit', 
         year: 'numeric'
       }),
-      // Формат: June 29, 2017
-      long: date.toLocaleDateString(lang, {
+      long: date.toLocaleDateString(locale, {
         year: 'numeric',
-        month: 'long',
+        month: 'long',    // 👈 Браузер сам переведет
         day: 'numeric'
       }),
-      // Формат: 29.06.2017 12:09:33
       full: `${date.toLocaleDateString('en-GB')} ${date.toLocaleTimeString('en-GB')}`,
-      // ISO формат для datetime-local input
       iso: date.toISOString().slice(0, 16),
-      // Формат: 29 / Июн / 2017 (ваш метод)
-      shortMonStr: `${date.getDate().toString().padStart(2, '0')} / ${getTranslatedMonth(date)} / ${date.getFullYear()}`
     };
   } catch (error) {
-    console.error('Error formatting date:', dateString, error);
     return {
       short: 'N/A',
       long: 'Date Error',
-      full: 'N/A',
+      full: 'N/A', 
       iso: new Date().toISOString().slice(0, 16),
-      shortMonStr: 'N/A'
     };
   }
 };
 
 export const isDateExpired = (dateString: string) => {
   if (!dateString) return false;
-  
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return false;
-  
-  return date < new Date();
+  return !isNaN(date.getTime()) && date < new Date();
 };
 
 export const getDaysBetween = (startDate: string, endDate: string) => {
@@ -82,51 +65,134 @@ export const getDaysBetween = (startDate: string, endDate: string) => {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-// Безопасная функция для форматирования даты с fallback
+
+// ============ ХУКИ ДЛЯ ПЕРЕВОДОВ ============
+
+export const useDateFormatter = () => {
+  const { language } = useTypedTranslation();
+  const { t } = useTypedTranslation('common');
+
+  // Единообразные сокращения месяцев (3 символа)
+  const getUniformMonthAbbreviation = (date: Date) => {
+    const monthAbbreviations = {
+      'en': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      'uk': ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 
+             'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'],
+      'ru': ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 
+             'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
+    };
+
+    const monthIndex = date.getMonth();
+    return monthAbbreviations[language as keyof typeof monthAbbreviations]?.[monthIndex] || 
+           monthAbbreviations['en'][monthIndex];
+  };
+
+  // Дни недели с заглавной буквы
+  const getCapitalizedWeekday = (date: Date, format: 'short' | 'long' = 'long') => {
+    const weekday = date.toLocaleDateString(language, { weekday: format });
+    
+    // Делаем первую букву заглавной
+    return weekday.charAt(0).toUpperCase() + weekday.slice(1);
+  };
+
+  // Браузерные локали для полных названий (когда нужны длинные)
+  const getLocalizedMonth = (date: Date, format: 'short' | 'long' | 'uniform' = 'short') => {
+    if (format === 'uniform') {
+      return getUniformMonthAbbreviation(date);
+    }
+    return date.toLocaleDateString(language, { month: format });
+  };
+
+  const getLocalizedWeekday = (date: Date, format: 'short' | 'long' = 'long') => {
+    return getCapitalizedWeekday(date, format);
+  };
+
+  const formatLocalizedDate = (
+    dateString: string,
+    options?: Intl.DateTimeFormatOptions
+  ) => {
+    if (!dateString?.trim()) return t('notSpecified', { defaultValue: 'Не указано' });
+
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return t('invalidDate', { defaultValue: 'Неверная дата' });
+
+      // Fallback на стандартное форматирование
+      return date.toLocaleDateString(language, options);
+    } catch (error) {
+      return t('dateError', { defaultValue: 'Ошибка даты' });
+    }
+  };
+
+  // Специальный формат для Header
+  const formatHeaderDate = (date: Date = new Date()) => {
+    const day = date.getDate();
+    const month = getUniformMonthAbbreviation(date);
+    const year = date.getFullYear();
+    const today = `${day} ${month} ${year}`;
+
+    const time = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    const weekly = getCapitalizedWeekday(date);
+
+    return { today, time, weekly };
+  };
+
+  // Ваш кастомный формат с автоматическими переводами
+  const formatCustomDate = (date: Date) => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = getUniformMonthAbbreviation(date); 
+    const year = date.getFullYear();
+    
+    return `${day} / ${month} / ${year}`;
+  };
+
+  return {
+    formatLocalizedDate,
+    getLocalizedMonth,
+    getLocalizedWeekday,
+    getCapitalizedWeekday,
+    getUniformMonthAbbreviation,
+    formatHeaderDate,
+    formatCustomDate,
+  };
+};
+
+export const useSafeDateFormat = () => {
+  const { formatLocalizedDate } = useDateFormatter();
+  const { t } = useTypedTranslation('common');
+
+  return (
+    dateString?: string | null,
+    fallback?: string
+  ) => {
+    if (!dateString) {
+      return fallback || t('notSpecified', { defaultValue: 'Не указано' });
+    }
+
+    return formatLocalizedDate(dateString, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+};
+
+// Для обратной совместимости
 export const safeDateFormat = (
   dateString?: string | null,
-  fallback: string = 'Не указано',
-  lang: string = i18n.language // 👈 язык по умолчанию из i18n
+  fallback: string = 'Не указано'
 ) => {
   if (!dateString) return fallback;
 
   try {
-    const formatted = formatDate(dateString, lang);
+    const formatted = formatDate(dateString, 'uk');
     return formatted.short !== 'N/A' ? formatted.short : fallback;
   } catch (error) {
     return fallback;
   }
-};
-
-// ============= НОВЫЕ i18n ФУНКЦИИ =============
-
-// Функция для получения переведенного дня недели
-export const getTranslatedWeekday = (date: Date) => {
-  const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-  const dayKeys = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  return i18n.t(`common:${dayKeys[dayOfWeek]}`);
-};
-
-// Функция для получения переведенного месяца
-export const getTranslatedMonth = (date: Date) => {
-  const month = date.getMonth(); // 0 = January, 1 = February, etc.
-  const monthKeys = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
-  return i18n.t(`common:${monthKeys[month]}`);
-};
-
-// Форматирование для Header с переводами
-export const formatHeaderDate = (date: Date) => {
-  const day = date.getDate();
-  const month = getTranslatedMonth(date);
-  const year = date.getFullYear();
-  const today = `${day} ${month} ${year}`;
-
-  const time = date.toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  const weekly = getTranslatedWeekday(date);
-
-  return { today, time, weekly };
 };

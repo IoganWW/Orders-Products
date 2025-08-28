@@ -2,13 +2,14 @@ import React, { useEffect, useMemo, memo } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { setCurrentTime } from '@/store/slices/appSlice';
 import { useTypedTranslation } from '@/hooks/useTypedTranslation';
-import { formatHeaderDate } from '@/utils/dateUtils';
+import { useDateFormatter } from '@/utils/dateUtils';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import styles from './Layout.module.css';
 import Link from 'next/link';
 
 const Header: React.FC = memo(() => {
   const { t } = useTypedTranslation('common');
+  const { formatHeaderDate } = useDateFormatter();
   const dispatch = useAppDispatch();
   const { currentTime, activeSessions, isConnected } = useAppSelector((state) => state.app);
 
@@ -21,10 +22,10 @@ const Header: React.FC = memo(() => {
     return () => clearInterval(timer);
   }, [dispatch]);
 
-  // Мемоизируем форматированную дату для оптимизации
+  // Дата форматируется с переводами!
   const formattedDate = useMemo(() => {
     return formatHeaderDate(currentTime);
-  }, [currentTime]);
+  }, [currentTime, formatHeaderDate]);
 
   const { today, time, weekly } = formattedDate;
 

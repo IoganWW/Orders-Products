@@ -1,5 +1,12 @@
 {
   "selectLanguage": "Select language",
+  "switchLanguage": "Switch Language",
+  "languageOptions": "Language Options",
+  
+  "notSpecified": "Not specified",
+  "invalidDate": "Invalid date", 
+  "dateError": "Date error",
+
   "loading": "Loading...",
   "error": "Error!",
   "login": "Login",
@@ -35,18 +42,5 @@
   "thursday": "Thursday",
   "friday": "Friday",
   "saturday": "Saturday",
-  "sunday": "Sunday",
-
-  "jan": "Jan",
-  "feb": "Feb",
-  "mar": "Mar",
-  "apr": "Apr",
-  "may": "May",
-  "jun": "Jun",
-  "jul": "Jul",
-  "aug": "Aug",
-  "sep": "Sep",
-  "oct": "Oct",
-  "nov": "Nov",
-  "dec": "Dec"
+  "sunday": "Sunday"
 }

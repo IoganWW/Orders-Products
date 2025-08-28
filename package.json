@@ -13,7 +13,9 @@
     "docker:stop": "docker-compose down",
     "docker:restart": "docker-compose restart",
     "docker:logs": "docker-compose logs -f",
-    "docker:clean": "docker-compose down -v --rmi all"
+    "docker:clean": "docker-compose down -v --rmi all",
+    "i18n:validate": "node scripts/validate-translations.js",
+    "i18n:extract": "node scripts/extract-keys.js"
   },
   "engines": {
     "node": ">=18.0.0"

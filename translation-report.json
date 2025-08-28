@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-08-27T22:36:04.666Z",
+  "totalIssues": 2,
+  "issuesByType": [
+    {
+      "type": "MISSING_KEY",
+      "count": 2,
+      "issues": [
+        {
+          "type": "MISSING_KEY",
+          "language": "uk",
+          "namespace": "orders",
+          "key": "products",
+          "message": "Key \"products\" exists in en but missing in uk"
+        },
+        {
+          "type": "MISSING_KEY",
+          "language": "ru",
+          "namespace": "orders",
+          "key": "products",
+          "message": "Key \"products\" exists in en but missing in ru"
+        }
+      ]
+    }
+  ],
+  "languages": [
+    "en",
+    "uk",
+    "ru"
+  ],
+  "namespaces": [
+    "common",
+    "navigation",
+    "orders",
+    "products",
+    "users"
+  ]
+}
